@@ -1,0 +1,93 @@
+@startuml
+
+!include https://raw.githubusercontent.com/plantuml-stdlib/C4-PlantUML/master/C4_Component.puml
+
+' uncomment the following line and comment the first to use locally
+
+' !include C4_Component.puml
+
+
+
+
+
+
+
+
+
+
+
+
+
+title Component diagram for Internet Banking System - API Application
+
+
+
+
+Container(web_app, "Web Application Interface", "Container: Web application", "Интерфейс для клиентов")
+
+Container(mobile_app, "Mobile Application Interface", "Container: Android/IOS Mobile application", "Мобильное приложение для клиентов.")
+
+
+
+
+Container_Boundary(api, "Backend Приложение") {
+
+  ContainerDb(db, "SPS Database", "Container: PostgreSQL", "Данные по платежам, кошелькам, курсам валют и т.д. \n Используют все, кроме Leantech Commons и Individuals API")
+
+
+
+
+  Component(ind_api, "Individuals API", "Component: Spring App", "API, с настроенной авторизацией и аутентификацией.")
+
+  Component(person, "Person Service", "Component: Spring App", "Сервис, предназначенный для хранения учетной информации о каждом пользователе, стране, адресах и т.д.")
+
+  Component(wallets, "Wallets Service", "Component: Spring App", "Сервис, отвечающий за работу с кошельками, транзакциями и комиссиями.")
+
+  Component(payment, "Payment Service", "Component: Spring App", "Сервис, возвращающий доступные платежные методы, исходя из переданных параметров.")
+
+  Component(notification, "Notification Service", "Component: Spring App", "Сервис для отправки сообщений на E-mail пользователей системы.")
+
+  Component(config, "Config Service", "Component: Spring App", "Сервис для хранения и получения полной информации о нужной конфигурации или нужной ошибке. \nИспользуют все, кроме БД и Leantech Commons")
+
+  Component(common, "Leantech Commons", "Component: Java Library", "Библиотека, хранящая нужные DTO, клиенты сервисов и другие переиспользуемые классы. \nДанные этого компонента использует каждый другой компонент.")
+
+  Component(fake_provider, "Fake Provider", "Component: Spring App", "Сервис, имитирующий реальный банковский провайдер, позволяющий создавать транзакции, отправлять вебхуки и проверять баланс клиента.")
+
+  Component(currency, "Currency Exchange Service", "Component: Spring App", "Сервис для получения актуального курса валют.")
+
+  Component(webhook, "Webhook Service", "Component: Spring App", "Сервис, отвечающий за хранение вебхуков и измененине статусов у транзакций")
+
+   
+
+  Rel(ind_api, person, "REST API", "async, JSON/HTTP")
+
+  Rel(ind_api, wallets, "REST API", "async, JSON/HTTP")
+
+  Rel(ind_api, payment, "REST API", "async, JSON/HTTP")
+
+  Rel(ind_api, notification, "REST API", "async, JSON/HTTP")
+
+  Rel(payment, fake_provider, "REST API", "async, JSON/HTTP")
+
+  Rel(fake_provider, webhook, "REST API", "async, JSON/HTTP")
+
+  Rel(wallets, currency, "REST API", "async, JSON/HTTP")
+
+  Rel(notification, wallets, "REST API", "async, JSON/HTTP")
+
+
+
+
+}
+
+
+
+
+Rel(web_app, ind_api, "Uses", "async, JSON/HTTP")
+
+
+
+
+Rel(mobile_app, ind_api, "Uses", "async, JSON/HTTP")
+
+@enduml
