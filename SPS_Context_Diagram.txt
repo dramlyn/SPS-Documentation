@@ -1,0 +1,18 @@
+@startuml
+!include https://raw.githubusercontent.com/plantuml-stdlib/C4-PlantUML/master/C4_Context.puml
+
+
+title System Context diagram for Study Payment System
+
+Person(customer, "Пользователь", "Пользователь приложения")
+System(sps, "Study Payment System", "Система, которая позволяет пользователям хранить, отправлять и получать деньги, а также проводить различные платежи и транзакции.")
+System_Ext(mail_system, "E-mail system", "Электронная почта пользователя, которому система будет отправлять письма об подтверждении вывода или пополнения денежных средств и т.д.")
+System_Ext(currency_exchange_api, "Abstract API", "Система, предоставляющая актуальные курсы валют по API.")
+
+
+
+Rel(customer, sps, "Использует систему для проведения финансовых операций.")
+Rel(sps, mail_system, "Отправляет письма по SMTP.")
+Rel(sps, currency_exchange_api, "Получает актуальные курсы валют.")
+
+@enduml

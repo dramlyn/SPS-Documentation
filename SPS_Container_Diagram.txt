@@ -1,0 +1,36 @@
+@startuml
+!include https://raw.githubusercontent.com/plantuml-stdlib/C4-PlantUML/master/C4_Container.puml
+' uncomment the following line and comment the first to use locally
+' !include C4_Container.puml
+
+
+
+
+
+title Container diagram for Study Payment System
+
+Person(customer, Пользователь, "Пользователь приложения")
+Person(ex_app, Внешнее приложение, "Приложение, использующее эту систему.")
+
+System_Boundary(c1, "Study Payment System") {
+    Container(web_app, "Web Application Interface", "Container: Web application", "Интерфейс для клиентов.")
+    Container(mobile_app, "Mobile Application Interface", "Container: Android/IOS Mobile Application", "Мобильное приложение для клиентов.")
+    ContainerDb(database, "Database", "Container: PostgreSQL", "Данные по платежам, кошелькам, курсам валют и т.д.")
+    Container(backend_api, "Backend-Java приложение", "Container: Java", "Сервер-приложение, реализующее бизнес-логику работы клиентских приложений (веб, мобильные). Для взаимодействия клиентские приложения используют REST API (JSON).")
+}
+
+System_Ext(mail_system, "E-mail system", "Электронная почта пользователя, которому система будет отправлять письма об подтверждении вывода или пополнения денежных средств и т.д.")
+System_Ext(currency_exchange_api, "Abstract API", "Система, предоставляющая актуальные курсы валют по API.")
+
+
+Rel(customer, web_app, "Использует систему для проведения финансовых операций.", "HTTP")
+Rel(customer, mobile_app, "Использует систему для проведения финансовых операций.", "HTTP")
+Rel(ex_app, backend_api, "Получает доступ к системе с помощью Individuals API", "async, JSON/HTTP")
+
+Rel(mobile_app, backend_api, "Получает доступ к системе с помощью Individuals API", "async, JSON/HTTP")
+Rel(web_app, backend_api, "Получает доступ к системе с помощью Individuals API", "async, JSON/HTTP")
+Rel_Back_Neighbor(database, backend_api, "Получает и записывает данные в базу данных.", "async, R2DBC")
+
+Rel(backend_api, mail_system, "Отправляет письма по SMTP.")
+Rel(backend_api, currency_exchange_api, "Получает актуальные курсы валют.")
+@enduml
