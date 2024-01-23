@@ -1,0 +1,216 @@
+@startuml
+
+!theme plain
+top to bottom direction
+skinparam linetype ortho
+
+class Config2ConfigDtoMapper {
+  + Config2ConfigDtoMapper(): 
+  + map(ConfigDto): ConfigDto
+  - buildConfigExt(ConfigDto): ConfigDto
+}
+class Config2ConfigEntityMapper {
+  + Config2ConfigEntityMapper(): 
+  - buildConfigEntity(ConfigDto): ConfigEntity
+  + map(ConfigDto): ConfigEntity
+}
+class ConfigController {
+  + ConfigController(ConfigService): 
+  + getConfigByKey(String): Mono<ConfigValueDto>
+  + getAllPublicConfigs(Long): Mono<Map<String, String>>
+}
+class ConfigDto2ConfigMapper {
+  + ConfigDto2ConfigMapper(): 
+  - buildConfig(ConfigDto): ConfigDto
+  + map(ConfigDto): ConfigDto
+}
+class ConfigEntity {
+  + ConfigEntity(Long, String, String, String, Boolean, OffsetDateTime): 
+  + ConfigEntity(): 
+  - id: Long
+  - lastModified: OffsetDateTime
+  - value: String
+  - key: String
+  - description: String
+  - isPublic: Boolean
+  + equals(Object): boolean
+  + toBuilder(): ConfigEntityBuilder
+  # canEqual(Object): boolean
+  + hashCode(): int
+  + builder(): ConfigEntityBuilder
+  + toString(): String
+   description: String
+   isPublic: Boolean
+   lastModified: OffsetDateTime
+   id: Long
+   key: String
+   value: String
+}
+class ConfigEntity2ConfigMapper {
+  + ConfigEntity2ConfigMapper(): 
+  + map(ConfigEntity): ConfigDto
+  - buildConfig(ConfigEntity): ConfigDto
+}
+class ConfigErrorController {
+  + ConfigErrorController(ConfigErrorService, ConfigErrorMapper): 
+  + getAllConfigErrors(Integer, Integer): Mono<PageableDto<ConfigErrorDto>>
+  + getAllConfigErrorsForLocale(String): Mono<List<ConfigErrorMinDto>>
+  + deleteConfigError(Long): Mono<Void>
+  - getPageableDto(PageableDto<ConfigErrorDto>, List<ConfigErrorDto>): Mono<PageableDto<ConfigErrorDto>>
+  + getConfigErrorById(Long): Mono<ConfigErrorDto>
+  + getConfigErrorForLocale(String, String): Mono<ConfigErrorMinDto>
+  + saveConfigError(ConfigErrorDto): Mono<ConfigErrorDto>
+  + updateConfigError(ConfigErrorDto): Mono<ConfigErrorDto>
+}
+class ConfigErrorEntity {
+  + ConfigErrorEntity(Long, String, String, Language, String, OffsetDateTime): 
+  + ConfigErrorEntity(): 
+  - lastModified: OffsetDateTime
+  - id: Long
+  - value: String
+  - language: Language
+  - description: String
+  - key: String
+  + equals(Object): boolean
+  + hashCode(): int
+  + toString(): String
+  # canEqual(Object): boolean
+   description: String
+   lastModified: OffsetDateTime
+   language: Language
+   id: Long
+   key: String
+   value: String
+}
+class ConfigErrorMapper {
+  + ConfigErrorMapper(): 
+  + toEntity(ConfigErrorDto): ConfigErrorEntity
+  + fromEntity(ConfigErrorEntity): ConfigErrorDto
+  - buildConfig(ConfigErrorEntity): ConfigErrorDto
+}
+interface ConfigErrorRepository << interface >> {
+  + deleteById(Long): Mono<Void>
+  + findBy(Pageable): Flux<ConfigErrorEntity>
+  + findAllByLanguage(Language): Flux<ConfigErrorEntity>
+  + findByKeyAndLanguage(String, Language): Mono<ConfigErrorEntity>
+}
+interface ConfigErrorService << interface >> {
+  + findById(Long): Mono<ConfigErrorEntity>
+  + delete(Long): Mono<Void>
+  + update(ConfigErrorEntity): Mono<ConfigErrorEntity>
+  + save(ConfigErrorEntity): Mono<ConfigErrorEntity>
+  + findAllConfigs(Integer, Integer): Mono<PageableDto<ConfigErrorDto>>
+  + findAllConfigErrorsForLocale(String): Mono<List<ConfigErrorMinDto>>
+  + findConfigErrorForLocale(String, String): Mono<ConfigErrorMinDto>
+}
+class ConfigErrorServiceImpl {
+  + ConfigErrorServiceImpl(ConfigErrorRepository, ConfigErrorMapper): 
+  + update(ConfigErrorEntity): Mono<ConfigErrorEntity>
+  - buildPageableDto(Flux<ConfigErrorEntity>, PageRequest): Mono<PageableDto<ConfigErrorDto>>
+  - toMinDto(ConfigErrorEntity): ConfigErrorMinDto
+  + findById(Long): Mono<ConfigErrorEntity>
+  + findConfigErrorForLocale(String, String): Mono<ConfigErrorMinDto>
+  + findAllConfigErrorsForLocale(String): Mono<List<ConfigErrorMinDto>>
+  + save(ConfigErrorEntity): Mono<ConfigErrorEntity>
+  + findAllConfigs(Integer, Integer): Mono<PageableDto<ConfigErrorDto>>
+  + delete(Long): Mono<Void>
+}
+class ConfigInternalController {
+  + ConfigInternalController(ConfigService): 
+  + saveConfig(ConfigDto): Mono<ConfigDto>
+  + deleteConfig(Long): Mono<Void>
+  + getAllInternalConfigs(Integer, Integer, String): Mono<PageableDto<ConfigDto>>
+  + getConfigById(Long): Mono<ConfigDto>
+  + updateConfig(ConfigDto): Mono<ConfigDto>
+}
+interface ConfigRepository << interface >> {
+  + findBy(Pageable): Flux<ConfigEntity>
+  + findByKey(String): Mono<ConfigEntity>
+  + findAllPublic(OffsetDateTime): Flux<ConfigEntity>
+  + findByKeyContaining(String, Pageable): Flux<ConfigEntity>
+}
+class ConfigServerApplication {
+  + ConfigServerApplication(): 
+  + main(String[]): void
+}
+interface ConfigService << interface >> {
+  + findByKey(String): Mono<ConfigDto>
+  + findAllConfigsByTimestamp(Long): Mono<Map<String, String>>
+  + update(ConfigDto): Mono<ConfigDto>
+  + findById(Long): Mono<ConfigDto>
+  + delete(Long): Mono<Void>
+  + findInternalConfigs(Integer, Integer, String): Mono<PageableDto<ConfigDto>>
+  + save(ConfigDto): Mono<ConfigDto>
+}
+class ConfigServiceImpl {
+  + ConfigServiceImpl(ConfigRepository, Mapper<ConfigEntity, ConfigDto>, Mapper<ConfigDto, ConfigEntity>): 
+  + findByKey(String): Mono<ConfigDto>
+  + findInternalConfigs(Integer, Integer, String): Mono<PageableDto<ConfigDto>>
+  + findAllConfigsByTimestamp(Long): Mono<Map<String, String>>
+  + save(ConfigDto): Mono<ConfigDto>
+  - buildPageableDto(Flux<ConfigEntity>, PageRequest): Mono<PageableDto<ConfigDto>>
+  + delete(Long): Mono<Void>
+  + findById(Long): Mono<ConfigDto>
+  - updateConfigEntityFields(ConfigDto, ConfigEntity): ConfigEntity
+  + update(ConfigDto): Mono<ConfigDto>
+}
+class ControllerExceptionHandler {
+  + ControllerExceptionHandler(): 
+  + handleAnyException(Exception): ResponseEntity<ErrorResponse>
+  - buildErrorResponseEntity(String, HttpStatus): ResponseEntity<ErrorResponse>
+  + handleMissingServletRequestParameterException(MissingServletRequestParameterException): ResponseEntity<ErrorResponse>
+  + handleHttpMessageNotReadableException(HttpMessageNotReadableException): ResponseEntity<ErrorResponse>
+  + handleNotFoundException(NotFoundException): ResponseEntity<ErrorResponse>
+}
+class ErrorContextConfiguration {
+  + ErrorContextConfiguration(): 
+  ~ requestBodyReplacer(): SensitiveInformationReplacer
+  + serverCodecConfigurer(): ServerCodecConfigurer
+  ~ errorAttributes(List<ExceptionMapper>): ErrorInfoErrorAttributes
+  ~ loggingWebFilter(MeterRegistry, SensitiveInformationReplacer, SensitiveInformationReplacer): LoggingWebFilter
+  ~ responseBodyReplacer(): SensitiveInformationReplacer
+}
+class ErrorResponse {
+  + ErrorResponse(String): 
+  - message: String
+   message: String
+}
+interface Mapper<S, T> << interface >> {
+  + map(S): T
+  + mapAll(Collection<S>): Collection<T>
+}
+class R2dbcConfig {
+  + R2dbcConfig(): 
+}
+class RequestAndResponseLoggingFilter {
+  + RequestAndResponseLoggingFilter(): 
+  - buildMetaInfo(ContentCachingRequestWrapper, ContentCachingResponseWrapper): MetaInfo
+  - logRequestAndResponse(ContentCachingRequestWrapper, ContentCachingResponseWrapper): void
+  # doFilterInternal(HttpServletRequest, HttpServletResponse, FilterChain): void
+  # afterRequest(HttpServletRequest, String): void
+  ~ hideSensitiveSourceInfo(String): String
+  - buildLog(ContentCachingRequestWrapper, ContentCachingResponseWrapper): Log
+  - wrapResponse(HttpServletResponse): ContentCachingResponseWrapper
+  # beforeRequest(HttpServletRequest, String): void
+  - wrapRequest(HttpServletRequest): ContentCachingRequestWrapper
+  - parseBody(byte[]): String
+  - buildJsonFromObject(Object): String
+}
+
+Config2ConfigDtoMapper           -[#008200,dashed]-^  Mapper                          
+Config2ConfigEntityMapper        -[#008200,dashed]-^  Mapper                          
+ConfigController                "1" *-[#595959,plain]-> "configService\n1" ConfigService                   
+ConfigDto2ConfigMapper           -[#008200,dashed]-^  Mapper                          
+ConfigEntity2ConfigMapper        -[#008200,dashed]-^  Mapper                          
+ConfigErrorController           "1" *-[#595959,plain]-> "configErrorMapper\n1" ConfigErrorMapper               
+ConfigErrorController           "1" *-[#595959,plain]-> "configErrorService\n1" ConfigErrorService              
+ConfigErrorMapper                -[#595959,dashed]->  ConfigErrorEntity               : "«create»"
+ConfigErrorServiceImpl          "1" *-[#595959,plain]-> "configErrorMapper\n1" ConfigErrorMapper               
+ConfigErrorServiceImpl          "1" *-[#595959,plain]-> "repository\n1" ConfigErrorRepository           
+ConfigErrorServiceImpl           -[#008200,dashed]-^  ConfigErrorService              
+ConfigInternalController        "1" *-[#595959,plain]-> "configService\n1" ConfigService                   
+ConfigServiceImpl               "1" *-[#595959,plain]-> "configRepository\n1" ConfigRepository                
+ConfigServiceImpl                -[#008200,dashed]-^  ConfigService                   
+ConfigServiceImpl               "1" *-[#595959,plain]-> "configMapper\n1" Mapper                          
+ControllerExceptionHandler       -[#595959,dashed]->  ErrorResponse                   : "«create»"
+@enduml

@@ -1,0 +1,4409 @@
+@startuml
+
+!theme plain
+top to bottom direction
+skinparam linetype ortho
+
+class AESEncryptionService {
+  + AESEncryptionService(String, String): 
+  + checkSignature(String[], String): boolean
+  + sign(String[]): String
+  - calculateMac(byte[][]): byte[]
+  + decrypt(String): String
+  + encrypt(String): String
+}
+class APIRateDto {
+  + APIRateDto(OffsetDateTime, String, Map<String, BigDecimal>): 
+  + APIRateDto(): 
+  - sourceCurrency: String
+  - destinationCurrencies: Map<String, BigDecimal>
+  - rateTime: OffsetDateTime
+  + equals(Object): boolean
+  # canEqual(Object): boolean
+  + hashCode(): int
+  + toString(): String
+   rateTime: OffsetDateTime
+   destinationCurrencies: Map<String, BigDecimal>
+   sourceCurrency: String
+}
+class AbstractChangeHistoryRequestDto {
+  + AbstractChangeHistoryRequestDto(): 
+  + AbstractChangeHistoryRequestDto(String, String, String, String): 
+  - profileUid: String
+  - reason: String
+  - comment: String
+  - profileType: String
+  + equals(Object): boolean
+  + toString(): String
+  # canEqual(Object): boolean
+  + hashCode(): int
+   profileUid: String
+   comment: String
+   reason: String
+   profileType: String
+}
+class AbstractMatcherReplacer {
+  ~ AbstractMatcherReplacer(Pattern): 
+  + matchAndReplace(String): String
+  # replaceMatched(String): String
+}
+class AbstractPaymentRequestDto {
+  + AbstractPaymentRequestDto(): 
+  + AbstractPaymentRequestDto(String, Long, String, String, String, Long): 
+  - amountGross: Long
+  - provider: String
+  - currencyCode: String
+  - profileUid: String
+  - comment: String
+  - paymentMethodId: Long
+  # canEqual(Object): boolean
+  + equals(Object): boolean
+  + hashCode(): int
+  + toString(): String
+   profileUid: String
+   paymentMethodId: Long
+   comment: String
+   amountGross: Long
+   currencyCode: String
+   provider: String
+}
+class AbstractPaymentResponseDto {
+  + AbstractPaymentResponseDto(): 
+  + AbstractPaymentResponseDto(Long, Double): 
+  - fee: Long
+  - percentage: Double
+  # canEqual(Object): boolean
+  + equals(Object): boolean
+  + toString(): String
+  + hashCode(): int
+   fee: Long
+   percentage: Double
+}
+class ActiveAfterArchiveException {
+  + ActiveAfterArchiveException(): 
+   locale: boolean
+   httpStatus: HttpStatus
+   code: String
+   message: String
+}
+class AddressDto {
+  + AddressDto(Long, String, String, String, String, String, String, String): 
+  + AddressDto(): 
+  - id: Long
+  - countryName: String
+  - zipCode: String
+  - alpha2Code: String
+  - state: String
+  - alpha3Code: String
+  - address: String
+  - city: String
+  + hashCode(): int
+  + toString(): String
+  # canEqual(Object): boolean
+  + equals(Object): boolean
+   countryName: String
+   id: Long
+   city: String
+   state: String
+   zipCode: String
+   address: String
+   alpha2Code: String
+   alpha3Code: String
+}
+class AllIsSecretReplacer {
+  + AllIsSecretReplacer(): 
+  + matchAndReplace(String): String
+}
+class AlreadyVerifiedException {
+  + AlreadyVerifiedException(): 
+   locale: boolean
+   httpStatus: HttpStatus
+   code: String
+   message: String
+}
+class AttributeWrapperDto {
+  + AttributeWrapperDto(): 
+  + AttributeWrapperDto(String, String, List<String>): 
+  - name: String
+  - singleValue: String
+  - values: List<String>
+  # canEqual(Object): boolean
+  + toString(): String
+  + hashCode(): int
+  + equals(Object): boolean
+   name: String
+   values: List<String>
+   singleValue: String
+}
+interface AuthRequest << interface >>
+class AuthRequestDto {
+  + AuthRequestDto(String, String): 
+  + AuthRequestDto(): 
+  - password: String
+  - login: String
+  + toString(): String
+  + equals(Object): boolean
+  + hashCode(): int
+  # canEqual(Object): boolean
+   password: String
+   login: String
+}
+enum Authority << enumeration >> {
+  - Authority(int, String): 
+  - description: String
+  - ordinal: Integer
+  + values(): Authority[]
+  + fromOrdinalNumber(Integer?): Authority
+  + valueOf(String): Authority
+   description: String
+   ordinal: Integer
+}
+entity BalanceDtoResponse << record >> {
+  + BalanceDtoResponse(Currency, Long): 
+  + currency(): Currency
+  + balance(): Long
+}
+class BaseConsumerInitializer {
+  + BaseConsumerInitializer(): 
+  # handleErrorAndResume(Throwable): Flux<Void>
+  + onApplicationEvent(ApplicationReadyEvent): void
+   pipeline: Flux<Void>
+}
+class BaseDto {
+  + BaseDto(ResponseCodeError): 
+  + BaseDto(): 
+  - responseCodeError: ResponseCodeError
+  + equals(Object): boolean
+  # canEqual(Object): boolean
+  + toString(): String
+  + hashCode(): int
+   responseCodeError: ResponseCodeError
+}
+class BlockOrDeleteUserException {
+  + BlockOrDeleteUserException(): 
+   locale: boolean
+   httpStatus: HttpStatus
+   code: String
+   message: String
+}
+class CantChangeToAnotherStatusException {
+  + CantChangeToAnotherStatusException(): 
+   locale: boolean
+   httpStatus: HttpStatus
+   code: String
+   message: String
+}
+entity CardDataByPayoutDtoRequest << record >> {
+  + CardDataByPayoutDtoRequest(Long): 
+  + cardNumber(): Long
+}
+entity CardDataByTopUpDtoRequest << record >> {
+  + CardDataByTopUpDtoRequest(Long, String, Integer): 
+  + expDate(): String
+  + cvv(): Integer
+  + cardNumber(): Long
+}
+entity CardDataDtoResponse << record >> {
+  + CardDataDtoResponse(Long): 
+  + cardNumber(): Long
+}
+entity ChangeEmailConfirmRequestDto << record >> {
+  + ChangeEmailConfirmRequestDto(UUID, String, OtpType, String, String): 
+  + otpCode(): String
+  + password(): String
+  + otpUid(): UUID
+  + email(): String
+  + otpType(): OtpType
+}
+entity ChangeEmailConfirmResponseDto << record >> {
+  + ChangeEmailConfirmResponseDto(String): 
+  + email(): String
+}
+entity ChangeEmailInitiateRequestDto << record >> {
+  + ChangeEmailInitiateRequestDto(String, OtpType): 
+  + email(): String
+  + otpType(): OtpType
+}
+entity ChangeEmailInitiateResponseDto << record >> {
+  + ChangeEmailInitiateResponseDto(UUID): 
+  + otpUid(): UUID
+}
+class ChangeForgottenPasswordRequestDto {
+  + ChangeForgottenPasswordRequestDto(String, String): 
+  + ChangeForgottenPasswordRequestDto(): 
+  - email: String
+  - phoneLastDigits: String
+  + equals(Object): boolean
+  + hashCode(): int
+  + toString(): String
+  # canEqual(Object): boolean
+   email: String
+   phoneLastDigits: String
+}
+class ChangeMerchantMemberInfoRequestDto {
+  + ChangeMerchantMemberInfoRequestDto(): 
+  - merchantId: Long
+  - role: MerchantMemberRole
+  - firstName: String
+  - lastName: String
+  - memberProfileUid: UUID
+  + toString(): String
+  # canEqual(Object): boolean
+  + hashCode(): int
+  + equals(Object): boolean
+   memberProfileUid: UUID
+   firstName: String
+   lastName: String
+   merchantId: Long
+   role: MerchantMemberRole
+}
+class ChangeMerchantMemberStatusRequestDto {
+  + ChangeMerchantMemberStatusRequestDto(): 
+  - status: MerchantMemberStatus
+  - profileUid: UUID
+  - merchantId: Long
+  + hashCode(): int
+  + toString(): String
+  # canEqual(Object): boolean
+  + equals(Object): boolean
+   merchantId: Long
+   status: MerchantMemberStatus
+   profileUid: UUID
+}
+class ChangeMerchantMembersInvitationStatusDto {
+  + ChangeMerchantMembersInvitationStatusDto(): 
+  - invitationUid: UUID
+  - invitationStatus: InvitationStatus
+  # canEqual(Object): boolean
+  + hashCode(): int
+  + equals(Object): boolean
+  + toString(): String
+   invitationUid: UUID
+   invitationStatus: InvitationStatus
+}
+class ChangeMerchantStatusDto {
+  + ChangeMerchantStatusDto(): 
+  - profileUid: UUID
+  - status: Status
+  + hashCode(): int
+  # canEqual(Object): boolean
+  + toString(): String
+  + equals(Object): boolean
+   status: Status
+   profileUid: UUID
+}
+class ChangeOperationsStatusRequestDto {
+  + ChangeOperationsStatusRequestDto(): 
+  - profileUid: UUID
+  - status: Status
+  # canEqual(Object): boolean
+  + hashCode(): int
+  + equals(Object): boolean
+  + toString(): String
+   status: Status
+   profileUid: UUID
+}
+class ChangePasswordDto {
+  + ChangePasswordDto(String, String, String): 
+  + ChangePasswordDto(): 
+  - currentPassword: String
+  - newPassword: String
+  - confirmNewPassword: String
+  + hashCode(): int
+  + equals(Object): boolean
+  + toString(): String
+  # canEqual(Object): boolean
+   currentPassword: String
+   confirmNewPassword: String
+   newPassword: String
+}
+class ChangePasswordInitiateDtoRequest {
+  + ChangePasswordInitiateDtoRequest(String, String): 
+  + ChangePasswordInitiateDtoRequest(): 
+  - email: String
+  - phoneLastDigits: String
+  + equals(Object): boolean
+  + hashCode(): int
+  + toString(): String
+  # canEqual(Object): boolean
+   email: String
+   phoneLastDigits: String
+}
+class ChangePasswordRequestDto {
+  + ChangePasswordRequestDto(): 
+  + ChangePasswordRequestDto(String, String): 
+  - currentPassword: String
+  - newPassword: String
+  # canEqual(Object): boolean
+  + hashCode(): int
+  + toString(): String
+  + equals(Object): boolean
+   currentPassword: String
+   newPassword: String
+}
+class ChangePasswordSendLinkResponseDto {
+  + ChangePasswordSendLinkResponseDto(String, String): 
+  + ChangePasswordSendLinkResponseDto(): 
+  - otpCode: String
+  - token: String
+  + equals(Object): boolean
+  # canEqual(Object): boolean
+  + hashCode(): int
+  + toString(): String
+   token: String
+   otpCode: String
+}
+class ChangePasswordTokenDto {
+  + ChangePasswordTokenDto(): 
+  + ChangePasswordTokenDto(UUID, LocalDateTime, LocalDateTime, String, UUID, String, String): 
+  - otpUid: UUID
+  - destination: String
+  - email: String
+  - uid: UUID
+  - modifiedAt: LocalDateTime
+  - otpType: String
+  - createAt: LocalDateTime
+  + hashCode(): int
+  + equals(Object): boolean
+  # canEqual(Object): boolean
+  + toString(): String
+   modifiedAt: LocalDateTime
+   email: String
+   uid: UUID
+   otpUid: UUID
+   createAt: LocalDateTime
+   otpType: String
+   destination: String
+}
+class ChangePasswordVerifyDto {
+  + ChangePasswordVerifyDto(): 
+  + ChangePasswordVerifyDto(String, String): 
+  - otpCode: String
+  - newPassword: String
+  + toString(): String
+  + equals(Object): boolean
+  # canEqual(Object): boolean
+  + hashCode(): int
+   otpCode: String
+   newPassword: String
+}
+class ChangeStatusWalletTypeRequestDto {
+  + ChangeStatusWalletTypeRequestDto(): 
+  + ChangeStatusWalletTypeRequestDto(WalletTypeStatus): 
+  - status: WalletTypeStatus
+  # canEqual(Object): boolean
+  + hashCode(): int
+  + toString(): String
+  + equals(Object): boolean
+   status: WalletTypeStatus
+}
+class ChangeWalletStatusRequestDto {
+  + ChangeWalletStatusRequestDto(WalletStatus): 
+  + ChangeWalletStatusRequestDto(): 
+  - status: WalletStatus
+  # canEqual(Object): boolean
+  + equals(Object): boolean
+  + toString(): String
+  + hashCode(): int
+   status: WalletStatus
+}
+class ChangedFieldsException {
+  + ChangedFieldsException(): 
+   locale: boolean
+   httpStatus: HttpStatus
+   code: String
+   message: String
+}
+class Config {
+  ~ Config(Long, String, String, String, Boolean, OffsetDateTime): 
+  - key: String
+  - description: String
+  - value: String
+  - lastModified: OffsetDateTime
+  - id: Long
+  - isPublic: Boolean
+  + builder(): ConfigBuilder
+   description: String
+   isPublic: Boolean
+   lastModified: OffsetDateTime
+   id: Long
+   key: String
+   value: String
+}
+class Config2ConfigDtoMapper {
+  + Config2ConfigDtoMapper(): 
+  + map(ConfigDto): ConfigDto
+  - buildConfigExt(ConfigDto): ConfigDto
+}
+class ConfigDto {
+  + ConfigDto(Long, String, String, String, Boolean, String): 
+  + ConfigDto(): 
+  - key: String
+  - id: Long
+  - value: String
+  - isPublic: Boolean
+  - description: String
+  - lastModified: String
+  + equals(Object): boolean
+  # canEqual(Object): boolean
+  + toString(): String
+  + hashCode(): int
+   description: String
+   isPublic: Boolean
+   id: Long
+   lastModified: String
+   key: String
+   value: String
+}
+class ConfigDto2ConfigMapper {
+  + ConfigDto2ConfigMapper(): 
+  + map(ConfigDto): ConfigDto
+  - buildConfig(ConfigDto): ConfigDto
+}
+class ConfigErrorCachingClient {
+  + ConfigErrorCachingClient(ConfigsClient, long): 
+  + getConfigErrorValueByKey(String, String): Mono<ConfigErrorMinExt>
+}
+class ConfigErrorDto {
+  + ConfigErrorDto(): 
+  + ConfigErrorDto(Long, String, String, Language, String): 
+  - key: String
+  - id: Long
+  - description: String
+  - value: String
+  - language: Language
+  # canEqual(Object): boolean
+  + equals(Object): boolean
+  + toString(): String
+  + hashCode(): int
+   description: String
+   language: Language
+   id: Long
+   key: String
+   value: String
+}
+class ConfigErrorMinDto {
+  + ConfigErrorMinDto(String, String): 
+  + ConfigErrorMinDto(): 
+  - value: String
+  - key: String
+  + hashCode(): int
+  + equals(Object): boolean
+  + toString(): String
+  # canEqual(Object): boolean
+   key: String
+   value: String
+}
+class ConfigErrorMinExt {
+  + ConfigErrorMinExt(): 
+  - key: String
+  - value: String
+  + equals(Object): boolean
+  # canEqual(Object): boolean
+  + hashCode(): int
+  + toString(): String
+   key: String
+   value: String
+}
+class ConfigExt {
+  ~ ConfigExt(Long, String, String, String, Boolean, String): 
+  - lastModified: String
+  - isPublic: Boolean
+  - id: Long
+  - key: String
+  - description: String
+  - value: String
+  + toBuilder(): ConfigExtBuilder
+  + equals(Object): boolean
+  # canEqual(Object): boolean
+  + builder(): ConfigExtBuilder
+  + hashCode(): int
+  + toString(): String
+   description: String
+   isPublic: Boolean
+   id: Long
+   lastModified: String
+   key: String
+   value: String
+}
+class ConfigValueDto {
+  + ConfigValueDto(String): 
+  - value: String
+   value: String
+}
+class ConfigValueExt {
+  + ConfigValueExt(): 
+  - value: String
+  + toString(): String
+  # canEqual(Object): boolean
+  + equals(Object): boolean
+  + hashCode(): int
+   value: String
+}
+class ConfigsClient {
+  + ConfigsClient(InternalRequestExecutors, ObjectJsonMapper): 
+  + updateConfig(ConfigExt): Mono<ConfigExt>
+  - logErrorAndBuildResponse(String, Throwable): Mono<ConfigValueExt>
+  - localeNotFoundPredicate(): Predicate<Throwable>
+  - handleConfigErrorConfigValue(String, String, Throwable): Mono<ConfigErrorMinExt>
+  + getAllConfigs(Integer, Integer, String): Mono<PageableDto>
+  - handleErrorConfigValue(String, Throwable): Mono<ConfigValueExt>
+  + deleteConfigById(Long): Mono<Void>
+  + getConfigErrorValue(String, String): Mono<ConfigErrorMinExt>
+  - buildQueryParams(Integer?, Integer?, String): MultiValueMap<String, String>
+  + saveConfig(ConfigExt): Mono<ConfigExt>
+  + getConfigById(Long): Mono<ConfigExt>
+  - handleErrorConfig(String, Throwable): Mono<ConfigExt>
+  - logErrorAndBuildConfigErrorResponse(String, String, Throwable): Mono<ConfigErrorMinExt>
+  + getConfigValue(String): Mono<ConfigValueExt>
+}
+class ConfigurationInitException {
+  + ConfigurationInitException(String, Throwable): 
+}
+class ConfigurationNotFoundException {
+  + ConfigurationNotFoundException(String): 
+}
+class ConfirmChangePasswordDto {
+  + ConfirmChangePasswordDto(String, String, UUID, String, String, OtpDestinationDto): 
+  + ConfirmChangePasswordDto(): 
+  - email: String
+  - otpUid: UUID
+  - newPassword: String
+  - destination: OtpDestinationDto
+  - otpCode: String
+  - confirmNewPassword: String
+  # canEqual(Object): boolean
+  + toString(): String
+  + equals(Object): boolean
+  + hashCode(): int
+   destination: OtpDestinationDto
+   confirmNewPassword: String
+   otpCode: String
+   newPassword: String
+   email: String
+   otpUid: UUID
+}
+class ConfirmTopUpPaymentResponse {
+  + ConfirmTopUpPaymentResponse(String): 
+  + ConfirmTopUpPaymentResponse(): 
+  - topUpTransactionUid: String
+  + toString(): String
+  + equals(Object): boolean
+  + hashCode(): int
+  # canEqual(Object): boolean
+   topUpTransactionUid: String
+}
+class ConfirmTransferPaymentResponse {
+  + ConfirmTransferPaymentResponse(): 
+  + ConfirmTransferPaymentResponse(String, String): 
+  - topUpTransactionUid: String
+  - withdrawTransactionUid: String
+  + equals(Object): boolean
+  + toString(): String
+  # canEqual(Object): boolean
+  + hashCode(): int
+   topUpTransactionUid: String
+   withdrawTransactionUid: String
+}
+class ConfirmWithdrawalPaymentResponse {
+  + ConfirmWithdrawalPaymentResponse(String): 
+  + ConfirmWithdrawalPaymentResponse(): 
+  - withdrawTransactionUid: String
+  + equals(Object): boolean
+  # canEqual(Object): boolean
+  + toString(): String
+  + hashCode(): int
+   withdrawTransactionUid: String
+}
+class ConversionRateDto {
+  + ConversionRateDto(Long, String, String, LocalDateTime, LocalDateTime, BigDecimal, String, BigDecimal, BigDecimal): 
+  + ConversionRateDto(): 
+  - id: Long
+  - destinationCode: String
+  - rate: BigDecimal
+  - rateEndTime: LocalDateTime
+  - systemRate: BigDecimal
+  - sourceCode: String
+  - rateBeginTime: LocalDateTime
+  - providerCode: String
+  - multiplier: BigDecimal
+  + equals(Object): boolean
+  + toString(): String
+  + hashCode(): int
+  # canEqual(Object): boolean
+   destinationCode: String
+   rate: BigDecimal
+   id: Long
+   rateBeginTime: LocalDateTime
+   providerCode: String
+   multiplier: BigDecimal
+   sourceCode: String
+   rateEndTime: LocalDateTime
+   systemRate: BigDecimal
+}
+class CorrelationMetadata {
+  ~ CorrelationMetadata(String, String): 
+  - key: String
+  - value: String
+  + equals(Object): boolean
+  # canEqual(Object): boolean
+  + toString(): String
+  + hashCode(): int
+  + builder(): CorrelationMetadataBuilder
+   key: String
+   value: String
+}
+enum Country << enumeration >> {
+  - Country(String): 
+  - value: String
+  + values(): Country[]
+  + valueOf(String): Country
+   value: String
+}
+class CountryCodeDto {
+  + CountryCodeDto(String): 
+  + CountryCodeDto(): 
+  - alpha2Code: String
+  # canEqual(Object): boolean
+  + hashCode(): int
+  + equals(Object): boolean
+  + toString(): String
+   alpha2Code: String
+}
+class CountryDto {
+  + CountryDto(): 
+  + CountryDto(Integer, String, String, String, boolean): 
+  - alpha2Code: String
+  - id: Integer
+  - name: String
+  - alpha3Code: String
+  - isActive: boolean
+  + toString(): String
+  # canEqual(Object): boolean
+  + hashCode(): int
+  + equals(Object): boolean
+   name: String
+   alpha2Code: String
+   isActive: boolean
+   id: Integer
+   alpha3Code: String
+}
+class CountryNotFoundException {
+  + CountryNotFoundException(): 
+}
+class CreateCountryException {
+  + CreateCountryException(): 
+   locale: boolean
+   httpStatus: HttpStatus
+   code: String
+   message: String
+}
+class CreateWalletRequestDto {
+  + CreateWalletRequestDto(): 
+  + CreateWalletRequestDto(String, Long, String): 
+  - profileUid: String
+  - name: String
+  - walletTypeId: Long
+  + toString(): String
+  + hashCode(): int
+  # canEqual(Object): boolean
+  + equals(Object): boolean
+   profileUid: String
+   name: String
+   walletTypeId: Long
+}
+class CreateWalletResponseDto {
+  + CreateWalletResponseDto(String): 
+  + CreateWalletResponseDto(): 
+  - walletUid: String
+  + toString(): String
+  + equals(Object): boolean
+  # canEqual(Object): boolean
+  + hashCode(): int
+   walletUid: String
+}
+class CreateWalletTypeRequestDto {
+  + CreateWalletTypeRequestDto(): 
+  + CreateWalletTypeRequestDto(String, String, String, String): 
+  - profileType: String
+  - currencyCode: String
+  - profileUid: String
+  - name: String
+  + hashCode(): int
+  + toString(): String
+  + equals(Object): boolean
+  # canEqual(Object): boolean
+   profileUid: String
+   name: String
+   currencyCode: String
+   profileType: String
+}
+class CryptoUtils {
+  - CryptoUtils(): 
+  - saltHashArgon(String, byte[], int): byte[]
+  - saltHashSHA256(String, byte[]): byte[]
+  + saltHashArgon(String, String): SaltedHash
+  + fromHex(String): byte[]
+  + saltHashSHA256(String): SaltedHash
+  + generateNewSessionKey(String): String
+  + toHex(byte[]): String
+  + toBase64(byte[]): String
+  + fromBase64(String): byte[]
+  + saltHashArgon(String): SaltedHash
+  + getRandomBytes(int): byte[]
+  + sign(String, String): String
+  + saltHashSHA256(String, String): SaltedHash
+  + hashMD5(String): byte[]
+}
+enum Currency << enumeration >> {
+  - Currency(String): 
+  - value: String
+  + values(): Currency[]
+  + valueOf(String): Currency
+   value: String
+}
+class CurrencyClient {
+  + CurrencyClient(InternalRequestExecutor, ObjectJsonMapper): 
+  + getCurrencyByCode(String): Mono<CurrencyDto>
+  + getConversionRateBySourceAndDestinationCode(String, String): Mono<ConversionRateDto>
+}
+class CurrencyClientConfig {
+  + CurrencyClientConfig(): 
+  + currencyInternalRequestExecutor(InternalRequestExecutors): InternalRequestExecutor
+  + currencyClient(InternalRequestExecutor, ObjectJsonMapper): CurrencyClient
+}
+class CurrencyDto {
+  + CurrencyDto(): 
+  + CurrencyDto(String, String, String, boolean, int, String): 
+  - code: String
+  - isActive: boolean
+  - scale: int
+  - symbol: String
+  - isoCode: String
+  - description: String
+  + equals(Object): boolean
+  + toString(): String
+  + hashCode(): int
+  # canEqual(Object): boolean
+   description: String
+   isActive: boolean
+   code: String
+   symbol: String
+   isoCode: String
+   scale: int
+}
+entity CustomerByWebhookDtoRequest << record >> {
+  + CustomerByWebhookDtoRequest(String, String, Country): 
+  + lastName(): String
+  + firstName(): String
+  + country(): Country
+}
+entity CustomerDtoRequest << record >> {
+  + CustomerDtoRequest(String, String, Country): 
+  + lastName(): String
+  + country(): Country
+  + firstName(): String
+}
+entity CustomerDtoResponse << record >> {
+  + CustomerDtoResponse(String, String, Country): 
+  + lastName(): String
+  + firstName(): String
+  + country(): Country
+}
+class DateDeserializer {
+  + DateDeserializer(): 
+  + deserialize(JsonParser, DeserializationContext): LocalDate
+}
+class DateOfBirthException {
+  + DateOfBirthException(): 
+   locale: boolean
+   httpStatus: HttpStatus
+   code: String
+   message: String
+}
+class DateProcessor {
+  + DateProcessor(): 
+  + toDate(String): LocalDateTime
+  + toString(LocalDateTime): String
+}
+class DateTimeConstant {
+  + DateTimeConstant(): 
+}
+class DefaultExceptionMapper {
+  + DefaultExceptionMapper(): 
+  + canMap(Throwable): boolean
+  + map(Throwable): ErrorInfoDto
+}
+class DefaultOTPGenerator {
+  + DefaultOTPGenerator(): 
+  + newCode(int): String
+}
+class ECBConfiguration {
+  + ECBConfiguration(): 
+  - getECBCircuitBreakerConfig(CircuitBreakerProperties): CircuitBreakerConfig
+  + ecbRequestExecutor(ECBWebClientSupplier, HttpExchangeConfiguration): ECBRequestExecutor
+  + ecbWebClientSupplier(ECBParameters): ECBWebClientSupplier
+  + ecbParameters(String, Integer, Long, Long, String, String, Integer): ECBParameters
+  + ecbHttpExchangeConfiguration(MeterRegistry, CircuitBreakerRegistry, CircuitBreakerProperties, ECBParameters, Tracer, HttpErrorHandler, SensitiveInformationReplacer, SensitiveInformationReplacer): HttpExchangeConfiguration
+}
+class ECBParameters {
+  + ECBParameters(String, String, String, Integer, Long, Long, Integer): 
+  - writeTimeoutSeconds: Long
+  - password: String
+  - readTimeoutSeconds: Long
+  - maxConsumeMb: Integer
+  - connectTimeoutMillis: Integer
+  - url: String
+  - login: String
+   password: String
+   url: String
+   maxConsumeMb: Integer
+   connectTimeoutMillis: Integer
+   login: String
+   readTimeoutSeconds: Long
+   writeTimeoutSeconds: Long
+}
+class ECBRequestExecutor {
+  + ECBRequestExecutor(WebClient, HttpExchangeConfiguration): 
+  + doGETRequest(String, String, Map<String, String>): Mono<String>
+  + doDELETERequest(String, Map<String, String>): Mono<String>
+  + doDELETERequest(String, String, String, Map<String, String>): Mono<String>
+  + doPOSTRequest(String, String, Map<String, String>): Mono<String>
+  + doGETRequest(String, Map<String, String>): Mono<String>
+  + doPUTRequest(String, String, Map<String, String>): Mono<String>
+  + doPOSTRequest(String, byte[], Map<String, String>): Mono<String>
+}
+class ECBWebClientSupplier {
+  + ECBWebClientSupplier(ECBParameters, int, int, boolean, Builder): 
+  + get(): WebClient
+}
+class ECIESEncryptionService {
+  + ECIESEncryptionService(String, Scheduler): 
+  + encrypt(String): String
+  + decryptReactive(String): Mono<String>
+  + decrypt(String): String
+  + encryptReactive(String): Mono<String>
+  - handleError(Throwable): Mono<String>
+}
+class EmailDataDto {
+  + EmailDataDto(): 
+  - emailTo: String
+  - verificationLink: String
+  + equals(Object): boolean
+  # canEqual(Object): boolean
+  + hashCode(): int
+  + toString(): String
+   verificationLink: String
+   emailTo: String
+}
+class EmailInvitationException {
+  + EmailInvitationException(): 
+   locale: boolean
+   httpStatus: HttpStatus
+   code: String
+   message: String
+}
+class EmptyParametersForUpdateException {
+  + EmptyParametersForUpdateException(): 
+   locale: boolean
+   httpStatus: HttpStatus
+   code: String
+   message: String
+}
+class EmptyResponseException {
+  + EmptyResponseException(): 
+}
+interface EncryptionService << interface >> {
+  + decrypt(String): String
+  + encryptReactive(String): Mono<String>
+  + decryptReactive(String): Mono<String>
+  + encrypt(String): String
+}
+class ErrorInfoDto {
+  + ErrorInfoDto(): 
+  - resolveLocale: boolean
+  - message: String
+  - errorCode: String
+  - timestamp: long
+  - field: String
+  - traceId: String
+  - reason: String
+  - level: ErrorInfoLevel
+  - httpStatus: HttpStatus
+  + equals(Object): boolean
+  # canEqual(Object): boolean
+  + toString(): String
+  + hashCode(): int
+   traceId: String
+   resolveLocale: boolean
+   message: String
+   timestamp: long
+   field: String
+   httpStatus: HttpStatus
+   reason: String
+   level: ErrorInfoLevel
+   errorCode: String
+}
+class ErrorInfoErrorAttributes {
+  + ErrorInfoErrorAttributes(List<ExceptionMapper>): 
+  + getError(ServerRequest): Throwable
+  - mapError(Throwable): ErrorInfoDto
+  + getErrorAttributes(ServerRequest, ErrorAttributeOptions): Map<String, Object>
+  + storeErrorInformation(Throwable, ServerWebExchange): void
+}
+class ErrorInfoException {
+  + ErrorInfoException(ErrorInfoDto): 
+  + ErrorInfoException(String, ErrorInfoDto, Throwable): 
+  - errorInfo: ErrorInfoDto
+   errorInfo: ErrorInfoDto
+}
+class ErrorInfoExceptionMapper {
+  + ErrorInfoExceptionMapper(): 
+  + canMap(Throwable): boolean
+  + map(Throwable): ErrorInfoDto
+}
+enum ErrorInfoLevel << enumeration >> {
+  - ErrorInfoLevel(): 
+  + values(): ErrorInfoLevel[]
+  + valueOf(String): ErrorInfoLevel
+}
+interface ErrorInfoResolver << interface >> {
+  + resolveError(String, String): Mono<String>
+}
+class ErrorInfoWebExceptionHandler {
+  + ErrorInfoWebExceptionHandler(ErrorAttributes, List<HttpMessageReader<?>>, List<HttpMessageWriter<?>>, ErrorInfoResolver, boolean): 
+  - resolveKeyByMessage(ErrorInfoDto, String): Mono<ErrorInfoDto>
+  - isDisconnectedClientError(Throwable): boolean
+  - getRoutingFunction(ServerWebExchange): RouterFunction<ServerResponse>
+  - enrichErrorInfoDefaultMessage(ErrorInfoDto): ErrorInfoDto
+  # mapErrorInfo(ErrorInfoDto, String): Mono<ErrorInfoDto>
+  - buildErrorInfoServerResponse(ServerRequest, Throwable, String, boolean, long, ErrorInfoDto): Mono<ServerResponse>
+  - enrichTraceId(ErrorInfoDto): ErrorInfoDto
+  - enrichErrorInfoCustomMessage(ErrorInfoDto, String): ErrorInfoDto
+  + handle(ServerWebExchange, Throwable): Mono<Void>
+  - getErrorInfo(Throwable, Map<String, Object>): ErrorInfoDto
+  - write(ServerWebExchange, ServerResponse): Mono<Void>
+  - renderErrorResponse(ServerWebExchange, ServerRequest): Mono<ServerResponse>
+  - needLogAsWarn(ErrorInfoDto): boolean
+}
+interface ExceptionMapper << interface >> {
+  + canMap(Throwable): boolean
+  + map(Throwable): ErrorInfoDto
+}
+class ExceptionMapperConfiguration {
+  + ExceptionMapperConfiguration(): 
+  ~ notFoundExceptionMapper(): ExceptionMapper
+  ~ errorInfoExceptionMapper(): ExceptionMapper
+  ~ webExchangeBindExceptionMapper(): ExceptionMapper
+  ~ responseCodeExceptionMapper(): ExceptionMapper
+}
+class ExternalErrorInfoResolver {
+  + ExternalErrorInfoResolver(ConfigErrorCachingClient): 
+  + resolveError(String, String): Mono<String>
+}
+class FNV1a {
+  + FNV1a(): 
+  + hash32(byte[]): int
+  + hash32(byte[], int): int
+  + hash64(byte[]): long
+  + hash64(byte[], int): long
+}
+enum Flag << enumeration >> {
+  - Flag(): 
+  + valueOf(String): Flag
+  + values(): Flag[]
+}
+interface FourArgumentsMapFunction<A, B, C, R> << interface >> {
+  + map(A, B, C): R
+}
+enum Gateway << enumeration >> {
+  - Gateway(): 
+  + values(): Gateway[]
+  + valueOf(String): Gateway
+}
+enum GenderType << enumeration >> {
+  - GenderType(String): 
+  + values(): GenderType[]
+  + valueOf(String): GenderType
+   firstLetterOfName: String
+}
+class GetMerchantMembersInvitationsRequestDto {
+  + GetMerchantMembersInvitationsRequestDto(): 
+  - lastName: String
+  - merchantId: Long
+  - firstName: String
+  - role: MerchantMemberRole
+  - page: Integer
+  - email: String
+  - limit: Integer
+  + equals(Object): boolean
+  + hashCode(): int
+  # canEqual(Object): boolean
+  + toString(): String
+   lastName: String
+   merchantId: Long
+   email: String
+   role: MerchantMemberRole
+   limit: Integer
+   page: Integer
+   firstName: String
+}
+class GetMerchantMembersInvitationsResponseDto {
+  + GetMerchantMembersInvitationsResponseDto(): 
+  - lastName: String
+  - email: String
+  - uid: UUID
+  - createdAt: LocalDateTime
+  - firstName: String
+  - role: MerchantMemberRole
+  + toString(): String
+  + hashCode(): int
+  # canEqual(Object): boolean
+  + equals(Object): boolean
+   firstName: String
+   lastName: String
+   createdAt: LocalDateTime
+   email: String
+   uid: UUID
+   role: MerchantMemberRole
+}
+class GetOperationsMembersRequestDto {
+  + GetOperationsMembersRequestDto(String, String, String, List<OperationsRole>, List<Status>, Integer, Integer): 
+  + GetOperationsMembersRequestDto(): 
+  - email: String
+  - limit: Integer
+  - statuses: List<Status>
+  - lastName: String
+  - firstName: String
+  - page: Integer
+  - memberRoles: List<OperationsRole>
+  + hashCode(): int
+  + toString(): String
+  # canEqual(Object): boolean
+  + equals(Object): boolean
+   statuses: List<Status>
+   lastName: String
+   email: String
+   limit: Integer
+   memberRoles: List<OperationsRole>
+   page: Integer
+   firstName: String
+}
+class GetOperationsMembersResponseDto {
+  + GetOperationsMembersResponseDto(String, String, OperationsRole, String, UUID, Status): 
+  + GetOperationsMembersResponseDto(): 
+  - memberRole: OperationsRole
+  - email: String
+  - status: Status
+  - lastName: String
+  - profileUid: UUID
+  - firstName: String
+  + toString(): String
+  + hashCode(): int
+  + equals(Object): boolean
+  # canEqual(Object): boolean
+   firstName: String
+   lastName: String
+   profileUid: UUID
+   email: String
+   status: Status
+   memberRole: OperationsRole
+}
+interface HashFunction << interface >> {
+  + saltedHash(String): SaltedHash
+  + saltedHash(String, String): SaltedHash
+}
+enum Headers << enumeration >> {
+  - Headers(String, int): 
+  - Headers(String): 
+  + valueOf(String): Headers
+  + getHeaders(ServerRequest): Map<Headers, String>
+  + optional(ServerRequest): Optional<String>
+  + getOrDefault(Map<String, String>?, String): String
+  + getOrDefault(ServerRequest, String): String
+  + getOrThrow(Map<String, String>): String
+  + get(ServerRequest): String
+  + checkProfileTypes(Map<String, String>, String?): boolean
+  + optional(Map<String, String>?): Optional<String>
+  + values(): Headers[]
+  + getOrThrow(ServerRequest): String
+  + getOrThrow(ServerRequest, ResponseCode, String): String
+  + getHeaders(Map<String, String>): Map<Headers, String>
+  + getIpAddress(ServerRequest): String
+  + get(Map<String, String>?): String
+}
+annotation HistorySpecialField << annotation >>
+interface HttpErrorHandler << interface >> {
+  + handleError(String, Throwable): Throwable
+}
+interface HttpExchangeConfiguration << interface >> {
+   standardHeaders: Map<String, String>
+   meterRegistry: MeterRegistry
+   errorResponseMapper: FourArgumentsMapFunction<ClientResponse, Optional<String>, String, Mono<String>>
+   httpErrorHandler: HttpErrorHandler
+   responseBodyReplacer: SensitiveInformationReplacer
+   loggingName: String
+   timer: Timer
+   baseUrl: String
+   requestBodyReplacer: SensitiveInformationReplacer
+   circuitBreaker: CircuitBreaker
+   okResponseValidator: TripleMapFunction<ClientResponse, Optional<String>, Mono<Void>>
+}
+class HttpLoggingRequestDecorator {
+  + HttpLoggingRequestDecorator(ServerWebExchange, SensitiveInformationReplacer, Logger, String, String): 
+   body: Flux<DataBuffer>
+}
+class HttpLoggingResponseDecorator {
+  + HttpLoggingResponseDecorator(ServerWebExchange, SensitiveInformationReplacer, Logger, boolean, String, String, boolean): 
+  - clearMdcCommonFields(): void
+  - getPrefix(HttpStatusCode): String
+  - logInterceptedBody(String, List<DataBuffer>, String, String, Logger, SensitiveInformationReplacer): void
+  - parseDuration(long): String
+  - addToMdcCommonFields(HttpStatusCode?, long): void
+  + writeAndFlushWith(Publisher<Publisher<DataBuffer>>): Mono<Void>
+  + writeWith(Publisher<DataBuffer>): Mono<Void>
+}
+interface HttpRequestExecutor << interface >> {
+  + doPUTRequest(String, String, Map<String, String>): Mono<String>
+  + doPOSTRequest(String, byte[], Map<String, String>): Mono<String>
+  + doPOSTMultiValueMapRequest(String, MultiValueMap<String, String>, Map<String, String>): Mono<String>
+  + doGETRequestBinary(String, Map<String, String>): Mono<byte[]>
+  + doDELETERequest(String): Mono<String>
+  + doGETRequest(String): Mono<String>
+  + doPOSTMultiPartRequest(String, MultiValueMap<String, HttpEntity<?>>, Map<String, String>): Mono<String>
+  + doPOSTRequest(String, String): Mono<String>
+  + doDELETERequest(String, Map<String, String>): Mono<String>
+  + doPOSTRequestBinary(String, String, Map<String, String>): Mono<byte[]>
+  + doDELETERequest(String, String, String, Map<String, String>): Mono<String>
+  + doGETRequest(String, Map<String, String>): Mono<String>
+  + doPUTRequest(String, String): Mono<String>
+  + doPOSTRequest(String, String, String, Map<String, String>): Mono<String>
+  + doPOSTRequest(String, String, Map<String, String>): Mono<String>
+   webClient: WebClient
+}
+class HttpRequestExecutorImpl {
+  + HttpRequestExecutorImpl(WebClient, Logger, HttpExchangeConfiguration): 
+  - webClient: WebClient
+  + doPOSTRequest(String, String, Map<String, String>): Mono<String>
+  - doRequestWithLogBinary(URI, String, String, String, HttpMethod, Map<String, String>): Mono<byte[]>
+  + doPOSTMultiPartRequest(String, MultiValueMap<String, HttpEntity<?>>, Map<String, String>): Mono<String>
+  - logRequest(ContextView, String, HttpMethod, String, RequestHeadersSpec<RequestHeadersSpec<?>>): void
+  - handleError(Throwable, String): Mono<ClientResponse>
+  - logAndHandleError(Throwable, AtomicReference<Sample>, String): Mono<ClientResponse>
+  + doDELETERequest(String, String, String, Map<String, String>): Mono<String>
+  + doGETRequest(String, String, Map<String, String>): Mono<String>
+  + doGETRequest(String, Map<String, String>): Mono<String>
+  + doPOSTRequest(String, byte[], Map<String, String>): Mono<String>
+  - doRequestWithLog(URI, String, Object, String, HttpMethod, Map<String, String>): Mono<String>
+  + doPOSTMultiValueMapRequest(String, MultiValueMap<String, String>, Map<String, String>): Mono<String>
+  + doPOSTRequestBinary(String, String, Map<String, String>): Mono<byte[]>
+  - getLogPrefixWithSuffix(ContextView): String
+  + doPUTRequest(String, String, Map<String, String>): Mono<String>
+  + doPOSTRequest(String, String, String, Map<String, String>): Mono<String>
+  - getRequestSpec(URI, HttpMethod?, Object, Map<String, String>): RequestHeadersSpec<RequestHeadersSpec<?>>
+  - processResponseStatusAndBody(ClientResponse, String, Optional<T>, TripleMapFunction<ClientResponse, Optional<T>, Mono<Void>>, T, FourArgumentsMapFunction<ClientResponse, Optional<T>, String, Mono<T>>): Mono<T>
+  - replaceSensitive(String, String, SensitiveInformationReplacer?, String?): String
+  - logResponse(ClientResponse, Optional<T>, Function<T, String>, AtomicReference<Sample>, String, HttpMethod): Mono<Optional<T>>
+  + doDELETERequest(String, Map<String, String>): Mono<String>
+  - processResponse(ClientResponse, AtomicReference<Sample>, Class<T>, Function<T, String>, TripleMapFunction<ClientResponse, Optional<T>, Mono<Void>>, T, FourArgumentsMapFunction<ClientResponse, Optional<T>, String, Mono<T>>, String, HttpMethod): Mono<T>
+  # doRequestWithLogConfigurable(URI, String, Object, String, HttpMethod, Map<String, String>, Class<T>, Function<T, String>, TripleMapFunction<ClientResponse, Optional<T>, Mono<Void>>, T, FourArgumentsMapFunction<ClientResponse, Optional<T>, String, Mono<T>>): Mono<T>
+  + doGETRequestBinary(String, Map<String, String>): Mono<byte[]>
+  # mergeOverwriteHeaders(Map<String, String>, Map<String, String>): Map<String, String>
+   baseUrl: String
+   webClient: WebClient
+}
+class IllegalAccessException {
+  + IllegalAccessException(String): 
+}
+class IncorrectPasswordException {
+  + IncorrectPasswordException(): 
+   locale: boolean
+   httpStatus: HttpStatus
+   code: String
+   message: String
+}
+class IndividualDto {
+  + IndividualDto(Long, String, String, String, GenderType, String, String, LocalDate, AddressDto, String, String, Status, boolean, boolean): 
+  + IndividualDto(): 
+  - profileUid: String
+  - address: AddressDto
+  - status: Status
+  - email: String
+  - gender: GenderType
+  - passportNumber: String
+  - dateOfBirth: LocalDate
+  - name: String
+  - personalIdentityNumber: String
+  - surname: String
+  - id: Long
+  - filled: boolean
+  - verified: boolean
+  - phone: String
+  + toString(): String
+  + equals(Object): boolean
+  + hashCode(): int
+  # canEqual(Object): boolean
+   dateOfBirth: LocalDate
+   id: Long
+   phone: String
+   surname: String
+   address: AddressDto
+   filled: boolean
+   name: String
+   gender: GenderType
+   email: String
+   personalIdentityNumber: String
+   passportNumber: String
+   profileUid: String
+   verified: boolean
+   status: Status
+}
+enum IndividualField << enumeration >> {
+  - IndividualField(String, String): 
+  - description: String
+  - field: String
+  + fromString(String?): IndividualField
+  + fields(): List<String>
+  + valueOf(String): IndividualField
+  + values(): IndividualField[]
+   field: String
+   description: String
+}
+class IndividualMapDto {
+  + IndividualMapDto(): 
+  + IndividualMapDto(String, Map<String, String>): 
+  - profileUid: String
+  - params: Map<String, String>
+  # canEqual(Object): boolean
+  + equals(Object): boolean
+  + toString(): String
+  + hashCode(): int
+   profileUid: String
+   params: Map<String, String>
+}
+class IndividualProfileDetailsDto {
+  + IndividualProfileDetailsDto(): 
+  + IndividualProfileDetailsDto(String, String, String, String, String, String, boolean, LocalDate, AddressDto, String, String, ProfileStatusInfoDto, VerificationStatus, boolean, String, boolean, boolean): 
+  - personalIdentityNumber: String
+  - isApplicantIdPresent: boolean
+  - email: String
+  - dateOfBirth: LocalDate
+  - enabled2fa: boolean
+  - lastName: String
+  - profileUid: String
+  - statusInfo: ProfileStatusInfoDto
+  - verificationStatus: VerificationStatus
+  - firstName: String
+  - addressDto: AddressDto
+  - passportNumber: String
+  - userUid: String
+  - social: boolean
+  - rejectComment: String
+  - phoneNumber: String
+  - showServices: boolean
+  + equals(Object): boolean
+  # canEqual(Object): boolean
+  + builder(): IndividualProfileDetailsDtoBuilder
+  + hashCode(): int
+  + toString(): String
+   addressDto: AddressDto
+   social: boolean
+   dateOfBirth: LocalDate
+   rejectComment: String
+   statusInfo: ProfileStatusInfoDto
+   enabled2fa: boolean
+   verificationStatus: VerificationStatus
+   lastName: String
+   isApplicantIdPresent: boolean
+   email: String
+   userUid: String
+   phoneNumber: String
+   personalIdentityNumber: String
+   passportNumber: String
+   profileUid: String
+   showServices: boolean
+   firstName: String
+}
+class IndividualProfileDetailsForOperationsDto {
+  + IndividualProfileDetailsForOperationsDto(String, String, String, String, String, LocalDate, String, String, AddressDto): 
+  + IndividualProfileDetailsForOperationsDto(): 
+  - lastName: String
+  - passportNumber: String
+  - personalIdentityNumber: String
+  - dateOfBirth: LocalDate
+  - phoneNumber: String
+  - profileUid: String
+  - firstName: String
+  - addressDto: AddressDto
+  - email: String
+  + toString(): String
+  + equals(Object): boolean
+  + builder(): IndividualProfileDetailsForOperationsDtoBuilder
+  # canEqual(Object): boolean
+  + hashCode(): int
+   addressDto: AddressDto
+   lastName: String
+   dateOfBirth: LocalDate
+   email: String
+   phoneNumber: String
+   personalIdentityNumber: String
+   passportNumber: String
+   profileUid: String
+   firstName: String
+}
+class IndividualRegistrationDto {
+  + IndividualRegistrationDto(String, String, String, String, String, String, Language): 
+  + IndividualRegistrationDto(): 
+  - language: Language
+  - lastName: String
+  - firstName: String
+  - country: String
+  - phoneNumber: String
+  - email: String
+  - password: String
+  + equals(Object): boolean
+  + toString(): String
+  # canEqual(Object): boolean
+  + hashCode(): int
+   password: String
+   lastName: String
+   email: String
+   country: String
+   phoneNumber: String
+   firstName: String
+   language: Language
+}
+class IndividualRegistrationResponseDto {
+  + IndividualRegistrationResponseDto(): 
+  + IndividualRegistrationResponseDto(Long, String, String, String, String, String, Language): 
+  - countryCode: String
+  - phoneNumber: String
+  - firstName: String
+  - lastName: String
+  - email: String
+  - id: Long
+  - language: Language
+  + toString(): String
+  + equals(Object): boolean
+  + hashCode(): int
+  # canEqual(Object): boolean
+   lastName: String
+   countryCode: String
+   id: Long
+   email: String
+   phoneNumber: String
+   firstName: String
+   language: Language
+}
+class IndividualUpdateException {
+  + IndividualUpdateException(): 
+   locale: boolean
+   httpStatus: HttpStatus
+   code: String
+   message: String
+}
+class InternalErrorInfoResolver {
+  + InternalErrorInfoResolver(): 
+  + resolveError(String, String): Mono<String>
+}
+class InternalRequestExecutor {
+  + InternalRequestExecutor(WebClient, RetryProperties, HttpExchangeConfiguration): 
+  - clientAdditionalHeaders(ContextView): Map<String, String>
+  + doPOSTRequest(String, String, Map<String, String>): Mono<String>
+  + doGETRequest(String, Map<String, String>): Mono<String>
+  + doPOSTMultiPartRequest(String, MultiValueMap<String, HttpEntity<?>>, Map<String, String>): Mono<String>
+  + doPUTRequest(String, String, Map<String, String>): Mono<String>
+  + doPOSTRequest(String, byte[], Map<String, String>): Mono<String>
+  - retryIfServiceUnavailable(RetryProperties): Retry
+  + doDELETERequest(String, Map<String, String>): Mono<String>
+  + doDELETERequest(String, String, String, Map<String, String>): Mono<String>
+  - shouldRetry(Throwable): boolean
+}
+class InternalRequestExecutorErrorResponseMapper {
+  + InternalRequestExecutorErrorResponseMapper(ObjectJsonMapper): 
+  - buildResponseCodeException(ErrorInfoDto): Optional<ResponseCodeException>
+  - toErrorInfo(ClientResponse, String): Optional<ErrorInfoDto>
+  + errorResponseMapper(ClientResponse, Optional<String>, String): Mono<String>
+}
+class InternalRequestExecutorErrorResponseMapperTest {
+  + InternalRequestExecutorErrorResponseMapperTest(): 
+  + errorResponseMapperCaseWhenBodyIsOpenApiException(): void
+  + init(): void
+  + errorResponseMapperCaseWhenBodyIsResponseCodeException(): void
+}
+class InternalRequestExecutorRefusedTest {
+  + InternalRequestExecutorRefusedTest(): 
+  + connectRefusedTest(): void
+  + init(): void
+}
+class InternalRequestExecutorTimeoutTest {
+  + InternalRequestExecutorTimeoutTest(): 
+  + connectTimeoutTest(): void
+  + init(): void
+}
+class InternalRequestExecutors {
+  + InternalRequestExecutors(WebClient, RetryProperties, InternalRequestExecutorErrorResponseMapper, HttpErrorHandler): 
+  + InternalRequestExecutors(WebClient, RetryProperties, InternalRequestExecutorErrorResponseMapper): 
+  - environment: Environment
+  + createExecutor(String, String, WebClient, HttpErrorHandler): InternalRequestExecutor
+  + get(String, String, WebClient): InternalRequestExecutor
+  + get(String, String): InternalRequestExecutor
+   environment: Environment
+}
+class InvalidEmailException {
+  + InvalidEmailException(): 
+   locale: boolean
+   httpStatus: HttpStatus
+   code: String
+   message: String
+}
+class InvalidUserStatusException {
+  + InvalidUserStatusException(): 
+   locale: boolean
+   httpStatus: HttpStatus
+   code: String
+   message: String
+}
+class InvalidValueException {
+  + InvalidValueException(): 
+   locale: boolean
+   httpStatus: HttpStatus
+   code: String
+   message: String
+}
+class InvitationExpiredException {
+  + InvitationExpiredException(): 
+   locale: boolean
+   httpStatus: HttpStatus
+   code: String
+   message: String
+}
+enum InvitationStatus << enumeration >> {
+  - InvitationStatus(String): 
+  - name: String
+  + valueOf(String): InvitationStatus
+  + fromString(String?): InvitationStatus
+  + values(): InvitationStatus[]
+   name: String
+}
+class JSONConditionalReplacer {
+  + JSONConditionalReplacer(String, TextMatcherReplacer): 
+  + JSONConditionalReplacer(String?, String?, TextMatcherReplacer): 
+  + matchAndReplace(String): String
+}
+class JSONPropertyPANMaskReplacer {
+  + JSONPropertyPANMaskReplacer(String?): 
+  # replaceMatched(String): String
+}
+class JSONPropertyReplacer {
+  + JSONPropertyReplacer(String?): 
+  + jsonPropertiesReplacer(String[]): TextMatcherReplacer
+  # replaceMatched(String): String
+}
+class JdbcDatasourcePropertyBuilder {
+  + JdbcDatasourcePropertyBuilder(): 
+  + postgres(PostgreSQLContainer): JdbcDatasourcePropertyBuilder
+  + schema(String): JdbcDatasourcePropertyBuilder
+  + build(): TestPropertyValues
+  + ofPostgresContainer(PostgreSQLContainer, String?): TestPropertyValues
+  + builder(): JdbcDatasourcePropertyBuilder
+}
+interface KafkaConsumerMetricCollector << interface >> {
+  + incrementErrorReceiveMetric(String): void
+  + incrementDeserializeErrorMetric(String): void
+  + incrementSuccessReceiveMetric(String): void
+}
+class KafkaConsumerMetricCollectorImpl {
+  + KafkaConsumerMetricCollectorImpl(MeterRegistry): 
+  + incrementSuccessReceiveMetric(String): void
+  + incrementErrorReceiveMetric(String): void
+  + incrementDeserializeErrorMetric(String): void
+}
+interface KafkaProducerMetricCollector << interface >> {
+  + incrementSuccessSentMetric(String): void
+  + incrementErrorSentMetric(String): void
+}
+class KafkaProducerMetricCollectorImpl {
+  + KafkaProducerMetricCollectorImpl(MeterRegistry): 
+  + incrementErrorSentMetric(String): void
+  + incrementSuccessSentMetric(String): void
+}
+class KeycloakAccessTokenDto {
+  + KeycloakAccessTokenDto(): 
+  + KeycloakAccessTokenDto(long, String, int, Map<String, Object>, long, String, String, String, String, String): 
+  - refreshExpiresIn: long
+  - scope: String
+  - idToken: String
+  - sessionState: String
+  - refreshToken: String
+  - token: String
+  - tokenType: String
+  - expiresIn: long
+  - notBeforePolicy: int
+  - otherClaims: Map<String, Object>
+  # canEqual(Object): boolean
+  + toString(): String
+  + equals(Object): boolean
+  + hashCode(): int
+   tokenType: String
+   refreshToken: String
+   token: String
+   scope: String
+   expiresIn: long
+   idToken: String
+   refreshExpiresIn: long
+   notBeforePolicy: int
+   sessionState: String
+   otherClaims: Map<String, Object>
+}
+class KeycloakErrorDto {
+  + KeycloakErrorDto(): 
+  + KeycloakErrorDto(String): 
+  - errorDescription: String
+  + hashCode(): int
+  # canEqual(Object): boolean
+  + equals(Object): boolean
+  + toString(): String
+   errorDescription: String
+}
+class KeycloakIntegrationTest {
+  + KeycloakIntegrationTest(): 
+  + setUpKeycloakConfig(String, String, WireMockServer): void
+}
+class KeycloakLogoutDto {
+  + KeycloakLogoutDto(): 
+  + KeycloakLogoutDto(String): 
+  - refreshToken: String
+  + hashCode(): int
+  # canEqual(Object): boolean
+  + equals(Object): boolean
+  + toString(): String
+   refreshToken: String
+}
+class KeycloakResponseDto {
+  + KeycloakResponseDto(): 
+  + KeycloakResponseDto(int): 
+  - response: int
+  # canEqual(Object): boolean
+  + equals(Object): boolean
+  + hashCode(): int
+  + toString(): String
+   response: int
+}
+enum Language << enumeration >> {
+  - Language(String): 
+  - value: String
+  + values(): Language[]
+  + valueOf(String): Language
+   value: String
+}
+enum Language << enumeration >> {
+  - Language(String): 
+  - languageName: String
+  + valueOf(String): Language
+  + values(): Language[]
+   languageName: String
+}
+class LeantechScheduler {
+  + LeantechScheduler(int, int, long, int, MeterRegistry): 
+  + schedule(Runnable, long, TimeUnit): Disposable
+  + createWorker(): Worker
+  + schedulePeriodically(Runnable, long, long, TimeUnit): Disposable
+  + now(TimeUnit): long
+  + start(): void
+  + schedule(Runnable): Disposable
+  + dispose(): void
+  + execute(Runnable): void
+   disposed: boolean
+}
+class LoggingUtils {
+  - LoggingUtils(): 
+  + logExchange(Logger, Context, String, String, HttpStatus, Long, String, String): Mono<String>
+  + logRequest(Logger, String, String, String, HttpMethod, String): void
+  + logWarn(Logger, String, String, long, String, Throwable, String): void
+  + logErrorCustomMono(Logger, String, String, Throwable): Mono<Void>
+  + logError(Logger, String, String, long, String, Throwable, String): void
+  + applyLoggingPrefix(String, Context): Context
+  + getSortedHeadersMap(HttpHeaders?): Map<String, String>
+  + logCancel(Logger, HttpMethod, String, long, String): void
+  + logErrorCustom(Logger, String, ContextView, String, Throwable): void
+  + logRequest(Logger, String, String, String, HttpMethod, String, Map<String, String>?, Map<String, String>?): void
+  + logResponseFromClient(Logger, String, String, long, HttpStatusCode, String, String): void
+  + logRequest(Logger, String, String, HttpMethod, Map<String, String>?, Map<String, String>?): void
+  + logErrorExchange(Logger, Context, String, String, HttpStatus, Long, String, String, Throwable): Mono<Void>
+  + logResponse(Logger, String, String, long, HttpStatusCode, String, String, boolean): void
+  + logBody(Logger, String, String, String): void
+  + logIgnoredCancel(Logger, String): void
+  + applyLoggingPrefix(ServerRequest, Context): Context
+  + getSortedRequestParamsMap(MultiValueMap<String, String>?): Map<String, String>
+  + logResponse(Logger, String, long, HttpStatus): void
+  + logResponse(Logger, String, String, long, HttpStatus, String): void
+  + logResponse(Logger, String, String, long, HttpStatus): void
+  + logRequest(Logger, String, String, String, HttpMethod, String, Map<String, String>?, Map<String, String>?, boolean): void
+  + logRequestCustomForProxy(Logger, String, String, String): void
+  - enrichRequestParams(Map<String, String>?, StringBuilder?): void
+  + logRequest(Logger, String, String, String, HttpMethod): void
+  + getResponseAsString(List<DataBuffer>, String, String, Logger): String
+  + logError(Logger, ContextView, String, Throwable): Mono<Void>
+  + logError(Logger, String, String, long, String, Throwable): void
+  + logError(Logger, String, Throwable): Mono<Void>
+  + buildLogPrefix(String): String
+  + logError(Logger, String, long, String, Throwable): void
+  + logOtpDebug(Logger, ContextView, String): Mono<Void>
+  + logCancel(Logger, String, String, long): void
+  + addUniqueRequestKey(String?): String
+  + getThrowableInfo(Throwable?): String
+  + logRequest(Logger, String, String, String, HttpMethod, Map<String, String>?, Map<String, String>?): void
+  + logDebug(Logger, Context, String): Mono<Void>
+  + enrichHeaders(Map<String, String>?, StringBuilder?): void
+  + getSortedRequestParamsMap(Map<String, Object>?): Map<String, String>
+  + logIgnoredError(Logger, String, Throwable): void
+  + logExchange(Logger, String, String, String, Integer, String?, Long, String, String): Mono<String>
+}
+class LoggingWebFilter {
+  + LoggingWebFilter(MeterRegistry, SensitiveInformationReplacer, SensitiveInformationReplacer): 
+  + LoggingWebFilter(MeterRegistry, SensitiveInformationReplacer, SensitiveInformationReplacer, boolean, boolean, boolean): 
+  - logHeaders: boolean
+  - getLogPrefix(HttpHeaders?): String
+  - wasExcluded(String): boolean
+  - enrichAttributes(ServerWebExchange, String, boolean): void
+  ~ intToDuration(List<Integer>): Duration[]
+  + mutateToLogBodies(ServerWebExchange, String, boolean, Logger, SensitiveInformationReplacer, SensitiveInformationReplacer, boolean): ServerWebExchange
+  + filter(ServerWebExchange, WebFilterChain): Mono<Void>
+  + wasExcluded(ServerWebExchange): boolean
+  - mutateToLogBodies(ServerWebExchange, String, SensitiveInformationReplacer, SensitiveInformationReplacer, boolean): ServerWebExchange
+   excludedFromLog: List<String>
+   logHeaders: boolean
+}
+interface MDCKeys << interface >>
+class MDCUtils {
+  + MDCUtils(): 
+   traceId: String
+   spanId: String
+}
+interface Mapper<S, T> << interface >> {
+  + mapAll(Collection<S>): Collection<T>
+  + map(S): T
+}
+interface Mapper<S, T> << interface >> {
+  + map(S): T
+  + mapAll(Collection<S>): Collection<T>
+}
+class MembersOfMerchantResponseDto {
+  + MembersOfMerchantResponseDto(): 
+  - email: String
+  - lastName: String
+  - memberRole: MerchantMemberRole
+  - firstName: String
+  - status: MerchantMemberStatus
+  - memberProfileUid: UUID
+  + equals(Object): boolean
+  + hashCode(): int
+  + toString(): String
+  # canEqual(Object): boolean
+   memberProfileUid: UUID
+   memberRole: MerchantMemberRole
+   status: MerchantMemberStatus
+   firstName: String
+   lastName: String
+   email: String
+}
+class MerchantApiSecretKeyResponseDto {
+  + MerchantApiSecretKeyResponseDto(): 
+  - apiSecretKey: String
+  + equals(Object): boolean
+  + toString(): String
+  # canEqual(Object): boolean
+  + hashCode(): int
+   apiSecretKey: String
+}
+class MerchantBlockedException {
+  + MerchantBlockedException(): 
+   locale: boolean
+   httpStatus: HttpStatus
+   code: String
+   message: String
+}
+class MerchantDetailsForOperationsRequestDto {
+  + MerchantDetailsForOperationsRequestDto(): 
+  + MerchantDetailsForOperationsRequestDto(String, String, String, String, String, String, Integer, Integer): 
+  - registrationNumber: String
+  - merchantMemberProfileUid: String
+  - walletUid: String
+  - companyName: String
+  - page: Integer
+  - merchantProfileUid: String
+  - limit: Integer
+  - email: String
+  + equals(Object): boolean
+  + toString(): String
+  # canEqual(Object): boolean
+  + hashCode(): int
+   email: String
+   companyName: String
+   limit: Integer
+   merchantProfileUid: String
+   page: Integer
+   walletUid: String
+   registrationNumber: String
+   merchantMemberProfileUid: String
+}
+class MerchantDetailsForOperationsResponseDto {
+  + MerchantDetailsForOperationsResponseDto(String, String, String, Status, LocalDateTime, LocalDateTime): 
+  + MerchantDetailsForOperationsResponseDto(): 
+  - profileUid: String
+  - registrationNumber: String
+  - status: Status
+  - companyName: String
+  - createdAt: LocalDateTime
+  - modifiedAt: LocalDateTime
+  + hashCode(): int
+  # canEqual(Object): boolean
+  + toString(): String
+  + equals(Object): boolean
+   profileUid: String
+   modifiedAt: LocalDateTime
+   createdAt: LocalDateTime
+   registrationNumber: String
+   companyName: String
+   status: Status
+}
+class MerchantDto {
+  + MerchantDto(): 
+  + MerchantDto(Long, String, String, String, String, String, AddressDto, Status, boolean, boolean, String): 
+  - status: Status
+  - phone: String
+  - merchantLogoUrl: String
+  - email: String
+  - registrationNumber: String
+  - id: Long
+  - companyName: String
+  - address: AddressDto
+  - profileUid: String
+  - filled: boolean
+  - verified: boolean
+  + toString(): String
+  + hashCode(): int
+  # canEqual(Object): boolean
+  + equals(Object): boolean
+   id: Long
+   email: String
+   phone: String
+   companyName: String
+   profileUid: String
+   registrationNumber: String
+   address: AddressDto
+   merchantLogoUrl: String
+   verified: boolean
+   status: Status
+   filled: boolean
+}
+entity MerchantDtoRequest << record >> {
+  + MerchantDtoRequest(String, String): 
+  + merchantId(): String
+  + secretKey(): String
+}
+entity MerchantDtoResponse << record >> {
+  + MerchantDtoResponse(String, String): 
+  + merchantId(): String
+  + secretKey(): String
+}
+enum MerchantField << enumeration >> {
+  - MerchantField(String, String): 
+  - field: String
+  - description: String
+  + values(): MerchantField[]
+  + fromString(String?): MerchantField
+  + valueOf(String): MerchantField
+  + fields(): List<String>
+   field: String
+   description: String
+}
+class MerchantMapDto {
+  + MerchantMapDto(): 
+  - profileUid: String
+  - params: Map<String, String>
+  + toString(): String
+  # canEqual(Object): boolean
+  + hashCode(): int
+  + equals(Object): boolean
+   profileUid: String
+   params: Map<String, String>
+}
+class MerchantMemberBlockedException {
+  + MerchantMemberBlockedException(): 
+   locale: boolean
+   httpStatus: HttpStatus
+   code: String
+   message: String
+}
+class MerchantMemberDto {
+  + MerchantMemberDto(long, long, UUID, String, String, String, String, MerchantMemberRole, MerchantMemberStatus, String, LocalDateTime, boolean, boolean): 
+  + MerchantMemberDto(): 
+  - lastName: String
+  - profileUid: UUID
+  - firstName: String
+  - memberRole: MerchantMemberRole
+  - phoneNumber: String
+  - verified: boolean
+  - status: MerchantMemberStatus
+  - filled: boolean
+  - id: long
+  - email: String
+  - merchantId: long
+  - verifiedAt: LocalDateTime
+  - applicantId: String
+  + hashCode(): int
+  + equals(Object): boolean
+  + toString(): String
+  # canEqual(Object): boolean
+   merchantId: long
+   id: long
+   profileUid: UUID
+   verifiedAt: LocalDateTime
+   filled: boolean
+   lastName: String
+   applicantId: String
+   email: String
+   phoneNumber: String
+   memberRole: MerchantMemberRole
+   status: MerchantMemberStatus
+   firstName: String
+   verified: boolean
+}
+enum MerchantMemberField << enumeration >> {
+  - MerchantMemberField(String, String): 
+  - description: String
+  - field: String
+  + fields(): List<String>
+  + values(): MerchantMemberField[]
+  + valueOf(String): MerchantMemberField
+  + fromString(String?): MerchantMemberField
+   field: String
+   description: String
+}
+class MerchantMemberNotFoundException {
+  + MerchantMemberNotFoundException(): 
+   locale: boolean
+   httpStatus: HttpStatus
+   code: String
+   message: String
+}
+class MerchantMemberRegistrationRequestDto {
+  + MerchantMemberRegistrationRequestDto(): 
+  - firstName: String
+  - language: Language
+  - password: String
+  - lastName: String
+  - email: String
+  - phoneNumber: String
+  # canEqual(Object): boolean
+  + toString(): String
+  + hashCode(): int
+  + equals(Object): boolean
+   password: String
+   firstName: String
+   lastName: String
+   language: Language
+   email: String
+   phoneNumber: String
+}
+class MerchantMemberRequestDto {
+  + MerchantMemberRequestDto(long, String, String, String, List<MerchantMemberRole>, List<MerchantMemberStatus>, Integer, Integer): 
+  + MerchantMemberRequestDto(): 
+  - id: long
+  - statuses: List<MerchantMemberStatus>
+  - firstName: String
+  - memberRoles: List<MerchantMemberRole>
+  - limit: Integer
+  - lastName: String
+  - page: Integer
+  - email: String
+  + equals(Object): boolean
+  + toString(): String
+  # canEqual(Object): boolean
+  + hashCode(): int
+   statuses: List<MerchantMemberStatus>
+   lastName: String
+   id: long
+   email: String
+   limit: Integer
+   memberRoles: List<MerchantMemberRole>
+   page: Integer
+   firstName: String
+}
+class MerchantMemberRequestForOperationsDto {
+  + MerchantMemberRequestForOperationsDto(): 
+  + MerchantMemberRequestForOperationsDto(UUID, String, String, String, Integer, Integer): 
+  - lastName: String
+  - page: Integer
+  - firstName: String
+  - profileId: UUID
+  - limit: Integer
+  - email: String
+  + hashCode(): int
+  # canEqual(Object): boolean
+  + toString(): String
+  + equals(Object): boolean
+   profileId: UUID
+   page: Integer
+   firstName: String
+   lastName: String
+   email: String
+   limit: Integer
+}
+class MerchantMemberResponseDto {
+  + MerchantMemberResponseDto(long, UUID, String, MerchantMemberRole, String, String, String, MerchantMemberStatus): 
+  + MerchantMemberResponseDto(): 
+  - memberRole: MerchantMemberRole
+  - status: MerchantMemberStatus
+  - phone: String
+  - email: String
+  - profileUid: UUID
+  - lastName: String
+  - firstName: String
+  - id: long
+  # canEqual(Object): boolean
+  + toString(): String
+  + equals(Object): boolean
+  + hashCode(): int
+   lastName: String
+   id: long
+   email: String
+   phone: String
+   memberRole: MerchantMemberRole
+   status: MerchantMemberStatus
+   firstName: String
+   profileUid: UUID
+}
+enum MerchantMemberRole << enumeration >> {
+  - MerchantMemberRole(String): 
+  - name: String
+  + valueOf(String): MerchantMemberRole
+  + fromName(String?): MerchantMemberRole
+  + fromString(String?): MerchantMemberRole
+  + values(): MerchantMemberRole[]
+   name: String
+}
+enum MerchantMemberStatus << enumeration >> {
+  - MerchantMemberStatus(String): 
+  - name: String
+  + fromString(String?): MerchantMemberStatus
+  + valueOf(String): MerchantMemberStatus
+  + values(): MerchantMemberStatus[]
+   name: String
+}
+class MerchantMembersInvitationsDto {
+  + MerchantMembersInvitationsDto(): 
+  - email: String
+  - status: InvitationStatus
+  - lastName: String
+  - firstName: String
+  - role: MerchantMemberRole
+  - uid: UUID
+  - merchantId: Long
+  + hashCode(): int
+  + equals(Object): boolean
+  + toString(): String
+  # canEqual(Object): boolean
+   lastName: String
+   merchantId: Long
+   email: String
+   uid: UUID
+   role: MerchantMemberRole
+   firstName: String
+   status: InvitationStatus
+}
+class MerchantMembersInvitationsRequestDto {
+  + MerchantMembersInvitationsRequestDto(): 
+  - firstName: String
+  - role: MerchantMemberRole
+  - lastName: String
+  - email: String
+  + hashCode(): int
+  + equals(Object): boolean
+  + toString(): String
+  # canEqual(Object): boolean
+   firstName: String
+   lastName: String
+   email: String
+   role: MerchantMemberRole
+}
+class MerchantNotFoundException {
+  + MerchantNotFoundException(): 
+   locale: boolean
+   httpStatus: HttpStatus
+   code: String
+   message: String
+}
+class MerchantProfileDetailsDto {
+  + MerchantProfileDetailsDto(): 
+  + MerchantProfileDetailsDto(Long, MerchantMemberResponseDto, String, String, String, String, AddressDto, Status, boolean, boolean, String, LocalDateTime, VerificationStatus, boolean, String, boolean): 
+  - isApplicantIdPresent: boolean
+  - enabled2fa: boolean
+  - userUid: String
+  - rejectComment: String
+  - verificationStatus: VerificationStatus
+  - id: Long
+  - profileUid: String
+  - registrationNumber: String
+  - merchantLogoUrl: String
+  - address: AddressDto
+  - status: Status
+  - memberInfo: MerchantMemberResponseDto
+  - verified: boolean
+  - filled: boolean
+  - createdAt: LocalDateTime
+  - companyName: String
+  + equals(Object): boolean
+  # canEqual(Object): boolean
+  + toString(): String
+  + hashCode(): int
+   createdAt: LocalDateTime
+   rejectComment: String
+   id: Long
+   enabled2fa: boolean
+   address: AddressDto
+   verificationStatus: VerificationStatus
+   filled: boolean
+   isApplicantIdPresent: boolean
+   userUid: String
+   companyName: String
+   profileUid: String
+   memberInfo: MerchantMemberResponseDto
+   registrationNumber: String
+   merchantLogoUrl: String
+   verified: boolean
+   status: Status
+}
+class MerchantRegistrationDto {
+  + MerchantRegistrationDto(String, String, String, String, String, Language): 
+  + MerchantRegistrationDto(): 
+  - email: String
+  - password: String
+  - companyName: String
+  - country: String
+  - phoneNumber: String
+  - language: Language
+  + hashCode(): int
+  + equals(Object): boolean
+  # canEqual(Object): boolean
+  + toString(): String
+   password: String
+   language: Language
+   email: String
+   country: String
+   phoneNumber: String
+   companyName: String
+}
+interface MonoMapper<S, T> << interface >> {
+  + mapAll(Collection<S>): Flux<T>
+  + map(S): Mono<T>
+}
+class NoAccessException {
+  + NoAccessException(): 
+   locale: boolean
+   httpStatus: HttpStatus
+   code: String
+   message: String
+}
+class NoAccessToActionException {
+  + NoAccessToActionException(): 
+   locale: boolean
+   httpStatus: HttpStatus
+   code: String
+   message: String
+}
+class NoOpHttpErrorHandler {
+  + NoOpHttpErrorHandler(): 
+  + handleError(String, Throwable): Throwable
+}
+class NotFilledProfileException {
+  + NotFilledProfileException(): 
+   locale: boolean
+   httpStatus: HttpStatus
+   code: String
+   message: String
+}
+annotation NotForFilledProcessing << annotation >>
+class NotFoundException {
+  + NotFoundException(String): 
+}
+class NotFoundExceptionMapper {
+  + NotFoundExceptionMapper(): 
+  + canMap(Throwable): boolean
+  + map(Throwable): ErrorInfoDto
+}
+class NotificationClient {
+  + NotificationClient(InternalRequestExecutor, ObjectJsonMapper): 
+  + sendOtpMessage(OtpSendRequestDto): Mono<OtpSendResponseDto>
+  + checkOtpMessage(OtpCheckRequestDto): Mono<OtpCheckResponseDto>
+}
+class NotificationClientConfig {
+  + NotificationClientConfig(): 
+  + notificationInternalRequestExecutor(InternalRequestExecutors): InternalRequestExecutor
+  + notificationClient(InternalRequestExecutor, ObjectJsonMapper): NotificationClient
+}
+enum NotificationStatus << enumeration >> {
+  - NotificationStatus(): 
+  + valueOf(String): NotificationStatus
+  + values(): NotificationStatus[]
+}
+enum NotificationStatusDto << enumeration >> {
+  - NotificationStatusDto(): 
+  + values(): NotificationStatusDto[]
+  + valueOf(String): NotificationStatusDto
+}
+enum NotificationTriggerCode << enumeration >> {
+  - NotificationTriggerCode(String, String): 
+  - description: String
+  - code: String
+  + enumFromString(String): NotificationTriggerCode
+  + valueOf(String): NotificationTriggerCode
+  + values(): NotificationTriggerCode[]
+   description: String
+   code: String
+}
+class NotificationWithIdDto {
+  + NotificationWithIdDto(Integer, LocalDateTime, LocalDateTime, LocalDateTime, String, String, String, NotificationStatusDto, String, String, String, String, String, String, Boolean, Boolean): 
+  + NotificationWithIdDto(): 
+  - messageType: String
+  - triggerCode: String
+  - objectType: String
+  - subject: String
+  - suggestToAddToTrusted: Boolean
+  - error: String
+  - objectId: String
+  - createdBy: String
+  - id: Integer
+  - message: String
+  - hasConfirmOtp: Boolean
+  - createdAt: LocalDateTime
+  - userUid: String
+  - notificationStatus: NotificationStatusDto
+  - modifiedAt: LocalDateTime
+  - expirationDate: LocalDateTime
+  + equals(Object): boolean
+  # canEqual(Object): boolean
+  + hashCode(): int
+  + toString(): String
+   createdAt: LocalDateTime
+   message: String
+   error: String
+   objectId: String
+   notificationStatus: NotificationStatusDto
+   messageType: String
+   hasConfirmOtp: Boolean
+   id: Integer
+   createdBy: String
+   modifiedAt: LocalDateTime
+   expirationDate: LocalDateTime
+   userUid: String
+   objectType: String
+   suggestToAddToTrusted: Boolean
+   triggerCode: String
+   subject: String
+}
+class NotificationWithoutIdDto {
+  + NotificationWithoutIdDto(): 
+  - objectId: String
+  - expirationDate: LocalDateTime
+  - triggerCode: String
+  - userUid: String
+  - messageType: String
+  - error: String
+  - hasConfirmOtp: Boolean
+  - createdBy: String
+  - subject: String
+  - objectType: String
+  - modifiedAt: LocalDateTime
+  - message: String
+  - suggestToAddToTrusted: Boolean
+  - notificationStatus: NotificationStatusDto
+  - createdAt: LocalDateTime
+  # canEqual(Object): boolean
+  + hashCode(): int
+  + equals(Object): boolean
+  + toString(): String
+   createdAt: LocalDateTime
+   message: String
+   error: String
+   objectId: String
+   notificationStatus: NotificationStatusDto
+   messageType: String
+   hasConfirmOtp: Boolean
+   createdBy: String
+   modifiedAt: LocalDateTime
+   expirationDate: LocalDateTime
+   userUid: String
+   objectType: String
+   suggestToAddToTrusted: Boolean
+   triggerCode: String
+   subject: String
+}
+interface OTPGenerator << interface >> {
+  + newCode(int): String
+}
+interface ObjectJsonMapper << interface >> {
+  + toJson(T): String
+  + toResponseEntity(String): ResponseEntity<?>
+  + toObject(String, Class<T>): T
+  + toObject(String, TypeReference<T>): T
+}
+class ObjectJsonMapperImpl {
+  + ObjectJsonMapperImpl(ObjectMapper): 
+  + toObject(String, Class<T>): T
+  + toObject(String, TypeReference<T>): T
+  + toResponseEntity(String): ResponseEntity<?>
+  + toJson(T): String
+}
+enum OperationStatus << enumeration >> {
+  - OperationStatus(): 
+  + valueOf(String): OperationStatus
+  + values(): OperationStatus[]
+}
+enum OperationType << enumeration >> {
+  - OperationType(): 
+  + values(): OperationType[]
+  + valueOf(String): OperationType
+}
+class OperationsActivityAvailableKeysRequestDto {
+  + OperationsActivityAvailableKeysRequestDto(): 
+  - screen: Screen
+  - profileType: ProfileType
+  - language: Language
+  + equals(Object): boolean
+  + hashCode(): int
+  # canEqual(Object): boolean
+  + toString(): String
+   screen: Screen
+   language: Language
+   profileType: ProfileType
+}
+class OperationsActivityAvailableKeysResponseDto {
+  + OperationsActivityAvailableKeysResponseDto(): 
+  - screen: Screen
+  - profileType: ProfileType
+  - description: String
+  - key: OperationsHistoryKey
+  # canEqual(Object): boolean
+  + equals(Object): boolean
+  + toString(): String
+  + hashCode(): int
+   description: String
+   profileType: ProfileType
+   screen: Screen
+   key: OperationsHistoryKey
+}
+class OperationsChangeIndividualStatusRequestDto {
+  + OperationsChangeIndividualStatusRequestDto(): 
+  - profileUid: UUID
+  - status: Status
+  + equals(Object): boolean
+  + hashCode(): int
+  + toString(): String
+  # canEqual(Object): boolean
+   status: Status
+   profileUid: UUID
+}
+class OperationsChangeMembersDataRequestDto {
+  + OperationsChangeMembersDataRequestDto(): 
+  + OperationsChangeMembersDataRequestDto(UUID, String, String, OperationsRole): 
+  - lastName: String
+  - profileUid: UUID
+  - firstName: String
+  - role: OperationsRole
+  + toString(): String
+  + equals(Object): boolean
+  # canEqual(Object): boolean
+  + hashCode(): int
+   firstName: String
+   lastName: String
+   profileUid: UUID
+   role: OperationsRole
+}
+class OperationsGetIndividualsRequestDto {
+  + OperationsGetIndividualsRequestDto(String, String, String, String, UUID, UUID, Integer, Integer): 
+  + OperationsGetIndividualsRequestDto(): 
+  - phone: String
+  - limit: Integer
+  - email: String
+  - lastName: String
+  - profileUid: UUID
+  - walletUid: UUID
+  - firstName: String
+  - page: Integer
+  + equals(Object): boolean
+  # canEqual(Object): boolean
+  + toString(): String
+  + hashCode(): int
+   lastName: String
+   email: String
+   phone: String
+   limit: Integer
+   walletUid: UUID
+   page: Integer
+   firstName: String
+   profileUid: UUID
+}
+class OperationsGetIndividualsResponseDto {
+  + OperationsGetIndividualsResponseDto(UUID, String, String, String, String, String, Status, LocalDateTime, LocalDateTime): 
+  + OperationsGetIndividualsResponseDto(): 
+  - firstName: String
+  - profileUid: UUID
+  - email: String
+  - phoneNumber: String
+  - dateOfBirth: String
+  - status: Status
+  - lastName: String
+  - createdAt: LocalDateTime
+  - modifiedAt: LocalDateTime
+  # canEqual(Object): boolean
+  + toString(): String
+  + hashCode(): int
+  + equals(Object): boolean
+   modifiedAt: LocalDateTime
+   lastName: String
+   createdAt: LocalDateTime
+   dateOfBirth: String
+   email: String
+   phoneNumber: String
+   firstName: String
+   profileUid: UUID
+   status: Status
+}
+enum OperationsHistoryKey << enumeration >> {
+  - OperationsHistoryKey(String, String): 
+  - description: String
+  - key: String
+  + enumFromString(String): OperationsHistoryKey
+  + valueOf(String): OperationsHistoryKey
+  + values(): OperationsHistoryKey[]
+   description: String
+   key: String
+}
+class OperationsHistoryRequestDto {
+  + OperationsHistoryRequestDto(): 
+  + OperationsHistoryRequestDto(ProfileType, LocalDateTime, LocalDateTime, Screen, OperationsHistoryKey, UUID, String, String, Integer, Integer): 
+  - startDate: LocalDateTime
+  - endDate: LocalDateTime
+  - screen: Screen
+  - page: Integer
+  - target: String
+  - profileType: ProfileType
+  - key: OperationsHistoryKey
+  - changedByUid: UUID
+  - changedByEmail: String
+  - limit: Integer
+  + hashCode(): int
+  + toString(): String
+  + equals(Object): boolean
+  # canEqual(Object): boolean
+   changedByUid: UUID
+   endDate: LocalDateTime
+   limit: Integer
+   page: Integer
+   startDate: LocalDateTime
+   target: String
+   profileType: ProfileType
+   screen: Screen
+   changedByEmail: String
+   key: OperationsHistoryKey
+}
+class OperationsHistoryResponseDto {
+  + OperationsHistoryResponseDto(Long, Screen, OperationsHistoryKey, String, LocalDateTime, Reason, String): 
+  + OperationsHistoryResponseDto(): 
+  - id: Long
+  - reason: Reason
+  - key: OperationsHistoryKey
+  - createdAt: LocalDateTime
+  - target: String
+  - screen: Screen
+  - changedBy: String
+  + toString(): String
+  # canEqual(Object): boolean
+  + equals(Object): boolean
+  + hashCode(): int
+   createdAt: LocalDateTime
+   id: Long
+   reason: Reason
+   changedBy: String
+   target: String
+   screen: Screen
+   key: OperationsHistoryKey
+}
+class OperationsMemberRegistrationRequestDto {
+  + OperationsMemberRegistrationRequestDto(): 
+  - firstName: String
+  - language: Language
+  - lastName: String
+  - password: String
+  - email: String
+  + toString(): String
+  + equals(Object): boolean
+  # canEqual(Object): boolean
+  + hashCode(): int
+   password: String
+   firstName: String
+   lastName: String
+   language: Language
+   email: String
+}
+class OperationsMemberRegistrationResponseDto {
+  + OperationsMemberRegistrationResponseDto(): 
+  - status: Status
+  - id: Long
+  - email: String
+  - language: Language
+  - firstName: String
+  - role: OperationsRole
+  - lastName: String
+  # canEqual(Object): boolean
+  + toString(): String
+  + hashCode(): int
+  + equals(Object): boolean
+   lastName: String
+   id: Long
+   email: String
+   firstName: String
+   language: Language
+   role: OperationsRole
+   status: Status
+}
+class OperationsMembersDto {
+  + OperationsMembersDto(): 
+  - firstName: String
+  - email: String
+  - profileUid: UUID
+  - archivedAt: LocalDateTime
+  - status: Status
+  - role: OperationsRole
+  - id: Long
+  - lastName: String
+  # canEqual(Object): boolean
+  + toString(): String
+  + hashCode(): int
+  + equals(Object): boolean
+   lastName: String
+   id: Long
+   email: String
+   firstName: String
+   archivedAt: LocalDateTime
+   profileUid: UUID
+   role: OperationsRole
+   status: Status
+}
+class OperationsMembersInvitationsDto {
+  + OperationsMembersInvitationsDto(): 
+  + OperationsMembersInvitationsDto(UUID, String, String, String, OperationsRole, InvitationStatus): 
+  - email: String
+  - role: OperationsRole
+  - uid: UUID
+  - firstName: String
+  - lastName: String
+  - status: InvitationStatus
+  + equals(Object): boolean
+  + hashCode(): int
+  # canEqual(Object): boolean
+  + toString(): String
+   firstName: String
+   lastName: String
+   email: String
+   uid: UUID
+   role: OperationsRole
+   status: InvitationStatus
+}
+class OperationsMembersInvitationsInfoRequestDto {
+  + OperationsMembersInvitationsInfoRequestDto(): 
+  + OperationsMembersInvitationsInfoRequestDto(String, String, String, OperationsRole, Integer, Integer): 
+  - page: Integer
+  - firstName: String
+  - lastName: String
+  - limit: Integer
+  - role: OperationsRole
+  - email: String
+  # canEqual(Object): boolean
+  + hashCode(): int
+  + equals(Object): boolean
+  + toString(): String
+   page: Integer
+   firstName: String
+   lastName: String
+   email: String
+   role: OperationsRole
+   limit: Integer
+}
+class OperationsMembersInvitationsInfoResponseDto {
+  + OperationsMembersInvitationsInfoResponseDto(): 
+  + OperationsMembersInvitationsInfoResponseDto(UUID, String, String, String, OperationsRole, LocalDateTime): 
+  - uid: UUID
+  - firstName: String
+  - lastName: String
+  - role: OperationsRole
+  - email: String
+  - createdAt: LocalDateTime
+  + hashCode(): int
+  + equals(Object): boolean
+  # canEqual(Object): boolean
+  + toString(): String
+   firstName: String
+   lastName: String
+   createdAt: LocalDateTime
+   email: String
+   uid: UUID
+   role: OperationsRole
+}
+class OperationsMembersInvitationsRequestDto {
+  + OperationsMembersInvitationsRequestDto(): 
+  + OperationsMembersInvitationsRequestDto(String, String, String, OperationsRole): 
+  - role: OperationsRole
+  - firstName: String
+  - lastName: String
+  - email: String
+  # canEqual(Object): boolean
+  + toString(): String
+  + hashCode(): int
+  + equals(Object): boolean
+   firstName: String
+   lastName: String
+   email: String
+   role: OperationsRole
+}
+enum OperationsRole << enumeration >> {
+  - OperationsRole(String): 
+  - name: String
+  + fromString(String?): OperationsRole
+  + valueOf(String): OperationsRole
+  + values(): OperationsRole[]
+   name: String
+}
+class OtpCheckException {
+  + OtpCheckException(): 
+   locale: boolean
+   httpStatus: HttpStatus
+   code: String
+   message: String
+}
+class OtpCheckRequestDto {
+  + OtpCheckRequestDto(): 
+  + OtpCheckRequestDto(String, String, OtpDestinationDto): 
+  - otpUid: String
+  - otpCode: String
+  - destinationDto: OtpDestinationDto
+  + builder(): OtpCheckRequestDtoBuilder
+  + equals(Object): boolean
+  + toString(): String
+  + hashCode(): int
+  # canEqual(Object): boolean
+   destinationDto: OtpDestinationDto
+   otpUid: String
+   otpCode: String
+}
+class OtpCheckResponseDto {
+  + OtpCheckResponseDto(Long, boolean): 
+  + OtpCheckResponseDto(): 
+  - attempts: Long
+  - valid: boolean
+  + hashCode(): int
+  # canEqual(Object): boolean
+  + toString(): String
+  + equals(Object): boolean
+  + builder(): OtpCheckResponseDtoBuilder
+   valid: boolean
+   attempts: Long
+}
+class OtpCheckResponseDto {
+  + OtpCheckResponseDto(Long, boolean): 
+  + OtpCheckResponseDto(): 
+  - valid: boolean
+  - attempts: Long
+  + builder(): OtpCheckResponseDtoBuilder
+  # canEqual(Object): boolean
+  + toString(): String
+  + equals(Object): boolean
+  + hashCode(): int
+   valid: boolean
+   attempts: Long
+}
+class OtpDataToSendDto {
+  + OtpDataToSendDto(): 
+  + OtpDataToSendDto(String, String, String, String): 
+  - text: String
+  - emailFrom: String
+  - subject: String
+  - destination: String
+  + equals(Object): boolean
+  # canEqual(Object): boolean
+  + hashCode(): int
+  + toString(): String
+   text: String
+   emailFrom: String
+   subject: String
+   destination: String
+}
+class OtpDestinationDto {
+  + OtpDestinationDto(String, OtpType): 
+  + OtpDestinationDto(): 
+  - destination: String
+  - otpType: OtpType
+  + equals(Object?): boolean
+  + builder(): OtpDestinationDtoBuilder
+  + hashCode(): int
+  + toString(): String
+   otpType: OtpType
+   destination: String
+}
+class OtpDetailsRequestDto {
+  + OtpDetailsRequestDto(): 
+  + OtpDetailsRequestDto(Integer, Integer, Integer, Integer, Boolean): 
+  - delay: Integer
+  - ttl: Integer
+  - length: Integer
+  - attempts: Integer
+  - force: Boolean
+  + toString(): String
+  + equals(Object): boolean
+  # canEqual(Object): boolean
+  + hashCode(): int
+  + builder(): OtpDetailsRequestDtoBuilder
+   attempts: Integer
+   force: Boolean
+   ttl: Integer
+   delay: Integer
+   length: Integer
+}
+class OtpSendRequestDto {
+  + OtpSendRequestDto(): 
+  + OtpSendRequestDto(String, String, String, String, String, OtpDestinationDto, OtpDetailsRequestDto, String): 
+  - language: String
+  - otpDetails: OtpDetailsRequestDto
+  - uuid: String
+  - destination: OtpDestinationDto
+  - messageTemplate: String
+  - userUid: String
+  - email: String
+  - subject: String
+  + equals(Object): boolean
+  # canEqual(Object): boolean
+  + builder(): OtpSendRequestDtoBuilder
+  + toString(): String
+  + hashCode(): int
+   messageTemplate: String
+   language: String
+   email: String
+   userUid: String
+   uuid: String
+   destination: OtpDestinationDto
+   otpDetails: OtpDetailsRequestDto
+   subject: String
+}
+class OtpSendResponseDto {
+  + OtpSendResponseDto(String, String, String, OtpDetailsRequestDto, OtpDestinationDto): 
+  + OtpSendResponseDto(): 
+  - email: String
+  - otpDetails: OtpDetailsRequestDto
+  - otpDestinationDto: OtpDestinationDto
+  - uuid: String
+  - otpCode: String
+  + builder(): OtpSendResponseDtoBuilder
+  + equals(Object): boolean
+  + hashCode(): int
+  + toString(): String
+  # canEqual(Object): boolean
+   otpDestinationDto: OtpDestinationDto
+   otpCode: String
+   email: String
+   otpDetails: OtpDetailsRequestDto
+   uuid: String
+}
+enum OtpType << enumeration >> {
+  - OtpType(String): 
+  + value: String
+  + fromValue(String?): OtpType
+  + valueOf(String): OtpType
+  + values(): OtpType[]
+   value: String
+}
+class PAN {
+  ~ PAN(String, String, String): 
+  + PAN(String): 
+  + toBuilder(): PANBuilder
+  + hashCode(): int
+  - suffix(String): String
+  + equals(Object?): boolean
+  - prefix(String): String
+  + mask(String): String
+  + builder(): PANBuilder
+  + toString(): String
+}
+class PGPEncryptionService {
+  + PGPEncryptionService(PGPKeyProperty, Scheduler): 
+  + encryptReactive(String): Mono<String>
+  + decryptReactive(String): Mono<String>
+  - findPrivateKey(InputStream, long, char[]): PGPPrivateKey
+  - decrypt(InputStream, OutputStream, InputStream, char[]): void
+  + decrypt(String): String
+  - buildEncryptedDataGenerator(PGPPublicKey): PGPEncryptedDataGenerator
+  - findPrivateKey(PGPSecretKey, char[]): PGPPrivateKey
+  - buildDataEncryptor(): JcePGPDataEncryptorBuilder
+  - encrypt(OutputStream, PGPPublicKey, InputStream): void
+  - readPublicKey(InputStream): PGPPublicKey
+  - writeStreamToLiteralData(OutputStream, InputStream): void
+  - handleError(Throwable): Mono<String>
+  + encrypt(String): String
+}
+class PGPKeyProperty {
+  + PGPKeyProperty(): 
+  - publicKey: String
+  - password: String
+  - privateKey: String
+  # canEqual(Object): boolean
+  + equals(Object): boolean
+  + hashCode(): int
+  + toString(): String
+   password: String
+   publicKey: String
+   privateKey: String
+}
+class PageableDto {
+  + PageableDto(List<Config>, long, long, long): 
+  + PageableDto(List<Config>, PagingDto): 
+  - data: List<Config>
+  - paging: PagingDto
+  # canEqual(Object): boolean
+  + toString(): String
+  + equals(Object): boolean
+  + hashCode(): int
+   paging: PagingDto
+   data: List<Config>
+}
+class PageableDto<Dto> {
+  + PageableDto(List<Dto>, long, long, long): 
+  + PageableDto(Page<Dto>): 
+  - paging: PagingDto
+  - data: List<Dto>
+  + equals(Object): boolean
+  # canEqual(Object): boolean
+  + toString(): String
+  + hashCode(): int
+   paging: PagingDto
+   data: List<Dto>
+}
+class PageableDto<Dto> {
+  + PageableDto(List<Dto>, long, long, long): 
+  + PageableDto(Page<Dto>): 
+  - paging: PagingDto
+  - data: List<Dto>
+  # canEqual(Object): boolean
+  + hashCode(): int
+  + equals(Object): boolean
+  + toString(): String
+   paging: PagingDto
+   data: List<Dto>
+}
+class ParamNotFountException {
+  + ParamNotFountException(): 
+   locale: boolean
+   httpStatus: HttpStatus
+   code: String
+   message: String
+}
+class ParametersHttpExchangeConfiguration {
+  # ParametersHttpExchangeConfiguration(ParametersHttpExchangeConfigurationBuilder<?, ?>): 
+  - loggingName: String
+  - url: String
+  - meterRegistry: MeterRegistry
+  - tracer: Tracer
+  - responseBodyReplacer: SensitiveInformationReplacer
+  - circuitBreaker: CircuitBreaker
+  - errorResponseMapper: FourArgumentsMapFunction<ClientResponse, Optional<String>, String, Mono<String>>
+  - standardHeaders: Map<String, String>
+  - timer: Timer
+  - requestBodyReplacer: SensitiveInformationReplacer
+  - httpErrorHandler: HttpErrorHandler
+  - okResponseValidator: TripleMapFunction<ClientResponse, Optional<String>, Mono<Void>>
+  + defaultResponseValidator(ClientResponse?, Optional<String>?): Mono<Void>
+  + defaultErrorResponseMapper(ClientResponse, Optional<String>, String?): Mono<String>
+  # getTimer(MeterRegistry, String): Timer
+  - validate(): void
+  + builder(): ParametersHttpExchangeConfigurationBuilder<?, ?>
+   httpErrorHandler: HttpErrorHandler
+   loggingName: String
+   tracer: Tracer
+   baseUrl: String
+   okResponseValidator: TripleMapFunction<ClientResponse, Optional<String>, Mono<Void>>
+   url: String
+   standardHeaders: Map<String, String>
+   meterRegistry: MeterRegistry
+   errorResponseMapper: FourArgumentsMapFunction<ClientResponse, Optional<String>, String, Mono<String>>
+   responseBodyReplacer: SensitiveInformationReplacer
+   timer: Timer
+   requestBodyReplacer: SensitiveInformationReplacer
+   circuitBreaker: CircuitBreaker
+}
+enum PaymentMethod << enumeration >> {
+  - PaymentMethod(String): 
+  - value: String
+  + values(): PaymentMethod[]
+  + valueOf(String): PaymentMethod
+   value: String
+}
+entity PayoutByListDtoResponse << record >> {
+  + PayoutByListDtoResponse(UUID, PaymentMethod, Long, Currency, UUID, LocalDateTime, LocalDateTime, CardDataDtoResponse, Language, String, CustomerDtoResponse, StatusTransactionPayout, String): 
+  + customer(): CustomerDtoResponse
+  + transactionId(): UUID
+  + proselyteTransactionId(): UUID
+  + message(): String
+  + amount(): Long
+  + notificationUrl(): String
+  + status(): StatusTransactionPayout
+  + paymentMethod(): PaymentMethod
+  + cardData(): CardDataDtoResponse
+  + createdAt(): LocalDateTime
+  + language(): Language
+  + currency(): Currency
+  + updatedAt(): LocalDateTime
+}
+entity PayoutCreateDtoResponse << record >> {
+  + PayoutCreateDtoResponse(UUID, StatusTransactionPayout, String): 
+  + status(): StatusTransactionPayout
+  + payoutId(): UUID
+  + message(): String
+}
+entity PayoutDetailsDtoResponse << record >> {
+  + PayoutDetailsDtoResponse(UUID, PaymentMethod, Long, Currency, LocalDateTime, LocalDateTime, UUID, CardDataDtoResponse, Language, String, CustomerDtoResponse): 
+  + proselyteTransactionId(): UUID
+  + currency(): Currency
+  + customer(): CustomerDtoResponse
+  + paymentMethod(): PaymentMethod
+  + updatedAt(): LocalDateTime
+  + payoutId(): UUID
+  + amount(): Long
+  + language(): Language
+  + notificationUrl(): String
+  + cardData(): CardDataDtoResponse
+  + createdAt(): LocalDateTime
+}
+entity PayoutDtoRequest << record >> {
+  + PayoutDtoRequest(PaymentMethod, Long, Currency, UUID, CardDataByPayoutDtoRequest, Language, String, CustomerDtoRequest): 
+  + amount(): Long
+  + currency(): Currency
+  + language(): Language
+  + notificationUrl(): String
+  + paymentMethod(): PaymentMethod
+  + cardData(): CardDataByPayoutDtoRequest
+  + customer(): CustomerDtoRequest
+  + proselyteTransactionId(): UUID
+}
+entity PayoutWebhookHistoryDtoResponse << record >> {
+  + PayoutWebhookHistoryDtoResponse(Long, LocalDateTime, UUID, String, String, Integer, StatusTransactionPayout): 
+  + id(): Long
+  + createdAt(): LocalDateTime
+  + resultMessage(): String
+  + status(): StatusTransactionPayout
+  + payoutId(): UUID
+  + requestBody(): String
+  + responseStatus(): Integer
+}
+class PersonClient {
+  + PersonClient(InternalRequestExecutor, ObjectJsonMapper): 
+  + updateMerchantMembersInvitationExpireTime(String): Mono<Void>
+  + deleteMerchant(String): Mono<Void>
+  + getActivities(OperationsHistoryRequestDto): Mono<PageableDto<OperationsHistoryResponseDto>>
+  + changeMerchantMemberInfo(String, ChangeMerchantMemberInfoRequestDto): Mono<MerchantMemberDto>
+  + getUserByProfileUid(String): Mono<UserDto>
+  + getProfileRequiredFieldsMerchant(String, String, String): Mono<List<ProfileRequiredFieldsDto>>
+  + createCountry(CountryDto): Mono<CountryDto>
+  + findIndividualByProfileUid(String, ProfileType, String): Mono<IndividualDto>
+  + createMerchant(String, MerchantDto): Mono<MerchantDto>
+  + updateMerchant(MerchantDto): Mono<MerchantDto>
+  + searchAllUsersBy(String, Integer, Integer): Mono<List<UserDto>>
+  + getOperationsMemberByProfileUid(String): Mono<OperationsMembersDto>
+  + getMerchantByCompanyName(String): Mono<MerchantDto>
+  + checkMerchantMemberInvitationNotSentOrThrow(String): Mono<Void>
+  + findAllActiveCountries(): Mono<List<CountryDto>>
+  + isUserEnabled(String): Mono<VerifyOperationDto>
+  + getMerchantMembersInvitations(GetMerchantMembersInvitationsRequestDto): Mono<PageableDto<GetMerchantMembersInvitationsResponseDto>>
+  + getIndividualProfileDetails(String): Mono<IndividualProfileDetailsDto>
+  + updateTestUser(String): Mono<Boolean>
+  + getMecrhantProfileDetails(String): Mono<MerchantProfileDetailsDto>
+  + findIndividualByProfileUid(String): Mono<IndividualDto>
+  + getMerchantsForOperations(MerchantDetailsForOperationsRequestDto): Mono<PageableDto<MerchantDetailsForOperationsResponseDto>>
+  + getMerchantByMemberProfileUid(String): Mono<MerchantDto>
+  + updateMerchantMembersInvitationStatus(ChangeMerchantMembersInvitationStatusDto): Mono<Void>
+  + getMerchantByMemberEmail(String): Mono<MerchantDto>
+  + getOperationsHistoryActivityKeys(OperationsActivityAvailableKeysRequestDto): Mono<List<OperationsActivityAvailableKeysResponseDto>>
+  + createMerchant(MerchantRegistrationDto): Mono<MerchantMemberDto>
+  + updateIndividualByClient(String, String, IndividualMapDto): Mono<ProfileIndividualDto>
+  + getActivityDetails(Long): Mono<Map<String, String>>
+  + getMerchantByMerchantMemberUsername(String): Mono<MerchantDto>
+  + findAdminBy(String, String, String): Mono<UserDto>
+  + getOperationsMembers(GetOperationsMembersRequestDto): Mono<PageableDto<GetOperationsMembersResponseDto>>
+  + createOperationsMembersInvitation(OperationsMembersInvitationsRequestDto): Mono<OperationsMembersInvitationsDto>
+  + updateIndividual(IndividualDto): Mono<IndividualDto>
+  + createAddress(AddressDto): Mono<AddressDto>
+  + findCountryByName(String): Mono<CountryDto>
+  + changeIndividualStatusForOperations(OperationsChangeIndividualStatusRequestDto): Mono<IndividualDto>
+  + updateMerchantMemberDto(MerchantMemberDto): Mono<MerchantMemberDto>
+  + verifyUserPassword(String, String): Mono<VerifyOperationDto>
+  + getUserAttribute(String, String): Mono<AttributeWrapperDto>
+  + findMerchantMemberByUsername(String): Mono<MerchantMemberDto>
+  + updateAddress(AddressDto): Mono<AddressDto>
+  + setUserEnabledByEmail(String, ProfileType): Mono<Void>
+  + getMembersOfMerchant(MerchantMemberRequestDto, String): Mono<PageableDto<MembersOfMerchantResponseDto>>
+  + checkIsProfileVerified(String): Mono<Boolean>
+  + changeMerchantMemberStatusForOperations(ChangeMerchantMemberStatusRequestDto): Mono<MerchantMemberDto>
+  + createUser(String): Mono<UserDto>
+  + changeOperationsMemberStatus(ChangeOperationsStatusRequestDto): Mono<OperationsMembersDto>
+  + deleteIndividual(String): Mono<Void>
+  + getMerchantMemberByProfileUid(String): Mono<MerchantMemberDto>
+  + findCountryById(Integer): Mono<CountryDto>
+  + getMerchantApiSecretKey(String): Mono<MerchantApiSecretKeyResponseDto>
+  + getAllOperationsMembersInvitations(OperationsMembersInvitationsInfoRequestDto): Mono<PageableDto<OperationsMembersInvitationsInfoResponseDto>>
+  + findCountryByUsernameAndProfileType(String, ProfileType): Mono<CountryDto>
+  + getCountryCode(String): Mono<CountryCodeDto>
+  + findMerchantMemberByEmail(String): Mono<MerchantMemberDto>
+  + setUserAttribute(String, AttributeWrapperDto): Mono<UserDto>
+  + createSyncedIndividualEntity(IndividualRegistrationDto, String, String): Mono<IndividualDto>
+  + findAllShortCountries(): Mono<List<CountryDto>>
+  + filledOrThrowIndividual(String): Mono<Void>
+  + updateUserEmail(String, String): Mono<UserDto>
+  + changeMerchantMemberStatus(String, ChangeMerchantMemberStatusRequestDto): Mono<MerchantMemberDto>
+  + createAdmin(String): Mono<UserDto>
+  + getMerchantMembersForOperations(MerchantMemberRequestForOperationsDto): Mono<PageableDto<MembersOfMerchantResponseDto>>
+  + findMerchantByProfileUid(String): Mono<MerchantDto>
+  + deleteTestUser(String): Mono<Boolean>
+  + findAddressDtoById(Long): Mono<AddressDto>
+  + updateMerchant(String, ProfileType, MerchantMapDto): Mono<MerchantDto>
+  + removeUserAttribute(String, String): Mono<UserDto>
+  + setUsersEnabled(String, Boolean): Mono<Void>
+  + isUserExist(String, ProfileType): Mono<Boolean>
+  + confirmIndividualChangePhone(String, String, OtpCheckResponseDto): Mono<OtpCheckResponseDto>
+  + findMerchantByProfileUid(String, ProfileType, String): Mono<MerchantDto>
+  + updateUserCredentials(String, String): Mono<VerifyOperationDto>
+  + changePassword(String, ChangePasswordRequestDto): Mono<Void>
+  + regenerateMerchantApiSecretKey(String): Mono<MerchantApiSecretKeyResponseDto>
+  + removeUser(String): Mono<VerifyOperationDto>
+  + checkMerchantMemberPhoneDoesNotExistOrThrow(String): Mono<Void>
+  + checkIndividualPhoneDoesNotExistOrThrow(String): Mono<Void>
+  + checkOperationsMemberIsActiveOrThrow(String): Mono<Void>
+  + getMerchantById(Long): Mono<MerchantDto>
+  + findUserBy(String, String, String): Mono<UserDto>
+  + findMerchantByRegistrationNumber(String, ProfileType, String): Mono<MerchantDto>
+  + checkInvitationBelongsToMerchantOrThrow(String, String): Mono<Void>
+  + findUserByUsernameAndProfileType(String, ProfileType): Mono<UserDto>
+  + updateIndividualProfileDetails(IndividualProfileDetailsDto, String): Mono<IndividualProfileDetailsDto>
+  + findIndividualByUsername(String): Mono<IndividualDto>
+  + createMerchantMembersInvitation(MerchantMembersInvitationsRequestDto, String): Mono<MerchantMembersInvitationsDto>
+  + findAddressById(Long): Mono<AddressDto>
+  + checkOperatorsEmailDoesNotExistOrThrow(String): Mono<Void>
+  + getMerchantMembersInvitation(String): Mono<MerchantMembersInvitationsDto>
+  + updateMerchantProfileDetails(MerchantProfileDetailsDto, String): Mono<MerchantProfileDetailsDto>
+  + checkMerchantMemberIsActiveOrThrow(String): Mono<Void>
+  + findAllProfileHistoryWithFilter(String, ProfileType, ProfileHistoryFilterDto): Mono<PageableDto<ProfileHistoryDto>>
+  + findAllCountries(): Mono<List<CountryDto>>
+  + deleteOperations(String): Mono<Void>
+  + createIndividual(String, IndividualDto): Mono<IndividualDto>
+  + filledOrThrowMerchant(String): Mono<Void>
+  + searchAllAdminsBy(String, Integer, Integer): Mono<List<UserDto>>
+  + findProfileHistoryById(ProfileType, Long): Mono<ProfileHistoryDto>
+  + updateIndividualProfileDetailsForOperations(IndividualProfileDetailsForOperationsDto, String): Mono<IndividualProfileDetailsDto>
+  + deleteOperationsMembersInvitation(String): Mono<Void>
+  + registrationMerchantMember(MerchantMemberRegistrationRequestDto): Mono<MerchantMemberDto>
+  + checkUsernameDoesNotExistOrThrow(String, ProfileType): Mono<Void>
+  + getProfileRequiredFields(String, String, String): Mono<List<ProfileRequiredFieldsDto>>
+  + checkUsersPhoneDoesNotExistOrThrow(String): Mono<Void>
+  + updateUser(UserDto): Mono<UserDto>
+  + getIndividualsForOperations(OperationsGetIndividualsRequestDto): Mono<PageableDto<OperationsGetIndividualsResponseDto>>
+  + getOperationsMembersInvitation(String): Mono<OperationsMembersInvitationsDto>
+  + findProfileByUserUid(String): Mono<ProfileDto>
+  + checkMerchantMemberEmailDoesNotExistOrThrow(String): Mono<Void>
+  + checkIndividualEmailDoesNotExistOrThrow(String): Mono<Void>
+  + createIndividualEntity(IndividualRegistrationDto): Mono<IndividualDto>
+}
+class PersonClientConfig {
+  + PersonClientConfig(): 
+  + personInternalRequestExecutor(InternalRequestExecutors): InternalRequestExecutor
+  + personClient(InternalRequestExecutor, ObjectJsonMapper): PersonClient
+}
+class PhoneDigitsCheckException {
+  + PhoneDigitsCheckException(): 
+   locale: boolean
+   httpStatus: HttpStatus
+   code: String
+   message: String
+}
+class PostgresqlTestContainer {
+  + PostgresqlTestContainer(): 
+  + defaultPostgresql(): PostgreSQLContainer<?>
+  + applyForLiquibase(ConfigurableApplicationContext, String?): void
+  + apply(ConfigurableApplicationContext, String?): void
+}
+enum PreferredOtpGateway << enumeration >> {
+  - PreferredOtpGateway(): 
+  + values(): PreferredOtpGateway[]
+  + valueOf(String): PreferredOtpGateway
+}
+class ProducerMessage<K, V> {
+  + ProducerMessage(V): 
+  + ProducerMessage(K, V): 
+  - key: K
+  - value: V
+  + toString(): String
+  + equals(Object): boolean
+  # canEqual(Object): boolean
+  + hashCode(): int
+   value: V
+   key: K
+}
+enum ProfileChangeMaker << enumeration >> {
+  - ProfileChangeMaker(String): 
+  - name: String
+  + valueOf(String): ProfileChangeMaker
+  + values(): ProfileChangeMaker[]
+   name: String
+}
+class ProfileDto {
+  + ProfileDto(Long, String, ProfileType, String, String, AddressDto, Status, boolean, boolean, String, String, Language): 
+  + ProfileDto(): 
+  - language: Language
+  - email: String
+  - status: Status
+  - address: AddressDto
+  - surname: String
+  - filled: boolean
+  - verified: boolean
+  - profileType: ProfileType
+  - phone: String
+  - id: Long
+  - profileUid: String
+  - name: String
+  # canEqual(Object): boolean
+  + toString(): String
+  + hashCode(): int
+  + equals(Object): boolean
+   name: String
+   id: Long
+   email: String
+   phone: String
+   profileUid: String
+   surname: String
+   address: AddressDto
+   profileType: ProfileType
+   language: Language
+   verified: boolean
+   status: Status
+   filled: boolean
+}
+class ProfileHistoryDto {
+  + ProfileHistoryDto(Long, LocalDateTime, ProfileType, Map<String, String>, UUID, UUID, ProfileChangeMaker, Reason, String): 
+  + ProfileHistoryDto(): 
+  - targetProfileUid: UUID
+  - changedByProfileType: ProfileChangeMaker
+  - profileType: ProfileType
+  - id: Long
+  - changedByUserUid: UUID
+  - changedValues: Map<String, String>
+  - comment: String
+  - createdAt: LocalDateTime
+  - reason: Reason
+  + equals(Object): boolean
+  # canEqual(Object): boolean
+  + toString(): String
+  + hashCode(): int
+   comment: String
+   changedByProfileType: ProfileChangeMaker
+   createdAt: LocalDateTime
+   id: Long
+   reason: Reason
+   changedValues: Map<String, String>
+   profileType: ProfileType
+   targetProfileUid: UUID
+   changedByUserUid: UUID
+}
+class ProfileHistoryFilterDto {
+  + ProfileHistoryFilterDto(): 
+  + ProfileHistoryFilterDto(ProfileType, String, String, String, Integer, Integer): 
+  - field: String
+  - pageNumber: Integer
+  - profileType: ProfileType
+  - targetProfileUid: String
+  - changedByUserUid: String
+  - pageSize: Integer
+  # canEqual(Object): boolean
+  + hashCode(): int
+  + equals(Object): boolean
+  + toString(): String
+   field: String
+   pageSize: Integer
+   targetProfileUid: String
+   profileType: ProfileType
+   pageNumber: Integer
+   changedByUserUid: String
+}
+class ProfileIndividualDto {
+  + ProfileIndividualDto(Long, String, String, GenderType, String, String, LocalDate, AddressDto, String, String, LocalDateTime): 
+  + ProfileIndividualDto(): 
+  - gender: GenderType
+  - surname: String
+  - personalIdentityNumber: String
+  - address: AddressDto
+  - verifiedAt: LocalDateTime
+  - passportNumber: String
+  - email: String
+  - dateOfBirth: LocalDate
+  - name: String
+  - id: Long
+  - phone: String
+  # canEqual(Object): boolean
+  + toString(): String
+  + equals(Object): boolean
+  + hashCode(): int
+   name: String
+   dateOfBirth: LocalDate
+   gender: GenderType
+   id: Long
+   email: String
+   phone: String
+   personalIdentityNumber: String
+   passportNumber: String
+   surname: String
+   address: AddressDto
+   verifiedAt: LocalDateTime
+}
+enum ProfileManagerType << enumeration >> {
+  - ProfileManagerType(String): 
+  + values(): ProfileManagerType[]
+  + valueOf(String): ProfileManagerType
+  + fromName(String?): ProfileManagerType
+}
+class ProfileRequiredFieldsDto {
+  + ProfileRequiredFieldsDto(): 
+  + ProfileRequiredFieldsDto(String, LocalDateTime, LocalDateTime, String, String, RequiredFieldDataType, RequiredFieldValidationType, String, String, String, String, String, String): 
+  - createdAt: LocalDateTime
+  - validationRule: String
+  - validationType: RequiredFieldValidationType
+  - defaultValue: String
+  - language: String
+  - name: String
+  - uid: String
+  - representationName: String
+  - placeholder: String
+  - modifiedAt: LocalDateTime
+  - dataType: RequiredFieldDataType
+  - countryAlpha3Code: String
+  - description: String
+  # canEqual(Object): boolean
+  + builder(): ProfileRequiredFieldsDtoBuilder
+  + toString(): String
+  + equals(Object): boolean
+  + hashCode(): int
+   description: String
+   createdAt: LocalDateTime
+   representationName: String
+   language: String
+   validationRule: String
+   validationType: RequiredFieldValidationType
+   uid: String
+   name: String
+   modifiedAt: LocalDateTime
+   countryAlpha3Code: String
+   defaultValue: String
+   dataType: RequiredFieldDataType
+   placeholder: String
+}
+class ProfileStatusInfoDto {
+  + ProfileStatusInfoDto(Boolean, Status, Boolean, ProfileType, Boolean): 
+  + ProfileStatusInfoDto(): 
+  - verified: Boolean
+  - filled: Boolean
+  - status: Status
+  - profileType: ProfileType
+  - passwordSet: Boolean
+  + hashCode(): int
+  # canEqual(Object): boolean
+  + toString(): String
+  + equals(Object): boolean
+   passwordSet: Boolean
+   profileType: ProfileType
+   status: Status
+   verified: Boolean
+   filled: Boolean
+}
+enum ProfileType << enumeration >> {
+  - ProfileType(String): 
+  - name: String
+  + valueOf(String): ProfileType
+  + fromName(String?): ProfileType
+  + fromString(String?): ProfileType
+  + values(): ProfileType[]
+   name: String
+}
+class RSAEncryptionService {
+  + RSAEncryptionService(String, boolean): 
+  + encryptReactive(String): Mono<String>
+  + encrypt(String): String
+  + decrypt(String): String
+  + decryptReactive(String): Mono<String>
+}
+class RabbitMessageResponseDto {
+  + RabbitMessageResponseDto(): 
+  + RabbitMessageResponseDto(int, String): 
+  - message: String
+  - code: int
+  + toString(): String
+  + equals(Object): boolean
+  + hashCode(): int
+  # canEqual(Object): boolean
+   code: int
+   message: String
+}
+class RateCorrectionCoefficientDto {
+  + RateCorrectionCoefficientDto(): 
+  + RateCorrectionCoefficientDto(Long, boolean, String, String, float, String, String, String, LocalDate, LocalDate, String): 
+  - providerCode: String
+  - isArchived: boolean
+  - modifier: String
+  - sourceCode: String
+  - destinationCode: String
+  - profileType: String
+  - id: Long
+  - multiplier: float
+  - creator: String
+  - dateFrom: LocalDate
+  - dateTo: LocalDate
+  # canEqual(Object): boolean
+  + toString(): String
+  + hashCode(): int
+  + equals(Object): boolean
+   destinationCode: String
+   modifier: String
+   multiplier: float
+   id: Long
+   providerCode: String
+   sourceCode: String
+   isArchived: boolean
+   profileType: String
+   dateTo: LocalDate
+   creator: String
+   dateFrom: LocalDate
+}
+class RateProviderDto {
+  + RateProviderDto(String, String, String, int, boolean, BigDecimal): 
+  + RateProviderDto(): 
+  - isActive: boolean
+  - description: String
+  - priority: int
+  - providerCode: String
+  - providerName: String
+  - defaultMultiplier: BigDecimal
+  + hashCode(): int
+  + toString(): String
+  + equals(Object): boolean
+  # canEqual(Object): boolean
+   description: String
+   defaultMultiplier: BigDecimal
+   isActive: boolean
+   priority: int
+   providerCode: String
+   providerName: String
+}
+class ReCaptchaException {
+  + ReCaptchaException(): 
+   locale: boolean
+   httpStatus: HttpStatus
+   code: String
+   message: String
+}
+interface ReactiveKafkaConsumer<T> << interface >> {
+  + consume(): Flux<T>
+}
+enum Reason << enumeration >> {
+  - Reason(String, int): 
+  - description: String
+  - byWhom: int
+  + values(): Reason[]
+  + valueOf(String): Reason
+  + fromString(String?): Reason
+   description: String
+   byWhom: int
+   byAdminReasons: List<Reason>
+   bySystemReasons: List<Reason>
+   byClientReasons: List<Reason>
+}
+class RecipientNotActiveException {
+  + RecipientNotActiveException(): 
+   locale: boolean
+   httpStatus: HttpStatus
+   code: String
+   message: String
+}
+interface RegExpConstant << interface >>
+class RegistrationNumberException {
+  + RegistrationNumberException(): 
+   locale: boolean
+   httpStatus: HttpStatus
+   code: String
+   message: String
+}
+enum RejectLabel << enumeration >> {
+  - RejectLabel(): 
+  + valueOf(String): RejectLabel
+  + values(): RejectLabel[]
+}
+enum ReportCode << enumeration >> {
+  - ReportCode(): 
+  + valueOf(String): ReportCode
+  + fromName(String?): ReportCode
+  + values(): ReportCode[]
+}
+enum ReportType << enumeration >> {
+  - ReportType(String): 
+  - value: String
+  + fromValue(String?): ReportType
+  + values(): ReportType[]
+  + fromValueThrow(String?): ReportType
+  + valueOf(String): ReportType
+   value: String
+}
+enum RequestStatus << enumeration >> {
+  - RequestStatus(String): 
+  + valueOf(String): RequestStatus
+  + values(): RequestStatus[]
+}
+enum RequiredFieldDataType << enumeration >> {
+  - RequiredFieldDataType(String): 
+  - type: String
+  + values(): RequiredFieldDataType[]
+  + valueOf(String): RequiredFieldDataType
+   type: String
+}
+class RequiredFieldMissingException {
+  + RequiredFieldMissingException(String): 
+  - message: String
+   locale: boolean
+   httpStatus: HttpStatus
+   code: String
+   message: String
+}
+enum RequiredFieldValidationType << enumeration >> {
+  - RequiredFieldValidationType(String): 
+  - type: String
+  + valueOf(String): RequiredFieldValidationType
+  + values(): RequiredFieldValidationType[]
+   type: String
+}
+enum ResolutionStatus << enumeration >> {
+  - ResolutionStatus(String, String): 
+  - code: String
+  - description: String
+  + valueOf(String): ResolutionStatus
+  + values(): ResolutionStatus[]
+   description: String
+   code: String
+}
+class ResourceUtils {
+  - ResourceUtils(): 
+  + readStringFromFile(Class<?>, String): String
+  + sqlSpliterator(String): List<String>
+}
+class ResourceUtils {
+  - ResourceUtils(): 
+  + readStringFromFile(Class<?>, String): String
+  + sqlSpliterator(String): List<String>
+}
+enum ResponseCode << enumeration >> {
+  - ResponseCode(String, String): 
+  - ResponseCode(String, String, HttpStatus, boolean): 
+  - ResponseCode(String, String, boolean): 
+  - httpStatus: HttpStatus
+  - code: String
+  - isLocale: boolean
+  - message: String
+  + fromCode(String?): Optional<ResponseCode>
+  + valueOf(String): ResponseCode
+  + values(): ResponseCode[]
+   httpStatus: HttpStatus
+   code: String
+   message: String
+   isLocale: boolean
+}
+interface ResponseCodeError << interface >> {
+   locale: boolean
+   httpStatus: HttpStatus
+   code: String
+   message: String
+}
+class ResponseCodeException {
+  + ResponseCodeException(ResponseCodeError, String, String): 
+  + ResponseCodeException(ResponseCodeError, String, String, boolean): 
+  + ResponseCodeException(ResponseCodeError, String, Throwable): 
+  + ResponseCodeException(ResponseCodeError, ErrorInfoDto): 
+  + ResponseCodeException(ResponseCodeError, String): 
+  + ResponseCodeException(ResponseCodeError, String, String, Throwable, boolean): 
+  - errorInfo: ErrorInfoDto
+   errorInfo: ErrorInfoDto
+   responseCode: ResponseCodeError
+}
+class ResponseCodeExceptionMapper {
+  + ResponseCodeExceptionMapper(): 
+  + map(Throwable): ErrorInfoDto
+  + canMap(Throwable): boolean
+}
+class RetryProperties {
+  + RetryProperties(): 
+  - backoff: long
+  - maxAttempts: long
+   backoff: long
+   maxAttempts: long
+}
+class RetryableHttpRequestExecutor {
+  + RetryableHttpRequestExecutor(WebClient, Logger, HttpExchangeConfiguration, Retry): 
+  # doRequestWithLogConfigurable(URI, String, Object, String, HttpMethod, Map<String, String>, Class<T>, Function<T, String>, TripleMapFunction<ClientResponse, Optional<T>, Mono<Void>>, T, FourArgumentsMapFunction<ClientResponse, Optional<T>, String, Mono<T>>): Mono<T>
+}
+class SaltedHash {
+  + SaltedHash(String, String): 
+}
+class SameStatusException {
+  + SameStatusException(): 
+   locale: boolean
+   httpStatus: HttpStatus
+   code: String
+   message: String
+}
+enum Screen << enumeration >> {
+  - Screen(String): 
+  - name: String
+  + values(): Screen[]
+  + valueOf(String): Screen
+   name: String
+}
+class SenderNotActiveException {
+  + SenderNotActiveException(): 
+   locale: boolean
+   httpStatus: HttpStatus
+   code: String
+   message: String
+}
+class SensitiveInformationReplacer {
+  + SensitiveInformationReplacer(): 
+  + replaceInBody(String, String): String
+  + addReplacer(String, TextMatcherReplacer): SensitiveInformationReplacer
+}
+class ServiceException {
+  + ServiceException(): 
+  - errorCode: String
+  - message: String
+  # canEqual(Object): boolean
+  + hashCode(): int
+  + equals(Object): boolean
+  + toString(): String
+   message: String
+   errorCode: String
+}
+class ServiceExceptionMapper {
+  + ServiceExceptionMapper(): 
+  + canMap(Throwable): boolean
+  + map(Throwable): ErrorInfoDto
+}
+interface SigningEncryptionService << interface >> {
+  + encryptAndSign(String, String[]): String
+  + encryptAndSignReactive(String, String[]): Mono<String>
+  + checkSignature(String[], String): boolean
+  + decryptAndCheckReactive(String, String[]): Mono<String>
+  + sign(String[]): String
+  + decryptAndCheck(String, String[]): String
+}
+class SigverifyBodyReplacer {
+  + SigverifyBodyReplacer(): 
+  + matchAndReplace(String): String
+}
+class SocialNetworkLoginException {
+  + SocialNetworkLoginException(): 
+   locale: boolean
+   httpStatus: HttpStatus
+   code: String
+   message: String
+}
+class StarterConfiguration {
+  + StarterConfiguration(): 
+  + leantechScheduler(int, int, long, int, MeterRegistry): LeantechScheduler
+  + loadBalancedConfigurationProperties(): WebClientConfigurationProperties
+  + loadBalancedWebClient(Builder, WebClientConfigurationProperties): WebClient
+  + retryProperties(): RetryProperties
+  + tokenWebFilter(): TokenWebFilter
+  + httpErrorHandler(): HttpErrorHandler
+  + internalRequestExecutorErrorResponseMapper(ObjectJsonMapper): InternalRequestExecutorErrorResponseMapper
+  + loadBalancedWebClientBuilder(): Builder
+  + internalRequestExecutors(WebClient, RetryProperties, InternalRequestExecutorErrorResponseMapper): InternalRequestExecutors
+  + threadLocalContextWrapper(Scheduler): ThreadLocalContextWrapper
+  + objectJsonMapper(ObjectMapper): ObjectJsonMapper
+}
+enum Status << enumeration >> {
+  - Status(String): 
+  - name: String
+  + valueOf(String): Status
+  + fromString(String?): Status
+  + values(): Status[]
+   name: String
+}
+enum StatusTransactionPayout << enumeration >> {
+  - StatusTransactionPayout(String): 
+  - value: String
+  + values(): StatusTransactionPayout[]
+  + valueOf(String): StatusTransactionPayout
+   value: String
+}
+enum StatusTransactionTopUp << enumeration >> {
+  - StatusTransactionTopUp(String): 
+  - value: String
+  + valueOf(String): StatusTransactionTopUp
+  + values(): StatusTransactionTopUp[]
+   value: String
+}
+class SumsubApiConfiguration {
+  + SumsubApiConfiguration(): 
+  - getSumsubCircuitBreakerConfig(CircuitBreakerProperties): CircuitBreakerConfig
+  + sumsubHttpExchangeConfiguration(MeterRegistry, CircuitBreakerRegistry, CircuitBreakerProperties, SumsubApiParameters, Tracer, HttpErrorHandler): HttpExchangeConfiguration
+  + sumsubRequestExecutor(SumsubApiWebClientSupplier, HttpExchangeConfiguration): SumsubRequestExecutor
+  + sumsubApiSupplier(SumsubApiParameters): SumsubApiWebClientSupplier
+  + currencyApiParameters(String, Integer, Long, Long, String, Integer): SumsubApiParameters
+}
+class SumsubApiParameters {
+  + SumsubApiParameters(String, String, Integer, Long, Long, Integer): 
+  - url: String
+  - maxConsumeMb: Integer
+  - connectTimeoutMillis: Integer
+  - readTimeoutSeconds: Long
+  - token: String
+  - writeTimeoutSeconds: Long
+   connectTimeoutMillis: Integer
+   token: String
+   readTimeoutSeconds: Long
+   url: String
+   writeTimeoutSeconds: Long
+   maxConsumeMb: Integer
+}
+class SumsubApiWebClientSupplier {
+  + SumsubApiWebClientSupplier(SumsubApiParameters, int, int, boolean, Builder): 
+  + get(): WebClient
+}
+class SumsubException {
+  + SumsubException(String): 
+  - message: String
+   locale: boolean
+   httpStatus: HttpStatus
+   code: String
+   message: String
+}
+class SumsubRequestExecutor {
+  + SumsubRequestExecutor(WebClient, HttpExchangeConfiguration, String): 
+  + doPOSTRequest(String, byte[]): Mono<String>
+  + doGETRequestBinary(String): Mono<byte[]>
+  + doPOSTRequestBinary(String, String): Mono<byte[]>
+  - createSignature(long, HttpMethod, String?, byte[]?): String
+  - appendGetAdditionalHeaders(String?): Map<String, String>
+  + doPOSTRequest(String, String): Mono<String>
+  + doGETRequest(String): Mono<String>
+  - appendPostAdditionalHeaders(String?, byte[]?): Map<String, String>
+}
+class SystemException {
+  + SystemException(String, Throwable): 
+  + SystemException(String): 
+  - errorInfo: ErrorInfoDto
+   errorInfo: ErrorInfoDto
+}
+class SystemExceptionMapper {
+  + SystemExceptionMapper(): 
+  + canMap(Throwable): boolean
+  + map(Throwable): ErrorInfoDto
+}
+class TerminalInfo {
+  ~ TerminalInfo(TerminalType, String): 
+  - terminalVersion: String
+  - terminalType: TerminalType
+  + builder(): TerminalInfoBuilder
+  + of(Context?): TerminalInfo
+   terminalType: TerminalType
+   terminalVersion: String
+}
+enum TerminalType << enumeration >> {
+  - TerminalType(String): 
+  - value: String
+  + fromValue(String?): TerminalType
+  + isMobile(TerminalType?): boolean
+  + isWeb(TerminalType?): boolean
+  + values(): TerminalType[]
+  + valueOf(String): TerminalType
+   value: String
+}
+enum TerminalType << enumeration >> {
+  - TerminalType(String): 
+  - value: String
+  + fromValue(String?): TerminalType
+  + isWeb(TerminalType?): boolean
+  + isMobile(TerminalType?): boolean
+  + values(): TerminalType[]
+  + valueOf(String): TerminalType
+   value: String
+}
+class TerminalTypeRequiredResponseCodeError {
+  + TerminalTypeRequiredResponseCodeError(): 
+   locale: boolean
+   httpStatus: HttpStatus
+   code: String
+   message: String
+}
+class TestOTPGenerator {
+  + TestOTPGenerator(char): 
+  + newCode(int): String
+}
+class TestObjectMapper {
+  - TestObjectMapper(): 
+   instance: ObjectMapper
+}
+interface TextMatcherReplacer << interface >> {
+  + chainOf(TextMatcherReplacer[]): TextMatcherReplacer
+  + matchAndReplace(String): String
+  + chainOf(List<TextMatcherReplacer>): TextMatcherReplacer
+  + asIs(): TextMatcherReplacer
+}
+class ThreadLocalContext {
+  + ThreadLocalContext(): 
+  + ThreadLocalContext(Map<Object, Object>): 
+  + equals(Object): boolean
+  # canEqual(Object): boolean
+  + clear(): void
+  + hashCode(): int
+  + toString(): String
+  + get(Object): Object
+  + put(Object, Object): void
+   asMap: Map<Object, Object>
+}
+class ThreadLocalContextHolder {
+  + ThreadLocalContextHolder(): 
+  - context: ThreadLocal<ThreadLocalContext>
+  + clearContext(): void
+  + fillContext(ContextView): void
+   context: Optional<ThreadLocalContext>
+}
+class ThreadLocalContextWrapper {
+  + ThreadLocalContextWrapper(Scheduler): 
+  - wrapWithThreadLocalContext(Supplier<T>, ContextView): T
+  - wrapWithThreadLocalContext(Runnable, ContextView): void
+  + wrap(Runnable): Mono<Void>
+  + wrap(Supplier<T>): Mono<T>
+}
+class ToLowerCaseDeserializer {
+  + ToLowerCaseDeserializer(): 
+  + deserialize(JsonParser, DeserializationContext): String
+}
+enum TokenStatus << enumeration >> {
+  - TokenStatus(): 
+  + values(): TokenStatus[]
+  + valueOf(String): TokenStatus
+}
+class TokenWebFilter {
+  + TokenWebFilter(): 
+  + filter(ServerWebExchange, WebFilterChain): Mono<Void>
+}
+class TooManyLoginsException {
+  + TooManyLoginsException(): 
+   locale: boolean
+   httpStatus: HttpStatus
+   code: String
+   message: String
+}
+entity TopUpCreateDtoResponse << record >> {
+  + TopUpCreateDtoResponse(UUID, StatusTransactionTopUp, String): 
+  + transactionId(): UUID
+  + message(): String
+  + status(): StatusTransactionTopUp
+}
+entity TopUpDtoRequest << record >> {
+  + TopUpDtoRequest(PaymentMethod, Long, Currency, UUID, LocalDateTime, LocalDateTime, CardDataByTopUpDtoRequest, Language, String, CustomerDtoRequest): 
+  + createdAt(): LocalDateTime
+  + leantechTransactionId(): UUID
+  + paymentMethod(): PaymentMethod
+  + cardData(): CardDataByTopUpDtoRequest
+  + customer(): CustomerDtoRequest
+  + notificationUrl(): String
+  + currency(): Currency
+  + amount(): Long
+  + language(): Language
+  + updatedAt(): LocalDateTime
+}
+entity TopUpDtoResponse << record >> {
+  + TopUpDtoResponse(UUID, PaymentMethod, Long, Currency, UUID, LocalDateTime, LocalDateTime, String, CardDataDtoResponse, Language, CustomerDtoResponse, StatusTransactionTopUp, String): 
+  + notificationUrl(): String
+  + status(): StatusTransactionTopUp
+  + language(): Language
+  + message(): String
+  + cardData(): CardDataDtoResponse
+  + customer(): CustomerDtoResponse
+  + currency(): Currency
+  + proselyteTransactionId(): UUID
+  + paymentMethod(): PaymentMethod
+  + amount(): Long
+  + updatedAt(): LocalDateTime
+  + createdAt(): LocalDateTime
+  + transactionId(): UUID
+}
+class TopUpPaymentRequestDto {
+  + TopUpPaymentRequestDto(String): 
+  + TopUpPaymentRequestDto(): 
+  - walletUidTo: String
+  + hashCode(): int
+  + toString(): String
+  + equals(Object): boolean
+  # canEqual(Object): boolean
+   walletUidTo: String
+}
+class TopUpPaymentResponseDto {
+  + TopUpPaymentResponseDto(): 
+  + TopUpPaymentResponseDto(String): 
+  - topUpPaymentUid: String
+  # canEqual(Object): boolean
+  + equals(Object): boolean
+  + toString(): String
+  + hashCode(): int
+   topUpPaymentUid: String
+}
+entity TopUpWebhookHistoryDtoResponse << record >> {
+  + TopUpWebhookHistoryDtoResponse(Long, LocalDateTime, UUID, String, String, Integer, StatusTransactionTopUp): 
+  + createdAt(): LocalDateTime
+  + resultMessage(): String
+  + status(): StatusTransactionTopUp
+  + id(): Long
+  + responseStatus(): Integer
+  + topUpId(): UUID
+  + requestBody(): String
+}
+enum TransactionStatus << enumeration >> {
+  - TransactionStatus(): 
+  + values(): TransactionStatus[]
+  + valueOf(String): TransactionStatus
+}
+enum TransactionType << enumeration >> {
+  - TransactionType(): 
+  + valueOf(String): TransactionType
+  + values(): TransactionType[]
+}
+class TransferPaymentRequestDto {
+  + TransferPaymentRequestDto(String, String, String): 
+  + TransferPaymentRequestDto(): 
+  - walletUidTo: String
+  - walletUidFrom: String
+  - token: String
+  + toString(): String
+  + hashCode(): int
+  # canEqual(Object): boolean
+  + equals(Object): boolean
+   walletUidFrom: String
+   token: String
+   walletUidTo: String
+}
+class TransferPaymentResponseDto {
+  + TransferPaymentResponseDto(Long, Double, Long, Double, String): 
+  + TransferPaymentResponseDto(): 
+  - transferPaymentUid: String
+  - topUpPaymentPercentage: Double
+  - withdrawalPaymentFee: Long
+  - withdrawalPaymentPercentage: Double
+  - topUpPaymentFee: Long
+  + toString(): String
+  # canEqual(Object): boolean
+  + equals(Object): boolean
+  + hashCode(): int
+   topUpPaymentFee: Long
+   transferPaymentUid: String
+   withdrawalPaymentFee: Long
+   topUpPaymentPercentage: Double
+   withdrawalPaymentPercentage: Double
+}
+interface TripleMapFunction<A, B, R> << interface >> {
+  + map(A, B): R
+}
+class UpdateNotificationStatusDto {
+  + UpdateNotificationStatusDto(Integer, String): 
+  ~ userUid: String
+  ~ notificationId: Integer
+  + equals(Object): boolean
+  + hashCode(): int
+  + toString(): String
+  # canEqual(Object): boolean
+   userUid: String
+   notificationId: Integer
+}
+class UserAlreadyExistException {
+  + UserAlreadyExistException(): 
+   locale: boolean
+   httpStatus: HttpStatus
+   code: String
+   message: String
+}
+class UserBlockedException {
+  + UserBlockedException(): 
+   locale: boolean
+   httpStatus: HttpStatus
+   code: String
+   message: String
+}
+class UserDto {
+  + UserDto(): 
+  + UserDto(UUID, String, String, String, boolean, boolean, UUID, ProfileType, boolean, Language, boolean): 
+  - social: boolean
+  - username: String
+  - admin: boolean
+  - language: Language
+  - profileType: ProfileType
+  - passwordSet: boolean
+  - uid: UUID
+  - email: String
+  - enabled: boolean
+  - profileUid: UUID
+  - phoneNumber: String
+  # canEqual(Object): boolean
+  + equals(Object): boolean
+  + hashCode(): int
+  + toString(): String
+   social: boolean
+   passwordSet: boolean
+   email: String
+   uid: UUID
+   enabled: boolean
+   phoneNumber: String
+   username: String
+   profileUid: UUID
+   profileType: ProfileType
+   admin: boolean
+   language: Language
+}
+class UserEntityNotFoundException {
+  + UserEntityNotFoundException(): 
+   locale: boolean
+   httpStatus: HttpStatus
+   code: String
+   message: String
+}
+class UserNotFoundException {
+  + UserNotFoundException(String): 
+}
+class UserNotVerifiedException {
+  + UserNotVerifiedException(): 
+   locale: boolean
+   httpStatus: HttpStatus
+   code: String
+   message: String
+}
+class UserPhoneAlreadyExistException {
+  + UserPhoneAlreadyExistException(): 
+   locale: boolean
+   httpStatus: HttpStatus
+   code: String
+   message: String
+}
+class UserProfileFilterAlreadyExistsException {
+  + UserProfileFilterAlreadyExistsException(): 
+   locale: boolean
+   httpStatus: HttpStatus
+   code: String
+   message: String
+}
+class UtilTemplates {
+  + UtilTemplates(): 
+  + createBlockedEmail(String?, String?): String
+  + createArchivedEmail(String?, String?): String
+}
+enum VerificationStatus << enumeration >> {
+  - VerificationStatus(String): 
+  - name: String
+  + values(): VerificationStatus[]
+  + valueOf(String): VerificationStatus
+   name: String
+}
+class VerifyChangeDto {
+  + VerifyChangeDto(): 
+  + VerifyChangeDto(String, String, String, OtpType): 
+  - otpUID: String
+  - destination: String
+  - otpType: OtpType
+  - otpCode: String
+  + equals(Object): boolean
+  + toString(): String
+  + hashCode(): int
+  # canEqual(Object): boolean
+   otpCode: String
+   otpType: OtpType
+   otpUID: String
+   destination: String
+}
+class VerifyOperationDto {
+  + VerifyOperationDto(): 
+  + VerifyOperationDto(boolean): 
+  - valid: boolean
+   valid: boolean
+}
+class VerifyProfileResponseDto {
+  + VerifyProfileResponseDto(): 
+  + VerifyProfileResponseDto(TokenStatus, String, String): 
+  - token: String
+  - userId: String
+  - status: TokenStatus
+  + equals(Object): boolean
+  + hashCode(): int
+  + toString(): String
+  # canEqual(Object): boolean
+   status: TokenStatus
+   token: String
+   userId: String
+}
+class VersionedArgonHash {
+  - VersionedArgonHash(): 
+}
+class VersionedHashFunction {
+  + VersionedHashFunction(): 
+  + saltedHash(String): SaltedHash
+  - getVersion(String): int
+  # registerDefaultVersion(HashFunction): void
+  + isOutdated(SaltedHash): boolean
+  # registerVersion(int, HashFunction): void
+  + saltedHash(String, String): SaltedHash
+  - getSalt(String): String
+  - checkVersionRegistered(int): void
+  + isOutdated(String): boolean
+}
+annotation Viewable << annotation >>
+class WalletClient {
+  + WalletClient(InternalRequestExecutor, ObjectJsonMapper): 
+  + confirmWithdrawalPayment(String): Mono<ConfirmWithdrawalPaymentResponse>
+  + createWallet(CreateWalletRequestDto): Mono<CreateWalletResponseDto>
+  + changeStatusWalletType(ChangeStatusWalletTypeRequestDto, Long): Mono<Void>
+  + confirmTransferPayment(String): Mono<ConfirmTransferPaymentResponse>
+  + changeTypeWallet(String, Long): Mono<Void>
+  + withdrawalPayment(WithdrawalPaymentRequestDto): Mono<WithdrawalPaymentResponseDto>
+  + getTransactionHistoryWithoutPagination(TransactionHistoryDtoRequest): Mono<TransactionEntityDtoListResponse>
+  + createWalletType(CreateWalletTypeRequestDto): Mono<Void>
+  + confirmTopUpPayment(String): Mono<ConfirmTopUpPaymentResponse>
+  + transferPayment(TransferPaymentRequestDto): Mono<TransferPaymentResponseDto>
+  + changeStatusWallet(ChangeWalletStatusRequestDto, String): Mono<Void>
+  + getTransactionHistoryWithPagination(TransactionHistoryWithPaginationDtoRequest): Mono<TransactionHistoryWithPaginationDtoResponse>
+  + topUpPayment(TopUpPaymentRequestDto): Mono<TopUpPaymentResponseDto>
+}
+class WalletClientConfig {
+  + WalletClientConfig(): 
+  + walletClient(InternalRequestExecutor, ObjectJsonMapper): WalletClient
+  + walletInternalRequestExecutor(InternalRequestExecutors): InternalRequestExecutor
+}
+class WalletResponseDto {
+  + WalletResponseDto(): 
+  + WalletResponseDto(LocalDateTime, LocalDateTime, String, WalletTypeResponseDto, String, WalletStatus, Long, LocalDateTime, String): 
+  - profileUid: String
+  - status: WalletStatus
+  - modifiedAt: LocalDateTime
+  - walletUid: String
+  - balance: Long
+  - name: String
+  - walletType: WalletTypeResponseDto
+  - createdAt: LocalDateTime
+  - archivedAt: LocalDateTime
+  # canEqual(Object): boolean
+  + equals(Object): boolean
+  + hashCode(): int
+  + toString(): String
+   name: String
+   status: WalletStatus
+   modifiedAt: LocalDateTime
+   createdAt: LocalDateTime
+   walletType: WalletTypeResponseDto
+   profileUid: String
+   balance: Long
+   archivedAt: LocalDateTime
+   walletUid: String
+}
+enum WalletStatus << enumeration >> {
+  - WalletStatus(): 
+  + values(): WalletStatus[]
+  + valueOf(String): WalletStatus
+}
+class WalletTypeResponseDto {
+  + WalletTypeResponseDto(Long, LocalDateTime, LocalDateTime, String, String, WalletTypeStatus, LocalDateTime, String, String, String): 
+  + WalletTypeResponseDto(): 
+  - profileType: String
+  - status: WalletTypeStatus
+  - id: Long
+  - createdAt: LocalDateTime
+  - currencyCode: String
+  - modifier: String
+  - archivedAt: LocalDateTime
+  - name: String
+  - modifiedAt: LocalDateTime
+  - creator: String
+  + toString(): String
+  + equals(Object): boolean
+  + hashCode(): int
+  # canEqual(Object): boolean
+   modifier: String
+   name: String
+   modifiedAt: LocalDateTime
+   createdAt: LocalDateTime
+   id: Long
+   currencyCode: String
+   archivedAt: LocalDateTime
+   profileType: String
+   status: WalletTypeStatus
+   creator: String
+}
+enum WalletTypeStatus << enumeration >> {
+  - WalletTypeStatus(): 
+  + values(): WalletTypeStatus[]
+  + valueOf(String): WalletTypeStatus
+}
+class WebClientConfigurationProperties {
+  + WebClientConfigurationProperties(): 
+  - readTimeout: int
+  - writeTimeout: int
+  - isKeepAlive: boolean
+  - maxConnections: int
+  - connectTimeout: int
+  - maxBufferSize: String
+  + toString(): String
+  + hashCode(): int
+  + equals(Object): boolean
+  # canEqual(Object): boolean
+   writeTimeout: int
+   readTimeout: int
+   connectTimeout: int
+   isKeepAlive: boolean
+   maxBufferSize: String
+   maxConnections: int
+}
+class WebExchangeBindExceptionMapper {
+  + WebExchangeBindExceptionMapper(): 
+  + canMap(Throwable): boolean
+  + map(Throwable): ErrorInfoDto
+}
+class WebFluxContextConfiguration {
+  + WebFluxContextConfiguration(): 
+  ~ responseBodyReplacer(): SensitiveInformationReplacer
+  ~ externalErrorInfoResolver(ConfigErrorCachingClient): ErrorInfoResolver
+  ~ webExceptionHandler(ErrorAttributes, ServerCodecConfigurer, ErrorInfoResolver): ErrorInfoWebExceptionHandler
+  ~ configErrorCachingClient(ConfigsClient): ConfigErrorCachingClient
+  ~ internalErrorInfoResolver(): ErrorInfoResolver
+  ~ requestBodyReplacer(): SensitiveInformationReplacer
+}
+entity WebhookPayoutDtoRequest << record >> {
+  + WebhookPayoutDtoRequest(PaymentMethod, Long, Currency, UUID, LocalDateTime, LocalDateTime, String, CardDataDtoResponse, Language, CustomerByWebhookDtoRequest, StatusTransactionPayout, String): 
+  + paymentMethod(): PaymentMethod
+  + createdAt(): LocalDateTime
+  + message(): String
+  + updatedAt(): LocalDateTime
+  + status(): StatusTransactionPayout
+  + language(): Language
+  + customer(): CustomerByWebhookDtoRequest
+  + amount(): Long
+  + proselyteTransactionId(): UUID
+  + cardData(): CardDataDtoResponse
+  + currency(): Currency
+  + type(): String
+}
+entity WebhookTopUpDtoRequest << record >> {
+  + WebhookTopUpDtoRequest(UUID, PaymentMethod, Long, Currency, String, UUID, LocalDateTime, LocalDateTime, CardDataDtoResponse, Language, CustomerByWebhookDtoRequest, StatusTransactionTopUp, String): 
+  + createdAt(): LocalDateTime
+  + message(): String
+  + customer(): CustomerByWebhookDtoRequest
+  + providerTransactionId(): UUID
+  + proselyteTransactionId(): UUID
+  + type(): String
+  + currency(): Currency
+  + language(): Language
+  + paymentMethod(): PaymentMethod
+  + updatedAt(): LocalDateTime
+  + cardData(): CardDataDtoResponse
+  + amount(): Long
+  + status(): StatusTransactionTopUp
+}
+class WithdrawalPaymentRequestDto {
+  + WithdrawalPaymentRequestDto(String, String): 
+  + WithdrawalPaymentRequestDto(): 
+  - walletUidFrom: String
+  - token: String
+  + equals(Object): boolean
+  + toString(): String
+  # canEqual(Object): boolean
+  + hashCode(): int
+   walletUidFrom: String
+   token: String
+}
+class WithdrawalPaymentResponseDto {
+  + WithdrawalPaymentResponseDto(): 
+  + WithdrawalPaymentResponseDto(String): 
+  - withdrawPaymentUid: String
+  + hashCode(): int
+  + toString(): String
+  # canEqual(Object): boolean
+  + equals(Object): boolean
+   withdrawPaymentUid: String
+}
+class WrongCallbackSignatureException {
+  + WrongCallbackSignatureException(): 
+}
+class WrongMerchantException {
+  + WrongMerchantException(): 
+   locale: boolean
+   httpStatus: HttpStatus
+   code: String
+   message: String
+}
+class WrongProfileTypeException {
+  + WrongProfileTypeException(): 
+   locale: boolean
+   httpStatus: HttpStatus
+   code: String
+   message: String
+}
+class build {
+  + build(): 
+  + main(String[]): void
+  + run(): Object
+}
+class settings {
+  + settings(): 
+  + setProperty(String, Object): void
+  + getProperty(String): Object
+  + main(String[]): void
+  + run(): Object
+  + invokeMethod(String, Object): Object
+   metaClass: MetaClass
+}
+
+AESEncryptionService                            -[#008200,dashed]-^  SigningEncryptionService                       
+AbstractMatcherReplacer                         -[#008200,dashed]-^  TextMatcherReplacer                            
+ActiveAfterArchiveException                     -[#008200,dashed]-^  ResponseCodeError                              
+AllIsSecretReplacer                             -[#008200,dashed]-^  TextMatcherReplacer                            
+AlreadyVerifiedException                        -[#008200,dashed]-^  ResponseCodeError                              
+BaseDto                                        "1" *-[#595959,plain]-> "responseCodeError\n1" ResponseCodeError                              
+BlockOrDeleteUserException                      -[#008200,dashed]-^  ResponseCodeError                              
+CantChangeToAnotherStatusException              -[#008200,dashed]-^  ResponseCodeError                              
+ChangeMerchantMemberInfoRequestDto             "1" *-[#595959,plain]-> "role\n1" MerchantMemberRole                             
+ChangeMerchantMemberStatusRequestDto           "1" *-[#595959,plain]-> "status\n1" MerchantMemberStatus                           
+ChangeMerchantMembersInvitationStatusDto       "1" *-[#595959,plain]-> "invitationStatus\n1" InvitationStatus                               
+ChangeMerchantStatusDto                        "1" *-[#595959,plain]-> "status\n1" Status                                         
+ChangeOperationsStatusRequestDto               "1" *-[#595959,plain]-> "status\n1" Status                                         
+ChangeStatusWalletTypeRequestDto                -[#000082,plain]-^  AbstractChangeHistoryRequestDto                
+ChangeStatusWalletTypeRequestDto               "1" *-[#595959,plain]-> "status\n1" WalletTypeStatus                               
+ChangeWalletStatusRequestDto                    -[#000082,plain]-^  AbstractChangeHistoryRequestDto                
+ChangeWalletStatusRequestDto                   "1" *-[#595959,plain]-> "status\n1" WalletStatus                                   
+ChangedFieldsException                          -[#008200,dashed]-^  ResponseCodeError                              
+Config2ConfigDtoMapper                          -[#008200,dashed]-^  Mapper                                         
+ConfigDto2ConfigMapper                          -[#008200,dashed]-^  Mapper                                         
+ConfigErrorDto                                 "1" *-[#595959,plain]-> "language\n1" Language                                       
+ConfigsClient                                  "1" *-[#595959,plain]-> "configServerRequestExecutor\n1" InternalRequestExecutor                        
+ConfigsClient                                  "1" *-[#595959,plain]-> "objectMapper\n1" ObjectJsonMapper                               
+ConfirmChangePasswordDto                       "1" *-[#595959,plain]-> "destination\n1" OtpDestinationDto                              
+CreateCountryException                          -[#008200,dashed]-^  ResponseCodeError                              
+CurrencyClient                                 "1" *-[#595959,plain]-> "internalRequestExecutor\n1" InternalRequestExecutor                        
+CurrencyClient                                 "1" *-[#595959,plain]-> "objectJsonMapper\n1" ObjectJsonMapper                               
+DateOfBirthException                            -[#008200,dashed]-^  ResponseCodeError                              
+DefaultExceptionMapper                          -[#008200,dashed]-^  ExceptionMapper                                
+DefaultOTPGenerator                             -[#008200,dashed]-^  OTPGenerator                                   
+ECBRequestExecutor                              -[#000082,plain]-^  HttpRequestExecutorImpl                        
+ECIESEncryptionService                          -[#008200,dashed]-^  EncryptionService                              
+EmailInvitationException                        -[#008200,dashed]-^  ResponseCodeError                              
+EmptyParametersForUpdateException               -[#008200,dashed]-^  ResponseCodeError                              
+ErrorInfoDto                                   "1" *-[#595959,plain]-> "level\n1" ErrorInfoLevel                                 
+ErrorInfoErrorAttributes                       "1" *-[#595959,plain]-> "mappers\n*" ExceptionMapper                                
+ErrorInfoException                             "1" *-[#595959,plain]-> "errorInfo\n1" ErrorInfoDto                                   
+ErrorInfoExceptionMapper                        -[#008200,dashed]-^  ExceptionMapper                                
+ErrorInfoWebExceptionHandler                   "1" *-[#595959,plain]-> "errorInfoResolver\n1" ErrorInfoResolver                              
+ErrorInfoWebExceptionHandler                   "1" *-[#595959,plain]-> "AS_IS_REPLACER\n1" SensitiveInformationReplacer                   
+ExternalErrorInfoResolver                      "1" *-[#595959,plain]-> "configErrorCachingClient\n1" ConfigErrorCachingClient                       
+ExternalErrorInfoResolver                       -[#008200,dashed]-^  ErrorInfoResolver                              
+GetMerchantMembersInvitationsRequestDto        "1" *-[#595959,plain]-> "role\n1" MerchantMemberRole                             
+GetMerchantMembersInvitationsResponseDto       "1" *-[#595959,plain]-> "role\n1" MerchantMemberRole                             
+GetOperationsMembersRequestDto                 "1" *-[#595959,plain]-> "memberRoles\n*" OperationsRole                                 
+GetOperationsMembersRequestDto                 "1" *-[#595959,plain]-> "statuses\n*" Status                                         
+GetOperationsMembersResponseDto                "1" *-[#595959,plain]-> "memberRole\n1" OperationsRole                                 
+GetOperationsMembersResponseDto                "1" *-[#595959,plain]-> "status\n1" Status                                         
+HttpLoggingRequestDecorator                    "1" *-[#595959,plain]-> "requestBodyReplacer\n1" SensitiveInformationReplacer                   
+HttpLoggingResponseDecorator                   "1" *-[#595959,plain]-> "responseBodyReplacer\n1" SensitiveInformationReplacer                   
+HttpRequestExecutorImpl                        "1" *-[#595959,plain]-> "httpExchangeConfiguration\n1" HttpExchangeConfiguration                      
+HttpRequestExecutorImpl                         -[#008200,dashed]-^  HttpRequestExecutor                            
+IncorrectPasswordException                      -[#008200,dashed]-^  ResponseCodeError                              
+IndividualDto                                  "1" *-[#595959,plain]-> "address\n1" AddressDto                                     
+IndividualDto                                  "1" *-[#595959,plain]-> "gender\n1" GenderType                                     
+IndividualDto                                  "1" *-[#595959,plain]-> "status\n1" Status                                         
+IndividualProfileDetailsDto                    "1" *-[#595959,plain]-> "addressDto\n1" AddressDto                                     
+IndividualProfileDetailsDto                    "1" *-[#595959,plain]-> "statusInfo\n1" ProfileStatusInfoDto                           
+IndividualProfileDetailsDto                    "1" *-[#595959,plain]-> "verificationStatus\n1" VerificationStatus                             
+IndividualProfileDetailsForOperationsDto       "1" *-[#595959,plain]-> "addressDto\n1" AddressDto                                     
+IndividualRegistrationDto                      "1" *-[#595959,plain]-> "language\n1" Language                                       
+IndividualRegistrationResponseDto              "1" *-[#595959,plain]-> "language\n1" Language                                       
+IndividualUpdateException                       -[#008200,dashed]-^  ResponseCodeError                              
+InternalErrorInfoResolver                       -[#008200,dashed]-^  ErrorInfoResolver                              
+InternalRequestExecutor                         -[#000082,plain]-^  RetryableHttpRequestExecutor                   
+InternalRequestExecutorErrorResponseMapper     "1" *-[#595959,plain]-> "objectJsonMapper\n1" ObjectJsonMapper                               
+InternalRequestExecutorErrorResponseMapperTest "1" *-[#595959,plain]-> "internalRequestExecutorErrorResponseMapper\n1" InternalRequestExecutorErrorResponseMapper     
+InternalRequestExecutorRefusedTest             "1" *-[#595959,plain]-> "internalRequestExecutor\n1" InternalRequestExecutor                        
+InternalRequestExecutorRefusedTest             "1" *-[#595959,plain]-> "httpErrorHandler\n1" NoOpHttpErrorHandler                           
+InternalRequestExecutorTimeoutTest             "1" *-[#595959,plain]-> "internalRequestExecutor\n1" InternalRequestExecutor                        
+InternalRequestExecutorTimeoutTest             "1" *-[#595959,plain]-> "httpErrorHandler\n1" NoOpHttpErrorHandler                           
+InternalRequestExecutors                       "1" *-[#595959,plain]-> "httpErrorHandler\n1" HttpErrorHandler                               
+InternalRequestExecutors                       "1" *-[#595959,plain]-> "internalRequestExecutorErrorResponseMapper\n1" InternalRequestExecutorErrorResponseMapper     
+InternalRequestExecutors                       "1" *-[#595959,plain]-> "retryProperties\n1" RetryProperties                                
+InternalRequestExecutors                       "1" *-[#595959,plain]-> "requestBodyReplacer\n1" SensitiveInformationReplacer                   
+InvalidEmailException                           -[#008200,dashed]-^  ResponseCodeError                              
+InvalidUserStatusException                      -[#008200,dashed]-^  ResponseCodeError                              
+InvalidValueException                           -[#008200,dashed]-^  ResponseCodeError                              
+InvitationExpiredException                      -[#008200,dashed]-^  ResponseCodeError                              
+JSONConditionalReplacer                         -[#008200,dashed]-^  TextMatcherReplacer                            
+JSONConditionalReplacer                        "1" *-[#595959,plain]-> "replacer\n1" TextMatcherReplacer                            
+JSONPropertyPANMaskReplacer                     -[#000082,plain]-^  AbstractMatcherReplacer                        
+JSONPropertyReplacer                            -[#000082,plain]-^  AbstractMatcherReplacer                        
+KafkaConsumerMetricCollectorImpl                -[#008200,dashed]-^  KafkaConsumerMetricCollector                   
+KafkaProducerMetricCollectorImpl                -[#008200,dashed]-^  KafkaProducerMetricCollector                   
+LoggingWebFilter                               "1" *-[#595959,plain]-> "requestBodyReplacer\n1" SensitiveInformationReplacer                   
+MembersOfMerchantResponseDto                   "1" *-[#595959,plain]-> "memberRole\n1" MerchantMemberRole                             
+MembersOfMerchantResponseDto                   "1" *-[#595959,plain]-> "status\n1" MerchantMemberStatus                           
+MerchantBlockedException                        -[#008200,dashed]-^  ResponseCodeError                              
+MerchantDetailsForOperationsResponseDto        "1" *-[#595959,plain]-> "status\n1" Status                                         
+MerchantDto                                    "1" *-[#595959,plain]-> "address\n1" AddressDto                                     
+MerchantDto                                    "1" *-[#595959,plain]-> "status\n1" Status                                         
+MerchantMemberBlockedException                  -[#008200,dashed]-^  ResponseCodeError                              
+MerchantMemberDto                              "1" *-[#595959,plain]-> "memberRole\n1" MerchantMemberRole                             
+MerchantMemberDto                              "1" *-[#595959,plain]-> "status\n1" MerchantMemberStatus                           
+MerchantMemberNotFoundException                 -[#008200,dashed]-^  ResponseCodeError                              
+MerchantMemberRegistrationRequestDto           "1" *-[#595959,plain]-> "language\n1" Language                                       
+MerchantMemberRequestDto                       "1" *-[#595959,plain]-> "memberRoles\n*" MerchantMemberRole                             
+MerchantMemberRequestDto                       "1" *-[#595959,plain]-> "statuses\n*" MerchantMemberStatus                           
+MerchantMemberResponseDto                      "1" *-[#595959,plain]-> "memberRole\n1" MerchantMemberRole                             
+MerchantMemberResponseDto                      "1" *-[#595959,plain]-> "status\n1" MerchantMemberStatus                           
+MerchantMembersInvitationsDto                  "1" *-[#595959,plain]-> "status\n1" InvitationStatus                               
+MerchantMembersInvitationsDto                  "1" *-[#595959,plain]-> "role\n1" MerchantMemberRole                             
+MerchantMembersInvitationsRequestDto           "1" *-[#595959,plain]-> "role\n1" MerchantMemberRole                             
+MerchantNotFoundException                       -[#008200,dashed]-^  ResponseCodeError                              
+MerchantProfileDetailsDto                      "1" *-[#595959,plain]-> "address\n1" AddressDto                                     
+MerchantProfileDetailsDto                      "1" *-[#595959,plain]-> "memberInfo\n1" MerchantMemberResponseDto                      
+MerchantProfileDetailsDto                      "1" *-[#595959,plain]-> "status\n1" Status                                         
+MerchantProfileDetailsDto                      "1" *-[#595959,plain]-> "verificationStatus\n1" VerificationStatus                             
+MerchantRegistrationDto                        "1" *-[#595959,plain]-> "language\n1" Language                                       
+NoAccessException                               -[#008200,dashed]-^  ResponseCodeError                              
+NoAccessToActionException                       -[#008200,dashed]-^  ResponseCodeError                              
+NoOpHttpErrorHandler                            -[#008200,dashed]-^  HttpErrorHandler                               
+NotFilledProfileException                       -[#008200,dashed]-^  ResponseCodeError                              
+NotFoundExceptionMapper                         -[#008200,dashed]-^  ExceptionMapper                                
+NotificationClient                             "1" *-[#595959,plain]-> "internalRequestExecutor\n1" InternalRequestExecutor                        
+NotificationClient                             "1" *-[#595959,plain]-> "objectJsonMapper\n1" ObjectJsonMapper                               
+NotificationWithIdDto                          "1" *-[#595959,plain]-> "notificationStatus\n1" NotificationStatusDto                          
+NotificationWithoutIdDto                       "1" *-[#595959,plain]-> "notificationStatus\n1" NotificationStatusDto                          
+ObjectJsonMapperImpl                            -[#008200,dashed]-^  ObjectJsonMapper                               
+OperationsActivityAvailableKeysRequestDto      "1" *-[#595959,plain]-> "language\n1" Language                                       
+OperationsActivityAvailableKeysRequestDto      "1" *-[#595959,plain]-> "profileType\n1" ProfileType                                    
+OperationsActivityAvailableKeysRequestDto      "1" *-[#595959,plain]-> "screen\n1" Screen                                         
+OperationsActivityAvailableKeysResponseDto     "1" *-[#595959,plain]-> "key\n1" OperationsHistoryKey                           
+OperationsActivityAvailableKeysResponseDto     "1" *-[#595959,plain]-> "profileType\n1" ProfileType                                    
+OperationsActivityAvailableKeysResponseDto     "1" *-[#595959,plain]-> "screen\n1" Screen                                         
+OperationsChangeIndividualStatusRequestDto     "1" *-[#595959,plain]-> "status\n1" Status                                         
+OperationsChangeMembersDataRequestDto          "1" *-[#595959,plain]-> "role\n1" OperationsRole                                 
+OperationsGetIndividualsResponseDto            "1" *-[#595959,plain]-> "status\n1" Status                                         
+OperationsHistoryRequestDto                    "1" *-[#595959,plain]-> "key\n1" OperationsHistoryKey                           
+OperationsHistoryRequestDto                    "1" *-[#595959,plain]-> "profileType\n1" ProfileType                                    
+OperationsHistoryRequestDto                    "1" *-[#595959,plain]-> "screen\n1" Screen                                         
+OperationsHistoryResponseDto                   "1" *-[#595959,plain]-> "key\n1" OperationsHistoryKey                           
+OperationsHistoryResponseDto                   "1" *-[#595959,plain]-> "reason\n1" Reason                                         
+OperationsHistoryResponseDto                   "1" *-[#595959,plain]-> "screen\n1" Screen                                         
+OperationsMemberRegistrationRequestDto         "1" *-[#595959,plain]-> "language\n1" Language                                       
+OperationsMemberRegistrationResponseDto        "1" *-[#595959,plain]-> "language\n1" Language                                       
+OperationsMemberRegistrationResponseDto        "1" *-[#595959,plain]-> "role\n1" OperationsRole                                 
+OperationsMemberRegistrationResponseDto        "1" *-[#595959,plain]-> "status\n1" Status                                         
+OperationsMembersDto                           "1" *-[#595959,plain]-> "role\n1" OperationsRole                                 
+OperationsMembersDto                           "1" *-[#595959,plain]-> "status\n1" Status                                         
+OperationsMembersInvitationsDto                "1" *-[#595959,plain]-> "status\n1" InvitationStatus                               
+OperationsMembersInvitationsDto                "1" *-[#595959,plain]-> "role\n1" OperationsRole                                 
+OperationsMembersInvitationsInfoRequestDto     "1" *-[#595959,plain]-> "role\n1" OperationsRole                                 
+OperationsMembersInvitationsInfoResponseDto    "1" *-[#595959,plain]-> "role\n1" OperationsRole                                 
+OperationsMembersInvitationsRequestDto         "1" *-[#595959,plain]-> "role\n1" OperationsRole                                 
+OtpCheckException                               -[#008200,dashed]-^  ResponseCodeError                              
+OtpCheckRequestDto                             "1" *-[#595959,plain]-> "destinationDto\n1" OtpDestinationDto                              
+OtpDestinationDto                              "1" *-[#595959,plain]-> "otpType\n1" OtpType                                        
+OtpSendRequestDto                              "1" *-[#595959,plain]-> "destination\n1" OtpDestinationDto                              
+OtpSendRequestDto                              "1" *-[#595959,plain]-> "otpDetails\n1" OtpDetailsRequestDto                           
+OtpSendResponseDto                             "1" *-[#595959,plain]-> "otpDestinationDto\n1" OtpDestinationDto                              
+OtpSendResponseDto                             "1" *-[#595959,plain]-> "otpDetails\n1" OtpDetailsRequestDto                           
+PGPEncryptionService                            -[#008200,dashed]-^  EncryptionService                              
+PGPEncryptionService                           "1" *-[#595959,plain]-> "pgpKeyProperty\n1" PGPKeyProperty                                 
+PageableDto                                    "1" *-[#595959,plain]-> "data\n*" Config                                         
+ParamNotFountException                          -[#008200,dashed]-^  ResponseCodeError                              
+ParametersHttpExchangeConfiguration            "1" *-[#595959,plain]-> "errorResponseMapper\n1" FourArgumentsMapFunction                       
+ParametersHttpExchangeConfiguration            "1" *-[#595959,plain]-> "httpErrorHandler\n1" HttpErrorHandler                               
+ParametersHttpExchangeConfiguration             -[#008200,dashed]-^  HttpExchangeConfiguration                      
+ParametersHttpExchangeConfiguration            "1" *-[#595959,plain]-> "requestBodyReplacer\n1" SensitiveInformationReplacer                   
+ParametersHttpExchangeConfiguration            "1" *-[#595959,plain]-> "okResponseValidator\n1" TripleMapFunction                              
+PersonClient                                   "1" *-[#595959,plain]-> "internalRequestExecutor\n1" InternalRequestExecutor                        
+PersonClient                                   "1" *-[#595959,plain]-> "objectJsonMapper\n1" ObjectJsonMapper                               
+PhoneDigitsCheckException                       -[#008200,dashed]-^  ResponseCodeError                              
+ProfileDto                                     "1" *-[#595959,plain]-> "address\n1" AddressDto                                     
+ProfileDto                                     "1" *-[#595959,plain]-> "language\n1" Language                                       
+ProfileDto                                     "1" *-[#595959,plain]-> "profileType\n1" ProfileType                                    
+ProfileDto                                     "1" *-[#595959,plain]-> "status\n1" Status                                         
+ProfileHistoryDto                              "1" *-[#595959,plain]-> "changedByProfileType\n1" ProfileChangeMaker                             
+ProfileHistoryDto                              "1" *-[#595959,plain]-> "profileType\n1" ProfileType                                    
+ProfileHistoryDto                              "1" *-[#595959,plain]-> "reason\n1" Reason                                         
+ProfileHistoryFilterDto                        "1" *-[#595959,plain]-> "profileType\n1" ProfileType                                    
+ProfileIndividualDto                           "1" *-[#595959,plain]-> "address\n1" AddressDto                                     
+ProfileIndividualDto                           "1" *-[#595959,plain]-> "gender\n1" GenderType                                     
+ProfileRequiredFieldsDto                       "1" *-[#595959,plain]-> "dataType\n1" RequiredFieldDataType                          
+ProfileRequiredFieldsDto                       "1" *-[#595959,plain]-> "validationType\n1" RequiredFieldValidationType                    
+ProfileStatusInfoDto                           "1" *-[#595959,plain]-> "profileType\n1" ProfileType                                    
+ProfileStatusInfoDto                           "1" *-[#595959,plain]-> "status\n1" Status                                         
+RSAEncryptionService                            -[#008200,dashed]-^  EncryptionService                              
+ReCaptchaException                              -[#008200,dashed]-^  ResponseCodeError                              
+RecipientNotActiveException                     -[#008200,dashed]-^  ResponseCodeError                              
+RegistrationNumberException                     -[#008200,dashed]-^  ResponseCodeError                              
+RequiredFieldMissingException                   -[#008200,dashed]-^  ResponseCodeError                              
+ResponseCode                                    -[#008200,dashed]-^  ResponseCodeError                              
+ResponseCodeException                          "1" *-[#595959,plain]-> "errorInfo\n1" ErrorInfoDto                                   
+ResponseCodeException                          "1" *-[#595959,plain]-> "responseCodeError\n1" ResponseCodeError                              
+ResponseCodeExceptionMapper                     -[#008200,dashed]-^  ExceptionMapper                                
+RetryableHttpRequestExecutor                    -[#000082,plain]-^  HttpRequestExecutorImpl                        
+SameStatusException                             -[#008200,dashed]-^  ResponseCodeError                              
+SenderNotActiveException                        -[#008200,dashed]-^  ResponseCodeError                              
+ServiceExceptionMapper                          -[#008200,dashed]-^  ExceptionMapper                                
+SigningEncryptionService                        -[#008200,plain]-^  EncryptionService                              
+SigverifyBodyReplacer                           -[#008200,dashed]-^  TextMatcherReplacer                            
+SocialNetworkLoginException                     -[#008200,dashed]-^  ResponseCodeError                              
+SumsubException                                 -[#008200,dashed]-^  ResponseCodeError                              
+SumsubRequestExecutor                           -[#000082,plain]-^  HttpRequestExecutorImpl                        
+SystemException                                "1" *-[#595959,plain]-> "errorInfo\n1" ErrorInfoDto                                   
+SystemExceptionMapper                           -[#008200,dashed]-^  ExceptionMapper                                
+TerminalInfo                                   "1" *-[#595959,plain]-> "terminalType\n1" TerminalType                                   
+TerminalTypeRequiredResponseCodeError           -[#008200,dashed]-^  ResponseCodeError                              
+TestOTPGenerator                                -[#008200,dashed]-^  OTPGenerator                                   
+TooManyLoginsException                          -[#008200,dashed]-^  ResponseCodeError                              
+TopUpPaymentRequestDto                          -[#000082,plain]-^  AbstractPaymentRequestDto                      
+TopUpPaymentResponseDto                         -[#000082,plain]-^  AbstractPaymentResponseDto                     
+TransferPaymentRequestDto                       -[#000082,plain]-^  AbstractPaymentRequestDto                      
+UserAlreadyExistException                       -[#008200,dashed]-^  ResponseCodeError                              
+UserBlockedException                            -[#008200,dashed]-^  ResponseCodeError                              
+UserDto                                        "1" *-[#595959,plain]-> "language\n1" Language                                       
+UserDto                                        "1" *-[#595959,plain]-> "profileType\n1" ProfileType                                    
+UserEntityNotFoundException                     -[#008200,dashed]-^  ResponseCodeError                              
+UserNotVerifiedException                        -[#008200,dashed]-^  ResponseCodeError                              
+UserPhoneAlreadyExistException                  -[#008200,dashed]-^  ResponseCodeError                              
+UserProfileFilterAlreadyExistsException         -[#008200,dashed]-^  ResponseCodeError                              
+VerifyChangeDto                                "1" *-[#595959,plain]-> "otpType\n1" OtpType                                        
+VerifyProfileResponseDto                       "1" *-[#595959,plain]-> "status\n1" TokenStatus                                    
+VersionedArgonHash                              -[#000082,plain]-^  VersionedHashFunction                          
+VersionedHashFunction                           -[#008200,dashed]-^  HashFunction                                   
+WalletClient                                   "1" *-[#595959,plain]-> "internalRequestExecutor\n1" InternalRequestExecutor                        
+WalletClient                                   "1" *-[#595959,plain]-> "objectJsonMapper\n1" ObjectJsonMapper                               
+WalletClientConfig                              -[#595959,dashed]->  WalletClient                                   : "«create»"
+WalletResponseDto                              "1" *-[#595959,plain]-> "status\n1" WalletStatus                                   
+WalletResponseDto                              "1" *-[#595959,plain]-> "walletType\n1" WalletTypeResponseDto                          
+WalletTypeResponseDto                          "1" *-[#595959,plain]-> "status\n1" WalletTypeStatus                               
+WebExchangeBindExceptionMapper                  -[#008200,dashed]-^  ExceptionMapper                                
+WithdrawalPaymentRequestDto                     -[#000082,plain]-^  AbstractPaymentRequestDto                      
+WithdrawalPaymentResponseDto                    -[#000082,plain]-^  AbstractPaymentResponseDto                     
+WrongMerchantException                          -[#008200,dashed]-^  ResponseCodeError                              
+WrongProfileTypeException                       -[#008200,dashed]-^  ResponseCodeError                              
+@enduml

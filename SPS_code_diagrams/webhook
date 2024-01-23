@@ -1,0 +1,138 @@
+@startuml
+
+!theme plain
+top to bottom direction
+skinparam linetype ortho
+
+class ErrorContextConfig {
+  + ErrorContextConfig(): 
+  ~ errorAttributes(List<ExceptionMapper>): ErrorInfoErrorAttributes
+}
+class ErrorHandlerConfig {
+  + ErrorHandlerConfig(): 
+  + equals(Object): boolean
+  # canEqual(Object): boolean
+  + hashCode(): int
+  + toString(): String
+  + errorHandler(): ExchangeFilterFunction
+}
+interface PaymentMapper << interface >> {
+  + map(PaymentProviderCallback): PaymentResponseDto
+  + map(WebhookPayoutDtoRequest, String, TransactionEnumMapper): PaymentProviderCallback
+  + mapToKafkaRequestDto(PaymentProviderCallback, TransactionStatus): ConfirmTransactionRequestDto
+  + map(WebhookTopUpDtoRequest, String, TransactionEnumMapper): PaymentProviderCallback
+}
+class PaymentProducer {
+  + PaymentProducer(KafkaTemplate<String, ConfirmTransactionRequestDto>): 
+  + confirmTransaction(ConfirmTransactionRequestDto): void
+}
+class PaymentProviderCallback {
+  + PaymentProviderCallback(): 
+  + PaymentProviderCallback(UUID, LocalDateTime, LocalDateTime, String, UUID, TransactionType, String): 
+  - createdAt: LocalDateTime
+  - body: String
+  - uid: UUID
+  - updatedAt: LocalDateTime
+  - providerTransactionUid: UUID
+  - type: TransactionType
+  - provider: String
+  + equals(Object): boolean
+  + toString(): String
+  # canEqual(Object): boolean
+  + hashCode(): int
+   updatedAt: LocalDateTime
+   createdAt: LocalDateTime
+   uid: UUID
+   new: boolean
+   provider: String
+   type: TransactionType
+   id: UUID?
+   body: String
+   providerTransactionUid: UUID
+}
+interface PaymentProviderCallbackRepository << interface >>
+class PaymentRestControllerV1 {
+  + PaymentRestControllerV1(TopUpService, WithdrawalService, PaymentMapper): 
+  + topUpCallback(WebhookTopUpDtoRequest, String): Mono<PaymentResponseDto>
+  + withdrawalCallback(WebhookPayoutDtoRequest, String): Mono<PaymentResponseDto>
+}
+interface TopUpService << interface >> {
+  + confirmTopUpTransaction(String, WebhookTopUpDtoRequest): Mono<PaymentProviderCallback>
+}
+class TopUpServiceImpl {
+  + TopUpServiceImpl(PaymentProviderCallbackRepository, TransactionEnumMapper, PaymentMapper, PaymentProducer): 
+  + confirmTopUpTransaction(String, WebhookTopUpDtoRequest): Mono<PaymentProviderCallback>
+}
+class TransactionEnumMapper {
+  + TransactionEnumMapper(): 
+  + mapToTransactionStatus(StatusTransactionPayout): TransactionStatus
+  + mapTypeFakeProviderToTransactionType(String): TransactionType
+  + mapToTransactionStatus(StatusTransactionTopUp): TransactionStatus
+}
+class UnknownCallback {
+  + UnknownCallback(UUID, LocalDateTime, LocalDateTime, String): 
+  + UnknownCallback(): 
+  - createdAt: LocalDateTime
+  - body: String
+  - uid: UUID
+  - updatedAt: LocalDateTime
+  # canEqual(Object): boolean
+  + hashCode(): int
+  + equals(Object): boolean
+  + toString(): String
+   id: UUID?
+   updatedAt: LocalDateTime
+   createdAt: LocalDateTime
+   body: String
+   uid: UUID
+   new: boolean
+}
+interface UnknownCallbackRepository << interface >>
+class WebhookApplication {
+  + WebhookApplication(): 
+  + main(String[]): void
+}
+interface WebhookMapper << interface >> {
+  + map(UnknownCallback): UnknownCallbackResponseDto
+  + map(UnknownCallbackRequestDto): UnknownCallback
+}
+class WebhookRestControllerV1 {
+  + WebhookRestControllerV1(WebhookMapper, WebhookServiceImpl): 
+  + saveWebhook(UnknownCallbackRequestDto): Mono<UnknownCallbackResponseDto>
+   allWebhooks: Flux<UnknownCallbackResponseDto>
+}
+interface WebhookService << interface >> {
+  + saveWebhook(UnknownCallback): Mono<UnknownCallback>
+   allWebhooks: Flux<UnknownCallback>
+}
+class WebhookServiceImpl {
+  + WebhookServiceImpl(UnknownCallbackRepository): 
+  + saveWebhook(UnknownCallback): Mono<UnknownCallback>
+   allWebhooks: Flux<UnknownCallback>
+}
+interface WithdrawalService << interface >> {
+  + confirmWithdrawalTransaction(String, WebhookPayoutDtoRequest): Mono<PaymentProviderCallback>
+}
+class WithdrawalServiceImpl {
+  + WithdrawalServiceImpl(PaymentProviderCallbackRepository, TransactionEnumMapper, PaymentMapper, PaymentProducer): 
+  + confirmWithdrawalTransaction(String, WebhookPayoutDtoRequest): Mono<PaymentProviderCallback>
+}
+
+PaymentRestControllerV1           "1" *-[#595959,plain]-> "mapper\n1" PaymentMapper                     
+PaymentRestControllerV1           "1" *-[#595959,plain]-> "topUpService\n1" TopUpService                      
+PaymentRestControllerV1           "1" *-[#595959,plain]-> "withdrawalService\n1" WithdrawalService                 
+TopUpServiceImpl                  "1" *-[#595959,plain]-> "mapper\n1" PaymentMapper                     
+TopUpServiceImpl                  "1" *-[#595959,plain]-> "kafkaProducer\n1" PaymentProducer                   
+TopUpServiceImpl                  "1" *-[#595959,plain]-> "paymentProviderCallbackRepository\n1" PaymentProviderCallbackRepository 
+TopUpServiceImpl                   -[#008200,dashed]-^  TopUpService                      
+TopUpServiceImpl                  "1" *-[#595959,plain]-> "transactionEnumMapper\n1" TransactionEnumMapper             
+WebhookRestControllerV1           "1" *-[#595959,plain]-> "webhookMapper\n1" WebhookMapper                     
+WebhookRestControllerV1           "1" *-[#595959,plain]-> "webhookService\n1" WebhookServiceImpl                
+WebhookServiceImpl                "1" *-[#595959,plain]-> "unknownCallbackRepository\n1" UnknownCallbackRepository         
+WebhookServiceImpl                 -[#008200,dashed]-^  WebhookService                    
+WithdrawalServiceImpl             "1" *-[#595959,plain]-> "mapper\n1" PaymentMapper                     
+WithdrawalServiceImpl             "1" *-[#595959,plain]-> "kafkaProducer\n1" PaymentProducer                   
+WithdrawalServiceImpl             "1" *-[#595959,plain]-> "paymentProviderCallbackRepository\n1" PaymentProviderCallbackRepository 
+WithdrawalServiceImpl             "1" *-[#595959,plain]-> "transactionEnumMapper\n1" TransactionEnumMapper             
+WithdrawalServiceImpl              -[#008200,dashed]-^  WithdrawalService                 
+@enduml

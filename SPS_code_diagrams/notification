@@ -1,0 +1,499 @@
+@startuml
+
+!theme plain
+top to bottom direction
+skinparam linetype ortho
+
+class EmailDataDto {
+  + EmailDataDto(): 
+  - verificationLink: String
+  - emailTo: String
+  + equals(Object): boolean
+  # canEqual(Object): boolean
+  + hashCode(): int
+  + toString(): String
+   verificationLink: String
+   emailTo: String
+}
+class EmailOtpSender {
+  + EmailOtpSender(JavaMailSender): 
+  + sendOtp(OtpDataToSendDto): void
+}
+class EmailVerificationController {
+  + EmailVerificationController(RabbitMQEmailProducer): 
+  + sendEmailVerificationMessage(EmailDataDto): Mono<RabbitMessageResponseDto>
+}
+class ExportTransactionsController {
+  + ExportTransactionsController(ExportTransactionsService): 
+  + exportTransactionsToCsvUrl(TransactionHistoryDtoRequest): Mono<TransactionDownloadUrlDtoResponse>
+  + exportTransactionsToCsvEmail(TransactionHistoryEmailDtoRequest): Mono<Void>
+  + exportTransactionsToExcelEmail(TransactionHistoryEmailDtoRequest): Mono<Void>
+  + exportTransactionsToExcelUrl(TransactionHistoryDtoRequest): Mono<TransactionDownloadUrlDtoResponse>
+}
+class ExportTransactionsService {
+  + ExportTransactionsService(WalletClient, AmazonS3, TransactionsHistoryEmailSender): 
+  - findAllTransactionsByParam(TransactionHistoryDtoRequest): Flux<TransactionEntityDto>
+  + saveCsvFileToS3(TransactionHistoryDtoRequest): Mono<TransactionDownloadUrlDtoResponse>
+  + sendCsvFileToEmail(TransactionHistoryEmailDtoRequest): Mono<Void>
+  + sendExcelFileToEmail(TransactionHistoryEmailDtoRequest): Mono<Void>
+  - saveFileToS3(InputStream, String, String): void
+  - exportTransactionsToExcel(Flux<TransactionEntityDto>): Mono<InputStream>
+  + saveExcelFileToS3(TransactionHistoryDtoRequest): Mono<TransactionDownloadUrlDtoResponse>
+  - exportTransactionsToCsv(Flux<TransactionEntityDto>): Mono<InputStream>
+}
+class FilenamesGenerator {
+  + FilenamesGenerator(): 
+  + generateUniqueCsvFilename(UUID): String
+  + generateUniqueExcelFilename(UUID): String
+}
+class GsonFactory {
+  + GsonFactory(): 
+  + generateGson(): Gson
+}
+class LocalDateTimeAdapter {
+  + LocalDateTimeAdapter(): 
+  + serialize(LocalDateTime, Type, JsonSerializationContext): JsonElement
+  + deserialize(JsonElement, Type, JsonDeserializationContext): LocalDateTime
+}
+class NotificationController {
+  + NotificationController(NotificationService, RabbitMQNotificationProducer): 
+  + getAllNotificationsByUid(String, Integer, Integer): Mono<Page<NotificationWithIdDto>>
+  + getAllNotifications(Integer, Integer): Mono<Page<NotificationWithIdDto>>
+  + sendNotification(NotificationWithoutIdDto): Mono<RabbitMessageResponseDto>
+  + updateStatus(String, Integer): Mono<RabbitMessageResponseDto>
+}
+class NotificationEntity {
+  + NotificationEntity(): 
+  + NotificationEntity(Integer, LocalDateTime, LocalDateTime, LocalDateTime, String, String, String, NotificationStatus, String, String, String, String, String, String, boolean, boolean): 
+  + NotificationEntity(LocalDateTime, LocalDateTime, LocalDateTime, String, String, String, NotificationStatus, String, String, String, String, String, String, boolean, boolean): 
+  - modifiedAt: LocalDateTime
+  - objectId: String
+  - suggestToAddToTrusted: boolean
+  - hasConfirmOtp: boolean
+  - userUid: String
+  - notificationStatus: NotificationStatus
+  - createdBy: String
+  - expirationDate: LocalDateTime
+  - message: String
+  - messageType: String
+  - id: Integer
+  - subject: String
+  - triggerCode: String
+  - createdAt: LocalDateTime
+  - objectType: String
+  - error: String
+  # canEqual(Object): boolean
+  + equals(Object): boolean
+  + builder(): NotificationEntityBuilder
+  + hashCode(): int
+  + toString(): String
+  + toBuilder(): NotificationEntityBuilder
+   createdAt: LocalDateTime
+   message: String
+   error: String
+   objectId: String
+   suggestToAddToTrusted: boolean
+   messageType: String
+   id: Integer
+   createdBy: String
+   modifiedAt: LocalDateTime
+   expirationDate: LocalDateTime
+   userUid: String
+   notificationStatus: NotificationStatus
+   objectType: String
+   hasConfirmOtp: boolean
+   triggerCode: String
+   subject: String
+}
+interface NotificationMapper << interface >> {
+  + map(NotificationEntity): NotificationWithIdDto
+  + map(NotificationWithIdDto): NotificationEntity
+}
+interface NotificationRepository << interface >> {
+  + findBy(Pageable): Flux<NotificationEntity>
+  + findByUserUid(String, Pageable): Flux<NotificationEntity>
+  + findByIdAndUserUid(Integer, String): Mono<NotificationEntity>
+}
+class NotificationService {
+  + NotificationService(NotificationRepository, NotificationMapper): 
+  + findAllNotifications(PageRequest): Mono<Page<NotificationWithIdDto>>
+  + findAllNotificationsByUid(String, PageRequest): Mono<Page<NotificationWithIdDto>>
+}
+class NotificationServiceApplication {
+  + NotificationServiceApplication(): 
+  + main(String[]): void
+}
+enum NotificationStatus << enumeration >> {
+  + NotificationStatus(): 
+  + values(): NotificationStatus[]
+  + valueOf(String): NotificationStatus
+}
+enum NotificationStatusDto << enumeration >> {
+  + NotificationStatusDto(): 
+  + values(): NotificationStatusDto[]
+  + valueOf(String): NotificationStatusDto
+}
+class NotificationWithIdDto {
+  + NotificationWithIdDto(): 
+  + NotificationWithIdDto(Integer, LocalDateTime, LocalDateTime, LocalDateTime, String, String, String, NotificationStatusDto, String, String, String, String, String, String, Boolean, Boolean): 
+  - createdAt: LocalDateTime
+  - modifiedAt: LocalDateTime
+  - id: Integer
+  - hasConfirmOtp: Boolean
+  - expirationDate: LocalDateTime
+  - error: String
+  - objectId: String
+  - userUid: String
+  - suggestToAddToTrusted: Boolean
+  - subject: String
+  - createdBy: String
+  - notificationStatus: NotificationStatusDto
+  - message: String
+  - messageType: String
+  - objectType: String
+  - triggerCode: String
+  + toString(): String
+  # canEqual(Object): boolean
+  + equals(Object): boolean
+  + hashCode(): int
+   createdAt: LocalDateTime
+   message: String
+   error: String
+   objectId: String
+   notificationStatus: NotificationStatusDto
+   messageType: String
+   hasConfirmOtp: Boolean
+   id: Integer
+   createdBy: String
+   modifiedAt: LocalDateTime
+   expirationDate: LocalDateTime
+   userUid: String
+   objectType: String
+   suggestToAddToTrusted: Boolean
+   triggerCode: String
+   subject: String
+}
+class NotificationWithoutIdDto {
+  + NotificationWithoutIdDto(): 
+  - messageType: String
+  - objectType: String
+  - objectId: String
+  - expirationDate: LocalDateTime
+  - userUid: String
+  - notificationStatus: NotificationStatusDto
+  - message: String
+  - createdAt: LocalDateTime
+  - createdBy: String
+  - modifiedAt: LocalDateTime
+  - hasConfirmOtp: Boolean
+  - suggestToAddToTrusted: Boolean
+  - subject: String
+  - triggerCode: String
+  - error: String
+  + toString(): String
+  + equals(Object): boolean
+  + hashCode(): int
+  # canEqual(Object): boolean
+   createdAt: LocalDateTime
+   message: String
+   error: String
+   objectId: String
+   notificationStatus: NotificationStatusDto
+   messageType: String
+   hasConfirmOtp: Boolean
+   createdBy: String
+   modifiedAt: LocalDateTime
+   expirationDate: LocalDateTime
+   userUid: String
+   objectType: String
+   suggestToAddToTrusted: Boolean
+   triggerCode: String
+   subject: String
+}
+class OtpCheckRequestDto {
+  + OtpCheckRequestDto(String, String, OtpDestinationDto): 
+  + OtpCheckRequestDto(): 
+  - otpCode: String
+  - destinationDto: OtpDestinationDto
+  - otpUid: String
+  + builder(): OtpCheckRequestDtoBuilder
+  + toString(): String
+  + equals(Object): boolean
+  # canEqual(Object): boolean
+  + hashCode(): int
+   destinationDto: OtpDestinationDto
+   otpUid: String
+   otpCode: String
+}
+class OtpCheckResponseDto {
+  + OtpCheckResponseDto(): 
+  + OtpCheckResponseDto(Long, boolean): 
+  - attempts: Long
+  - valid: boolean
+  + equals(Object): boolean
+  # canEqual(Object): boolean
+  + hashCode(): int
+  + toString(): String
+  + builder(): OtpCheckResponseDtoBuilder
+   valid: boolean
+   attempts: Long
+}
+class OtpController {
+  + OtpController(OtpService): 
+  + sendOtpMessage(OtpSendRequestDto): Mono<OtpSendResponseDto>
+  + checkOtpMessage(OtpCheckRequestDto): Mono<OtpCheckResponseDto>
+}
+class OtpData {
+  + OtpData(String, String, String, OtpType, String, Integer, Integer, Long, Integer, Integer, Boolean, Long): 
+  + OtpData(): 
+  - destination: String
+  - currentDateInSeconds: Long
+  - attempts: Integer
+  - length: Integer
+  - force: Boolean
+  - userUid: String
+  - otpCode: String
+  - otpType: OtpType
+  - uuid: String
+  - attemptsUsed: Long
+  - ttl: Integer
+  - delay: Integer
+  + toString(): String
+  + equals(Object): boolean
+  # canEqual(Object): boolean
+  + hashCode(): int
+   attemptsUsed: Long
+   userUid: String
+   ttl: Integer
+   currentDateInSeconds: Long
+   uuid: String
+   otpCode: String
+   otpType: OtpType
+   attempts: Integer
+   force: Boolean
+   delay: Integer
+   destination: String
+   length: Integer
+}
+class OtpDataToSendDto {
+  + OtpDataToSendDto(): 
+  + OtpDataToSendDto(String, String, String, String): 
+  - emailFrom: String
+  - subject: String
+  - text: String
+  - destination: String
+  + toString(): String
+  # canEqual(Object): boolean
+  + hashCode(): int
+  + equals(Object): boolean
+   text: String
+   emailFrom: String
+   subject: String
+   destination: String
+}
+class OtpDestinationDto {
+  + OtpDestinationDto(String, OtpType): 
+  + OtpDestinationDto(): 
+  - destination: String
+  - otpType: OtpType
+  + toString(): String
+  + equals(Object): boolean
+  + hashCode(): int
+  + builder(): OtpDestinationDtoBuilder
+   otpType: OtpType
+   destination: String
+}
+class OtpDetailsRequestDto {
+  + OtpDetailsRequestDto(Integer, Integer, Integer, Integer, Boolean): 
+  + OtpDetailsRequestDto(): 
+  - ttl: Integer
+  - force: Boolean
+  - delay: Integer
+  - length: Integer
+  - attempts: Integer
+  + hashCode(): int
+  + builder(): OtpDetailsRequestDtoBuilder
+  + toString(): String
+  # canEqual(Object): boolean
+  + equals(Object): boolean
+   attempts: Integer
+   force: Boolean
+   ttl: Integer
+   delay: Integer
+   length: Integer
+}
+enum OtpErrorType << enumeration >> {
+  - OtpErrorType(String): 
+  - errorString: String
+  + values(): OtpErrorType[]
+  + valueOf(String): OtpErrorType
+   errorString: String
+}
+class OtpException {
+  + OtpException(OtpErrorType): 
+  + OtpException(OtpErrorType, HttpStatus): 
+  - otpErrorCode: OtpErrorType
+  - httpStatus: HttpStatus
+   httpStatus: HttpStatus
+   otpErrorCode: OtpErrorType
+}
+class OtpSendRequestDto {
+  + OtpSendRequestDto(String, String, String, String, String, OtpDestinationDto, OtpDetailsRequestDto, String): 
+  + OtpSendRequestDto(): 
+  - subject: String
+  - destination: OtpDestinationDto
+  - messageTemplate: String
+  - userUid: String
+  - uuid: String
+  - email: String
+  - language: String
+  - otpDetails: OtpDetailsRequestDto
+  + builder(): OtpSendRequestDtoBuilder
+  # canEqual(Object): boolean
+  + toString(): String
+  + hashCode(): int
+  + equals(Object): boolean
+   messageTemplate: String
+   language: String
+   email: String
+   userUid: String
+   uuid: String
+   destination: OtpDestinationDto
+   otpDetails: OtpDetailsRequestDto
+   subject: String
+}
+class OtpSendResponseDto {
+  + OtpSendResponseDto(String, String, String, OtpDetailsRequestDto, OtpDestinationDto): 
+  + OtpSendResponseDto(): 
+  - email: String
+  - uuid: String
+  - otpCode: String
+  - otpDestinationDto: OtpDestinationDto
+  - otpDetails: OtpDetailsRequestDto
+  + hashCode(): int
+  + toString(): String
+  + builder(): OtpSendResponseDtoBuilder
+  # canEqual(Object): boolean
+  + equals(Object): boolean
+   otpDestinationDto: OtpDestinationDto
+   otpCode: String
+   email: String
+   otpDetails: OtpDetailsRequestDto
+   uuid: String
+}
+interface OtpSender << interface >> {
+  + sendOtp(OtpDataToSendDto): void
+}
+class OtpService {
+  + OtpService(EmailOtpSender, ReactiveRedisOperations<String, OtpData>): 
+  - checkDelayTime(String): Mono<Void>
+  - validateOtpType(OtpType): void
+  - validateOtpCheck(OtpCheckRequestDto, OtpData): void
+  - checkOtpExists(String): Mono<Void>
+  - validateOtpRequest(OtpSendRequestDto): void
+  + verifyOtp(OtpCheckRequestDto): Mono<OtpCheckResponseDto>
+  + sendOtp(OtpSendRequestDto): Mono<OtpSendResponseDto>
+}
+class RabbitConfig {
+  + RabbitConfig(): 
+  + updateBinding(): Binding
+  + createQueue(): Queue
+  + emailBinding(): Binding
+  + emailQueue(): Queue
+  + createBinding(): Binding
+  + topicExchange(): TopicExchange
+  + updateQueue(): Queue
+}
+class RabbitMQEmailConsumer {
+  + RabbitMQEmailConsumer(JavaMailSender): 
+  + consumeEmail(String): void
+  - generateContent(String): String
+}
+class RabbitMQEmailProducer {
+  + RabbitMQEmailProducer(RabbitTemplate): 
+  + sendEmailVerification(EmailDataDto): Mono<RabbitMessageResponseDto>
+}
+class RabbitMQNotificationConsumer {
+  + RabbitMQNotificationConsumer(NotificationRepository, NotificationMapper): 
+  + consumeCreate(String): void
+  + consumeUpdate(String): void
+}
+class RabbitMQNotificationProducer {
+  + RabbitMQNotificationProducer(RabbitTemplate): 
+  - validateNotificationDto(NotificationWithoutIdDto): void
+  + updateNotification(UpdateNotificationStatusDto): Mono<RabbitMessageResponseDto>
+  + sendNotification(NotificationWithoutIdDto): Mono<RabbitMessageResponseDto>
+}
+class RabbitMessageResponseDto {
+  + RabbitMessageResponseDto(int, String): 
+  + RabbitMessageResponseDto(): 
+  - code: int
+  - message: String
+  + equals(Object): boolean
+  # canEqual(Object): boolean
+  + hashCode(): int
+  + toString(): String
+   code: int
+   message: String
+}
+class RedisConfiguration {
+  + RedisConfiguration(): 
+  + reactiveRedisConnectionFactory(): ReactiveRedisConnectionFactory
+  + redisValueOperations(): ReactiveValueOperations<String, OtpData>
+  + redisOperations(ReactiveRedisConnectionFactory): ReactiveRedisOperations<String, OtpData>
+}
+class S3Config {
+  + S3Config(): 
+  + amazonS3(): AmazonS3
+}
+class SmsOtpSender {
+  + SmsOtpSender(): 
+  - generateUrl(String, String): String
+  + sendOtp(OtpDataToSendDto): void
+}
+class SpringdocConfig {
+  + SpringdocConfig(): 
+  + openAPI(): OpenAPI
+}
+class TransactionsHistoryEmailSender {
+  + TransactionsHistoryEmailSender(JavaMailSender): 
+  + sendTransactionsFileToEmail(String, String, InputStream): void
+}
+class UpdateNotificationStatusDto {
+  + UpdateNotificationStatusDto(Integer, String): 
+  ~ notificationId: Integer
+  ~ userUid: String
+  + equals(Object): boolean
+  # canEqual(Object): boolean
+  + hashCode(): int
+  + toString(): String
+   userUid: String
+   notificationId: Integer
+}
+
+EmailOtpSender                  -[#008200,dashed]-^  OtpSender                      
+EmailVerificationController    "1" *-[#595959,plain]-> "producer\n1" RabbitMQEmailProducer          
+ExportTransactionsController   "1" *-[#595959,plain]-> "transactionsService\n1" ExportTransactionsService      
+ExportTransactionsService      "1" *-[#595959,plain]-> "emailSender\n1" TransactionsHistoryEmailSender 
+GsonFactory                     -[#595959,dashed]->  LocalDateTimeAdapter           : "«create»"
+NotificationController         "1" *-[#595959,plain]-> "notificationService\n1" NotificationService            
+NotificationController         "1" *-[#595959,plain]-> "producer\n1" RabbitMQNotificationProducer   
+NotificationEntity             "1" *-[#595959,plain]-> "notificationStatus\n1" NotificationStatus             
+NotificationService            "1" *-[#595959,plain]-> "notificationMapper\n1" NotificationMapper             
+NotificationService            "1" *-[#595959,plain]-> "notificationRepository\n1" NotificationRepository         
+NotificationWithIdDto          "1" *-[#595959,plain]-> "notificationStatus\n1" NotificationStatusDto          
+NotificationWithoutIdDto       "1" *-[#595959,plain]-> "notificationStatus\n1" NotificationStatusDto          
+OtpCheckRequestDto             "1" *-[#595959,plain]-> "destinationDto\n1" OtpDestinationDto              
+OtpController                  "1" *-[#595959,plain]-> "otpService\n1" OtpService                     
+OtpException                   "1" *-[#595959,plain]-> "otpErrorCode\n1" OtpErrorType                   
+OtpSendRequestDto              "1" *-[#595959,plain]-> "destination\n1" OtpDestinationDto              
+OtpSendRequestDto              "1" *-[#595959,plain]-> "otpDetails\n1" OtpDetailsRequestDto           
+OtpSendResponseDto             "1" *-[#595959,plain]-> "otpDestinationDto\n1" OtpDestinationDto              
+OtpSendResponseDto             "1" *-[#595959,plain]-> "otpDetails\n1" OtpDetailsRequestDto           
+OtpService                     "1" *-[#595959,plain]-> "emailOtpSender\n1" EmailOtpSender                 
+OtpService                      -[#595959,dashed]->  OtpData                        : "«create»"
+OtpService                      -[#595959,dashed]->  OtpException                   : "«create»"
+RabbitMQNotificationConsumer   "1" *-[#595959,plain]-> "notificationMapper\n1" NotificationMapper             
+RabbitMQNotificationConsumer   "1" *-[#595959,plain]-> "notificationRepository\n1" NotificationRepository         
+SmsOtpSender                    -[#008200,dashed]-^  OtpSender                      
+@enduml

@@ -1,0 +1,1638 @@
+@startuml
+
+!theme plain
+top to bottom direction
+skinparam linetype ortho
+
+class AbstractEntity {
+  + AbstractEntity(): 
+  # AbstractEntity(AbstractEntityBuilder<?, ?>): 
+  - modifiedAt: LocalDateTime
+  - createdAt: LocalDateTime
+  + equals(Object): boolean
+  # canEqual(Object): boolean
+  + hashCode(): int
+  + toString(): String
+   modifiedAt: LocalDateTime
+   createdAt: LocalDateTime
+}
+class AddressEntity {
+  + AddressEntity(): 
+  # AddressEntity(AddressEntityBuilder<?, ?>): 
+  - city: String
+  - country: CountryEntity
+  - id: Long
+  - state: String
+  - countryId: Integer
+  - address: String
+  - archivedAt: LocalDateTime
+  - zipCode: String
+  # canEqual(Object): boolean
+  + toString(): String
+  + hashCode(): int
+  + toBuilder(): AddressEntityBuilder<?, ?>
+  + equals(Object): boolean
+  + builder(): AddressEntityBuilder<?, ?>
+   id: Long
+   country: CountryEntity
+   countryId: Integer
+   city: String
+   state: String
+   zipCode: String
+   archivedAt: LocalDateTime
+   address: String
+}
+class AddressMapper {
+  + AddressMapper(CountryMapper): 
+  + toDto(AddressEntity): AddressDto
+  + toDto(List<AddressEntity>): List<AddressDto>
+  + fromDto(AddressDto, CountryEntity): AddressEntity
+}
+interface AddressRepository << interface >> {
+  + findAllByCountryId(Integer): Flux<AddressEntity>
+  + existsByCountryId(Integer): Mono<Boolean>
+  + findAllByAddress(String): Flux<AddressEntity>
+}
+class AddressRestControllerV1 {
+  + AddressRestControllerV1(AddressMapper, AddressService, CountryService): 
+  + findById(Long): Mono<AddressDto>
+  + findAddressEntityById(Long): Mono<AddressEntity>
+  + create(Mono<AddressDto>): Mono<AddressDto>
+  + update(Mono<AddressDto>): Mono<AddressDto>
+}
+interface AddressService << interface >> {
+  + saveOrUpdate(AddressEntity): Mono<AddressEntity>
+  + findById(Long): Mono<AddressEntity>
+  + create(AddressEntity): Mono<AddressEntity>
+  + createByAlpha3Code(String): Mono<AddressEntity>
+}
+class AddressServiceImpl {
+  + AddressServiceImpl(AddressRepository, CountryRepository): 
+  + saveOrUpdate(AddressEntity): Mono<AddressEntity>
+  + create(AddressEntity): Mono<AddressEntity>
+  + createByAlpha3Code(String): Mono<AddressEntity>
+  + findById(Long): Mono<AddressEntity>
+}
+class AdminEntity {
+  + AdminEntity(): 
+  - archivedAt: LocalDateTime
+  - status: Status
+  - surname: String
+  - profile: ProfileEntity
+  - name: String
+  - id: Long
+  + equals(Object): boolean
+  # canEqual(Object): boolean
+  + toString(): String
+  + hashCode(): int
+   surname: String
+   name: String
+   archivedAt: LocalDateTime
+   id: Long
+   profile: ProfileEntity
+   status: Status
+}
+interface AttributeService << interface >> {
+  + removeAttribute(ProfileEntity, String): Mono<Void>
+  + setAttribute(ProfileEntity, String, String): Mono<Void>
+  + getAttribute(ProfileEntity, String): Mono<String>
+  + getAllAttributes(ProfileEntity): Mono<Map<String, String>>
+}
+class AttributeServiceImpl {
+  + AttributeServiceImpl(IndividualService, MerchantService, CountryService): 
+  + getAttribute(ProfileEntity, String): Mono<String>
+  - appendProfileData(String, ProfileType, Map<String, String>): Map<String, String>
+  - setMerchantField(MerchantEntity, String, String): Mono<MerchantEntity>
+  - setIndividualField(IndividualEntity, String, String): Mono<IndividualEntity>
+  - cleanCountry(IndividualEntity): IndividualEntity
+  - getFieldStringValue(String, T): String?
+  - getFieldValuesMap(T): Map<String, String>
+  + getAllAttributes(ProfileEntity): Mono<Map<String, String>>
+  + removeAttribute(ProfileEntity, String): Mono<Void>
+  + setAttribute(ProfileEntity, String, String): Mono<Void>
+}
+class AuthorityEntity {
+  + AuthorityEntity(): 
+  - profileType: ProfileType
+  - authority: Authority
+  - id: Long
+  + equals(Object): boolean
+  # canEqual(Object): boolean
+  + hashCode(): int
+  + toString(): String
+   id: Long
+   profileType: ProfileType
+   authority: Authority
+}
+class BaseEntity {
+  + BaseEntity(): 
+  # BaseEntity(BaseEntityBuilder<?, ?>): 
+  - id: Long
+  - createdAt: LocalDateTime
+  - modifiedAt: LocalDateTime
+  + equals(Object): boolean
+  # canEqual(Object): boolean
+  + hashCode(): int
+  + toString(): String
+   id: Long
+   modifiedAt: LocalDateTime
+   createdAt: LocalDateTime
+}
+class CountryEntity {
+  + CountryEntity(): 
+  # CountryEntity(CountryEntityBuilder<?, ?>): 
+  - id: Integer
+  - alpha3Code: String
+  - isActive: boolean
+  - name: String
+  - alpha2Code: String
+  + toBuilder(): CountryEntityBuilder<?, ?>
+  + equals(Object): boolean
+  # canEqual(Object): boolean
+  + builder(): CountryEntityBuilder<?, ?>
+  + hashCode(): int
+  + toString(): String
+   name: String
+   alpha2Code: String
+   isActive: boolean
+   id: Integer
+   alpha3Code: String
+}
+class CountryMapper {
+  + CountryMapper(): 
+  + fromDto(CountryDto): CountryEntity
+  + toDto(List<CountryEntity>): List<CountryDto>
+  + toShortDto(List<CountryEntity>): List<CountryDto>
+  + toDto(CountryEntity): CountryDto
+  + toShortDto(CountryEntity): CountryDto
+}
+interface CountryRepository << interface >> {
+  + findAllByIsActiveIsTrueOrderByName(): Flux<CountryEntity>
+  + findByName(String): Mono<CountryEntity>
+  + findAllByIdIn(List<Integer>): Flux<CountryEntity>
+  + existsByAlpha3Code(String): Mono<Boolean>
+  + findByAlpha3Code(String): Mono<CountryEntity>
+}
+class CountryRestControllerV1 {
+  + CountryRestControllerV1(CountryMapper, CountryService): 
+  + findAllShort(): Mono<List<CountryDto>>
+  + findById(Integer): Mono<CountryDto>
+  + findByName(String): Mono<CountryDto>
+  + findAllActive(): Mono<List<CountryDto>>
+  + create(Mono<CountryDto>): Mono<CountryDto>
+  + findAll(): Mono<List<CountryDto>>
+  + findByUsername(Map<String, String>, String): Mono<CountryEntity>
+}
+interface CountryService << interface >> {
+  + findByName(String): Mono<CountryEntity>
+  + findAll(): Mono<List<CountryEntity>>
+  + getCountryByUsernameAndProfileType(String, ProfileType): Mono<CountryEntity>
+  + findAllById(List<Integer>): Mono<List<CountryEntity>>
+  + findById(Integer): Mono<CountryEntity>
+  + findAllActive(): Mono<List<CountryEntity>>
+  + create(CountryEntity): Mono<CountryEntity>
+  + findByAlpha3Code(String): Mono<CountryEntity>
+}
+class CountryServiceImpl {
+  + CountryServiceImpl(CountryRepository, AddressRepository, UserRepository, ProfileRepository, IndividualRepository, MerchantRepository): 
+  + findAllById(List<Integer>): Mono<List<CountryEntity>>
+  + getCountryByUsernameAndProfileType(String, ProfileType): Mono<CountryEntity>
+  - getCountyEntityByProfileType(ProfileType, UUID): Mono<CountryEntity>
+  + create(CountryEntity): Mono<CountryEntity>
+  + findByAlpha3Code(String): Mono<CountryEntity>
+  + findByName(String): Mono<CountryEntity>
+  + findAll(): Mono<List<CountryEntity>>
+  + findAllActive(): Mono<List<CountryEntity>>
+  + findById(Integer): Mono<CountryEntity>
+}
+class ErrorContextConfig {
+  + ErrorContextConfig(): 
+  ~ errorAttributes(List<ExceptionMapper>): ErrorInfoErrorAttributes
+  ~ responseBodyReplacer(): SensitiveInformationReplacer
+  ~ loggingWebFilter(MeterRegistry, SensitiveInformationReplacer, SensitiveInformationReplacer): LoggingWebFilter
+  ~ requestBodyReplacer(): SensitiveInformationReplacer
+}
+class ErrorHandlerConfig {
+  + ErrorHandlerConfig(): 
+  + errorHandler(): ExchangeFilterFunction
+  + equals(Object): boolean
+  # canEqual(Object): boolean
+  + hashCode(): int
+  + toString(): String
+}
+class ExtendedAdminEntity {
+  + ExtendedAdminEntity(): 
+  - id: Long
+  - profile: ProfileEntity
+  - name: String
+  - archivedAt: LocalDateTime
+  - modifiedAt: LocalDateTime
+  - createdAt: LocalDateTime
+  - status: Status
+  - email: String
+  - phone: String
+  - filtersEntity: UserProfileFiltersEntity
+  - surname: String
+  + equals(Object): boolean
+  + hashCode(): int
+  + toString(): String
+  # canEqual(Object): boolean
+   name: String
+   modifiedAt: LocalDateTime
+   createdAt: LocalDateTime
+   id: Long
+   email: String
+   phone: String
+   profile: ProfileEntity
+   surname: String
+   archivedAt: LocalDateTime
+   filtersEntity: UserProfileFiltersEntity
+   status: Status
+}
+class IndividualEntity {
+  + IndividualEntity(): 
+  - lastName: String
+  - applicantId: String
+  - email: String
+  - dateOfBirth: LocalDate
+  - archivedAt: LocalDateTime
+  - verifiedAt: LocalDateTime
+  - filled: boolean
+  - profileUid: UUID
+  - gender: GenderType
+  - passportNumber: String
+  - address: AddressEntity
+  - firstName: String
+  - profile: ProfileEntity
+  - id: Long
+  - addressId: Long
+  - personalIdentityNumber: String
+  - phone: String
+  - status: Status
+  # canEqual(Object): boolean
+  + equals(Object): boolean
+  + toString(): String
+  + hashCode(): int
+   dateOfBirth: LocalDate
+   id: Long
+   phone: String
+   address: AddressEntity
+   profile: ProfileEntity
+   archivedAt: LocalDateTime
+   profileUid: UUID
+   verifiedAt: LocalDateTime
+   filled: boolean
+   lastName: String
+   applicantId: String
+   gender: GenderType
+   email: String
+   personalIdentityNumber: String
+   passportNumber: String
+   firstName: String
+   status: Status
+   addressId: Long
+}
+class IndividualMapper {
+  + IndividualMapper(): 
+  + toDto(IndividualEntity): IndividualDto
+  + toDto(List<IndividualEntity>): List<IndividualDto>
+}
+interface IndividualRepository << interface >> {
+  + findByApplicantId(String): Mono<IndividualEntity>
+  + deleteByProfileUid(UUID): Mono<Void>
+  + findByProfileUidAndId(UUID, Long): Mono<IndividualEntity>
+  + getCountOfAllIndividualsForOperations(String, String, String, String, UUID): Mono<Long>
+  + findByProfileUid(UUID): Mono<IndividualEntity>
+  + findAllIndividualsForOperations(String, String, String, String, UUID, int, int): Flux<IndividualEntity>
+  + findByFullName(String, String): Flux<IndividualEntity>
+  + existsByEmail(String): Mono<Boolean>
+  + findByEntityProfileUidWithFilters(UUID, UUID): Mono<IndividualEntity>
+  + findByEmail(String): Mono<IndividualEntity>
+  + existsByPhoneLike(String): Mono<Boolean>
+}
+class IndividualRestControllerV1 {
+  + IndividualRestControllerV1(ProfileIndividualMapper, IndividualMapper, IndividualService, UserService): 
+  + update(IndividualEntity): Mono<IndividualEntity>
+  + findIndividualByProfileUid(String): Mono<IndividualEntity>
+  + filledOrThrow(String): Mono<Void>
+  + updateByClient(Map<String, String>, Mono<IndividualMapDto>): Mono<ProfileIndividualDto>
+  + findByUsername(String): Mono<IndividualEntity>
+  + delete(String): Mono<Void>
+  + checkIndividualPhoneDoesNotExistOrThrow(String): Mono<Void>
+  + checkIndividualEmailDoesNotExistOrThrow(String): Mono<Void>
+  + findByProfileUid(Map<String, String>, String): Mono<IndividualDto>
+}
+interface IndividualService << interface >> {
+  + findByEntityProfileUidWithFilters(String, String): Mono<IndividualEntity>
+  + findAll(Integer, Integer): Mono<Page<IndividualEntity>>
+  + update(IndividualEntity): Mono<IndividualEntity>
+  + updateByProfile(String, String, IndividualMapDto): Mono<IndividualEntity>
+  + findByProfileUid(String): Mono<IndividualEntity>
+  + changeIndividualStatus(OperationsChangeIndividualStatusRequestDto): Mono<IndividualDto>
+  + deleteIndividual(String): Mono<Void>
+  + checkUsersEmailDoesNotExistOrThrow(String): Mono<Void>
+  + create(ProfileEntity, IndividualEntity): Mono<IndividualEntity>
+  + findById(Long): Mono<IndividualEntity>
+  + filledOrThrow(String): Mono<Void>
+  + createForProfile(ProfileEntity): Mono<IndividualEntity>
+  + checkUsersPhoneDoesNotExistOrThrow(String): Mono<Void>
+}
+class IndividualServiceImpl {
+  + IndividualServiceImpl(AddressService, ProfileHistoryService, CountryService, IndividualRepository, UserRepository, UserService, OperationsGetIndividualsMapper, IndividualMapper, ProfileRepository, ProfileHistoryRepository, UserProfilesRepository): 
+  + deleteIndividual(String): Mono<Void>
+  - validateParamsAndSet(IndividualEntity, ProfileType, Map<String, String>): Mono<IndividualEntity>
+  - enrichStatus(ProfileType, IndividualEntity, Map<String, String>, IndividualEntity): Mono<IndividualEntity>
+  - checkIsValidEntity(String, IndividualEntity): Mono<IndividualEntity>
+  + checkUsersEmailDoesNotExistOrThrow(String): Mono<Void>
+  - enrichFilledIfNeeded(IndividualEntity, IndividualEntity): Mono<IndividualEntity>
+  + findAll(Integer, Integer): Mono<Page<IndividualEntity>>
+  - enrichByHistory(ProfileType, IndividualEntity, Map<String, String>, IndividualEntity): Mono<IndividualEntity>
+  - updateHistory(String, ProfileType, Reason, String, IndividualEntity, IndividualEntity): Mono<IndividualEntity>
+  - updateAlpha3Code(Map<String, String>, String, AddressEntity): Mono<AddressEntity>
+  + findByEntityProfileUidWithFilters(String, String): Mono<IndividualEntity>
+  + createForProfile(ProfileEntity): Mono<IndividualEntity>
+  - enrichAddress(AddressEntity, Map<String, String>): Mono<AddressEntity>
+  - setActiveAfterBlockedOut(ProfileType, IndividualEntity): Mono<IndividualEntity>
+  + findByProfileUid(String): Mono<IndividualEntity>
+  + checkUsersPhoneDoesNotExistOrThrow(String): Mono<Void>
+  - checkIndividualStatus(IndividualEntity, Status): Mono<Void>
+  + update(IndividualEntity): Mono<IndividualEntity>
+  - createIndividualItemFromTo(ProfileType, IndividualEntity, Status): Mono<IndividualEntity>
+  + filledOrThrow(String): Mono<Void>
+  + changeIndividualStatus(OperationsChangeIndividualStatusRequestDto): Mono<IndividualDto>
+  + findById(Long): Mono<IndividualEntity>
+  - updateZipCodeField(Map<String, String>, String, AddressEntity): void
+  - setActiveAfterArchive(ProfileType, IndividualEntity): Mono<IndividualEntity>
+  - returnIndividualActive(IndividualEntity): Mono<IndividualEntity>
+  - updateAddressField(Map<String, String>, String, AddressEntity): void
+  - createProfileHistory(IndividualEntity, IndividualEntity): ProfileHistoryEntity
+  + create(ProfileEntity, IndividualEntity): Mono<IndividualEntity>
+  - setActiveAfterBlocked(ProfileType, IndividualEntity): Mono<IndividualEntity>
+  + updateByProfile(String, String, IndividualMapDto): Mono<IndividualEntity>
+}
+class JsonToMapConverter {
+  + JsonToMapConverter(ObjectMapper): 
+  + convert(Json): Map<String, Object>?
+}
+class LeantechPersonsApplication {
+  + LeantechPersonsApplication(): 
+  + main(String[]): void
+}
+class MapToJsonConverter {
+  + MapToJsonConverter(ObjectMapper): 
+  + convert(Map<String, Object>): Json?
+}
+class MerchantEntity {
+  + MerchantEntity(): 
+  - id: Long
+  - addressId: Long
+  - status: Status
+  - verifiedAt: LocalDateTime
+  - filled: boolean
+  - profile: ProfileEntity
+  - registrationNumber: String
+  - merchantLogoUrl: String
+  - merchantApiKey: String
+  - applicantId: String
+  - address: AddressEntity
+  - phoneNumber: String
+  - archivedAt: LocalDateTime
+  - email: String
+  - profileUid: UUID
+  - companyName: String
+  + hashCode(): int
+  + equals(Object): boolean
+  + toString(): String
+  # canEqual(Object): boolean
+   id: Long
+   address: AddressEntity
+   profile: ProfileEntity
+   archivedAt: LocalDateTime
+   profileUid: UUID
+   verifiedAt: LocalDateTime
+   filled: boolean
+   applicantId: String
+   email: String
+   companyName: String
+   phoneNumber: String
+   merchantApiKey: String
+   registrationNumber: String
+   merchantLogoUrl: String
+   status: Status
+   addressId: Long
+}
+class MerchantMapper {
+  + MerchantMapper(): 
+  + toDto(MerchantEntity): MerchantDto
+  + toDtoForOperations(MerchantEntity): MerchantDetailsForOperationsResponseDto
+  + toDto(List<MerchantEntity>): List<MerchantDto>
+  + fromDto(MerchantDto, ProfileEntity, CountryEntity): MerchantEntity
+  + toDtoForOperations(List<MerchantEntity>): List<MerchantDetailsForOperationsResponseDto>
+}
+class MerchantMemberEntity {
+  + MerchantMemberEntity(): 
+  - id: long
+  - filled: boolean
+  - verified: boolean
+  - invitationLink: String
+  - email: String
+  - lastName: String
+  - status: MerchantMemberStatus
+  - merchantId: long
+  - phoneNumber: String
+  - applicantId: String
+  - archivedAt: LocalDateTime
+  - memberRole: MerchantMemberRole
+  - profileUid: UUID
+  - firstName: String
+  - verifiedAt: LocalDateTime
+  + equals(Object): boolean
+  + hashCode(): int
+  # canEqual(Object): boolean
+  + toString(): String
+   merchantId: long
+   id: long
+   archivedAt: LocalDateTime
+   profileUid: UUID
+   verifiedAt: LocalDateTime
+   filled: boolean
+   lastName: String
+   applicantId: String
+   email: String
+   phoneNumber: String
+   memberRole: MerchantMemberRole
+   status: MerchantMemberStatus
+   firstName: String
+   invitationLink: String
+   verified: boolean
+}
+class MerchantMembersInvitationsEntity {
+  + MerchantMembersInvitationsEntity(): 
+  - createdAt: LocalDateTime
+  - firstName: String
+  - status: InvitationStatus
+  - expiresIn: LocalDateTime
+  - lastName: String
+  - email: String
+  - role: MerchantMemberRole
+  - merchantId: Long
+  - uid: UUID
+  + equals(Object): boolean
+  # canEqual(Object): boolean
+  + hashCode(): int
+  + toString(): String
+   createdAt: LocalDateTime
+   lastName: String
+   merchantId: Long
+   email: String
+   uid: UUID
+   role: MerchantMemberRole
+   firstName: String
+   expiresIn: LocalDateTime
+   status: InvitationStatus
+}
+class MerchantMembersInvitationsMapper {
+  + MerchantMembersInvitationsMapper(): 
+  + toDto(List<MerchantMembersInvitationsEntity>): List<MerchantMembersInvitationsDto>
+  + toGetMerchantMembersInvitationsResponseDto(MerchantMembersInvitationsEntity): GetMerchantMembersInvitationsResponseDto
+  + toGetMerchantMembersInvitationsResponseDto(List<MerchantMembersInvitationsEntity>): List<GetMerchantMembersInvitationsResponseDto>
+  + toDto(MerchantMembersInvitationsEntity): MerchantMembersInvitationsDto
+}
+interface MerchantMembersInvitationsRepository << interface >> {
+  + existsByEmailAndStatus(String, InvitationStatus): Mono<Boolean>
+  + findByEmailAndStatus(String, InvitationStatus): Mono<MerchantMembersInvitationsEntity>
+  + countMerchantMembersInvitationsEntity(String, String, String, MerchantMemberRole, Long, InvitationStatus): Mono<Long>
+  + getMerchantMembersInvitationsEntity(String, String, String, MerchantMemberRole, Long, InvitationStatus, Integer, Integer): Flux<MerchantMembersInvitationsEntity>
+}
+class MerchantMembersMapper {
+  + MerchantMembersMapper(): 
+  + toDto(List<MerchantMemberEntity>): List<MerchantMemberResponseDto>
+  + toDto(MerchantMemberEntity): MerchantMemberResponseDto
+  + toMembersOfMerchantResponseDto(MerchantMemberEntity): MembersOfMerchantResponseDto
+  + toMembersOfMerchantResponseDto(List<MerchantMemberEntity>): List<MembersOfMerchantResponseDto>
+  + toMerchantMemberDto(MerchantMemberEntity): MerchantMemberDto
+  + toMerchantMemberDto(List<MerchantMemberEntity>): List<MerchantMemberDto>
+}
+interface MerchantMembersRepository << interface >> {
+  + findAllByMerchantProfileUidMemberRoleAndEmail(long, String, String): Flux<MerchantMemberEntity>
+  + findAllMerchantMembers(long, String, String, String, List<MerchantMemberRole>, List<MerchantMemberStatus>, int, int): Flux<MerchantMemberEntity>
+  + findAllByMerchantProfileUidAndStatus(long, String): Flux<MerchantMemberEntity>
+  + findAllByMerchantId(Long): Flux<MerchantMemberEntity>
+  + deleteByProfileUid(UUID): Mono<Void>
+  + findAllByMerchantProfileUidStatusAndFirstName(long, String, String): Flux<MerchantMemberEntity>
+  + findByProfileUid(UUID): Mono<MerchantMemberEntity>
+  + findByProfileUidAndMerchantId(long, UUID): Mono<MerchantMemberEntity>
+  + findAllByMerchantProfileUidStatusAndEmail(long, String, String): Flux<MerchantMemberEntity>
+  + findAllByMerchantProfileUidAndRole(long, String): Flux<MerchantMemberEntity>
+  + getCountOfAllMerchantMembers(long, String, String, String, List<MerchantMemberRole>, List<MerchantMemberStatus>): Mono<Long>
+  + findAllByMerchantProfileUid(long): Flux<MerchantMemberEntity>
+  + findAllByMerchantProfileUidStatusAndLastName(long, String, String): Flux<MerchantMemberEntity>
+  + findAllByMerchantProfileUidMemberRoleStatusAndEmail(long, String, String, String): Flux<MerchantMemberEntity>
+  + getCountOfAllMerchantMembersForOperations(long, String, String, String): Mono<Long>
+  + findByEmail(String): Mono<MerchantMemberEntity>
+  + findAllByMerchantProfileUidMemberRoleAndStatus(long, String, String): Flux<MerchantMemberEntity>
+  + findAllByEmail(String): Flux<MerchantMemberEntity>
+  + findAllByMerchantProfileUidMemberRoleStatusAndLastName(long, String, String, String): Flux<MerchantMemberEntity>
+  + findAllMerchantMembersForOperations(long, String, String, String, int, int): Flux<MerchantMemberEntity>
+  + findAllByMerchantProfileUidMemberRoleAndFirstName(long, String, String): Flux<MerchantMemberEntity>
+  + findAllByMerchantProfileUidMemberRoleAndLastName(long, String, String): Flux<MerchantMemberEntity>
+  + existsByEmail(String): Mono<Boolean>
+  + findAllByMerchantProfileUidMemberRoleStatusAndFirstName(long, String, String, String): Flux<MerchantMemberEntity>
+  + existsByPhoneNumberLike(String): Mono<Boolean>
+}
+interface MerchantMembersService << interface >> {
+  + saveMerchantMemberHistory(MerchantMemberEntity): Mono<MerchantMemberEntity>
+  + createAdmin(MerchantEntity): Mono<MerchantMemberEntity>
+  + createMerchantMembersInvitation(MerchantMembersInvitationsRequestDto, String): Mono<MerchantMembersInvitationsEntity>
+  + checkMemberIsNotArchivedOrThrow(UUID): Mono<Void>
+  + checkUsersPhoneDoesNotExistOrThrow(String): Mono<Void>
+  + findByEmail(String): Mono<MerchantMemberEntity>
+  + getMerchantMembersInvitation(String): Mono<MerchantMembersInvitationsDto>
+  + save(MerchantMemberEntity): Mono<MerchantMemberEntity>
+  + getMerchantMemberByProfileUid(UUID): Mono<MerchantMemberDto>
+  + checkMemberIsNotBlockedOrThrow(UUID): Mono<Void>
+  + updateInvitationExpireTime(String): Mono<Void>
+  + getMerchantMemberStatusFromHistory(UUID): Mono<MerchantMemberStatus>
+  + updateMerchantMembersInvitationStatus(ChangeMerchantMembersInvitationStatusDto): Mono<Void>
+  + create(MerchantMemberEntity, UserEntity): Mono<MerchantMemberEntity>
+  + checkUsersEmailDoesNotExistOrThrow(String): Mono<Void>
+  + checkMerchantMemberInvitationValidOrThrow(MerchantMemberRegistrationRequestDto): Mono<Void>
+  + getMerchantMembersInvitations(GetMerchantMembersInvitationsRequestDto): Mono<PageableDto<GetMerchantMembersInvitationsResponseDto>>
+  + getMerchantMemberByUsername(String): Mono<MerchantMemberEntity>
+  + checkMemberNotBlockingYourselfOrThrow(ChangeMerchantMemberStatusRequestDto, String): Mono<Void>
+  + checkMemberBelongMerchantOrThrow(UUID, UUID): Mono<Void>
+  + checkMemberInvitationIsNotSentOrThrow(String): Mono<Void>
+  + changeMemberStatus(ChangeMerchantMemberStatusRequestDto): Mono<MerchantMemberEntity>
+}
+class MerchantMembersServiceImpl {
+  + MerchantMembersServiceImpl(MerchantMembersRepository, MerchantRepository, ProfileHistoryRepository, MerchantMembersInvitationsRepository, UserRepository, ProfileRepository, MerchantMembersInvitationsMapper, MerchantMembersMapper, ProfileHistoryService): 
+  + getMerchantMemberStatusFromHistory(UUID): Mono<MerchantMemberStatus>
+  + createAdmin(MerchantEntity): Mono<MerchantMemberEntity>
+  + checkMerchantMemberInvitationValidOrThrow(MerchantMemberRegistrationRequestDto): Mono<Void>
+  + checkMemberIsNotArchivedOrThrow(UUID): Mono<Void>
+  + checkMemberNotBlockingYourselfOrThrow(ChangeMerchantMemberStatusRequestDto, String): Mono<Void>
+  + changeInfo(ChangeMerchantMemberInfoRequestDto): Mono<MerchantMemberEntity>
+  + updateInvitationExpireTime(String): Mono<Void>
+  + checkUsersPhoneDoesNotExistOrThrow(String): Mono<Void>
+  + changeMemberStatus(ChangeMerchantMemberStatusRequestDto): Mono<MerchantMemberEntity>
+  + getMerchantMembersInvitations(GetMerchantMembersInvitationsRequestDto): Mono<PageableDto<GetMerchantMembersInvitationsResponseDto>>
+  + create(MerchantMemberEntity, UserEntity): Mono<MerchantMemberEntity>
+  + createMerchantMembersInvitation(MerchantMembersInvitationsRequestDto, String): Mono<MerchantMembersInvitationsEntity>
+  + findByEmail(String): Mono<MerchantMemberEntity>
+  + checkMemberIsNotBlockedOrThrow(UUID): Mono<Void>
+  + checkMemberBelongMerchantOrThrow(UUID, UUID): Mono<Void>
+  + save(MerchantMemberEntity): Mono<MerchantMemberEntity>
+  + getMerchantMemberByProfileUid(UUID): Mono<MerchantMemberDto>
+  + checkUsersEmailDoesNotExistOrThrow(String): Mono<Void>
+  + checkMemberInvitationIsNotSentOrThrow(String): Mono<Void>
+  - createMerchantMembersInvitationsEntity(MerchantMembersInvitationsRequestDto, Long): MerchantMembersInvitationsEntity
+  + getMerchantMemberByUsername(String): Mono<MerchantMemberEntity>
+  + getMerchantMembersInvitation(String): Mono<MerchantMembersInvitationsDto>
+  + saveMerchantMemberHistory(MerchantMemberEntity): Mono<MerchantMemberEntity>
+  + updateMerchantMembersInvitationStatus(ChangeMerchantMembersInvitationStatusDto): Mono<Void>
+}
+class MerchantProfileDetailsMapper {
+  + MerchantProfileDetailsMapper(): 
+  + toDto(MerchantEntity, MerchantMemberEntity, boolean): MerchantProfileDetailsDto
+}
+interface MerchantRepository << interface >> {
+  + findByEntityProfileUidWithFilters(UUID, UUID): Mono<MerchantEntity>
+  + findAllMerchantsWithFilters(UUID, String, String, int, int): Flux<MerchantEntity>
+  + findByRegistrationNumber(String): Mono<MerchantEntity>
+  + findByRegistrationNumberWithFilters(UUID, String): Mono<MerchantEntity>
+  + findByProfileUid(UUID): Mono<MerchantEntity>
+  + findByExactCompanyName(String): Mono<MerchantEntity>
+  + findByApplicantId(String): Mono<MerchantEntity>
+  + findAllByProfileUidIn(List<UUID>): Flux<MerchantEntity>
+  + getCountOfAllMerchantsWithFilters(UUID, String, String): Mono<Long>
+  + findByProfile(ProfileEntity): Mono<MerchantEntity>
+  + findByProfileUidAndRegistrationNumber(UUID, String): Mono<MerchantEntity>
+  + deleteByProfileUid(UUID): Mono<Void>
+  + findByCompanyName(String): Mono<MerchantEntity>
+  + existsByRegistrationNumber(String): Mono<Boolean>
+  + findByEmail(String): Mono<MerchantEntity>
+  + findByMerchantApiKey(String): Mono<MerchantEntity>
+}
+class MerchantRestControllerV1 {
+  + MerchantRestControllerV1(MerchantMapper, MerchantService, MerchantMembersService, CountryService, ProfileService, UserService): 
+  + createMerchantMembersInvitation(Map<String, String>, MerchantMembersInvitationsRequestDto): Mono<MerchantMembersInvitationsEntity>
+  + checkInvitationBelongsToMerchantOrThrow(Map<String, String>, String): Mono<Void>
+  + regenerateMerchantApiSecretKey(String): Mono<MerchantApiSecretKeyResponseDto>
+  + getMerchantByMemberProfileUid(String): Mono<MerchantDto>
+  + findMerchantMemberByUsername(String): Mono<MerchantMemberEntity>
+  + findByRegistrationNumber(Map<String, String>, String): Mono<MerchantDto>
+  + changeMemberStatusForOperations(ChangeMerchantMemberStatusRequestDto): Mono<MerchantMemberEntity>
+  + filledOrThrow(String): Mono<Void>
+  + checkMerchantMemberEmailDoesNotExistOrThrow(String): Mono<Void>
+  + getMerchantMemberByUid(String): Mono<MerchantMemberDto>
+  + getMerchantByMerchantMemberUsername(String): Mono<MerchantDto>
+  + update(Map<String, String>, Mono<MerchantMapDto>): Mono<MerchantDto>
+  + getMembers(String, MerchantMemberRequestDto): Mono<PageableDto<MembersOfMerchantResponseDto>>
+  + delete(String): Mono<Void>
+  + getMerchantMembersInvitations(GetMerchantMembersInvitationsRequestDto): Mono<PageableDto<GetMerchantMembersInvitationsResponseDto>>
+  + getMerchantByCompanyName(String): Mono<MerchantDto>
+  + getMerchantById(Long): Mono<MerchantEntity>
+  + checkMerchantMemberIsActiveOrThrow(String): Mono<Void>
+  + findMerchantByProfileUid(String): Mono<MerchantEntity>
+  + updateMerchantMembersInvitationStatus(ChangeMerchantMembersInvitationStatusDto): Mono<Void>
+  + changeMemberStatus(Map<String, String>, ChangeMerchantMemberStatusRequestDto): Mono<MerchantMemberEntity>
+  + findMerchantMemberByEmail(String): Mono<MerchantMemberEntity>
+  + getMerchantApiSecretKey(String): Mono<MerchantApiSecretKeyResponseDto>
+  + updateMerchantMember(MerchantMemberEntity): Mono<MerchantMemberEntity>
+  + getMerchantMembersInvitation(String): Mono<MerchantMembersInvitationsDto>
+  + update(MerchantEntity): Mono<MerchantEntity>
+  + checkMemberInvitationNotSentOrThrow(String): Mono<Void>
+  + create(Map<String, String>, Mono<MerchantDto>): Mono<MerchantDto>
+  + getMerchantByMemberEmail(String): Mono<MerchantDto>
+  + getMembersForOperations(MerchantMemberRequestForOperationsDto): Mono<PageableDto<MembersOfMerchantResponseDto>>
+  + updateMerchantMembersInvitationExpireTime(String): Mono<Void>
+  + changeStatusFromOperations(ChangeMerchantStatusDto): Mono<List<MerchantMemberEntity>>
+  + findByProfileUid(Map<String, String>, String): Mono<MerchantDto>
+  + checkMerchantMemberPhoneDoesNotExistOrThrow(String): Mono<Void>
+}
+interface MerchantService << interface >> {
+  + findAll(Integer, Integer): Mono<Page<MerchantEntity>>
+  + findByEntityProfileUidWithFilters(String, String): Mono<MerchantEntity>
+  + getMerchantApiSecretKey(String): Mono<MerchantApiSecretKeyResponseDto>
+  + getMembers(MerchantMemberRequestDto, String): Mono<PageableDto<MembersOfMerchantResponseDto>>
+  + getMembersForOperations(MerchantMemberRequestForOperationsDto): Mono<PageableDto<MembersOfMerchantResponseDto>>
+  + filledOrThrow(String): Mono<Void>
+  + updateWithBlockCheck(String, ProfileType, MerchantMapDto): Mono<MerchantEntity>
+  + findByProfileUidAndRegistrationNumber(String, String): Mono<MerchantEntity>
+  + deleteMerchant(String): Mono<Void>
+  + checkIfMerchantRequestFilled(MerchantDetailsForOperationsRequestDto): Mono<Void>
+  + findById(Long): Mono<MerchantEntity>
+  + getMerchantByCompanyName(String): Mono<MerchantDto>
+  + findByProfileUid(String): Mono<MerchantEntity>
+  + getMerchantByMemberEmail(String): Mono<MerchantDto>
+  + checkMerchantIsNotBlockedOrThrow(UUID): Mono<Void>
+  + checkStatusAvailableOrThrow(UUID, Status): Mono<Void>
+  + getMerchantsForOperations(MerchantDetailsForOperationsRequestDto): Mono<PageableDto<MerchantDetailsForOperationsResponseDto>>
+  + getMerchantByMemberProfileUid(String): Mono<MerchantDto>
+  + createForProfile(ProfileEntity): Mono<MerchantEntity>
+  + findByEmail(String): Mono<MerchantEntity>
+  + findByRegistrationNumberWithFilters(String, String): Mono<MerchantEntity>
+  + checkInvitationBelongsToMerchantOrThrow(UUID, UUID): Mono<Void>
+  + create(ProfileEntity, MerchantDto): Mono<MerchantEntity>
+  + regenerateMerchantApiSecretKey(String): Mono<MerchantApiSecretKeyResponseDto>
+  + getMerchantsByProfileUids(List<UUID>): Mono<List<MerchantEntity>>
+  + changeStatusFromOperations(ChangeMerchantStatusDto): Mono<List<MerchantMemberEntity>>
+  + update(MerchantEntity): Mono<MerchantEntity>
+  + getMerchantByMerchantMemberUsername(String): Mono<MerchantDto>
+}
+class MerchantServiceImpl {
+  + MerchantServiceImpl(MerchantRepository, MerchantMembersRepository, MerchantMembersInvitationsRepository, MerchantMembersMapper, MerchantMapper, ProfileHistoryService, AddressService, CountryService, UserService, UserRepository, ProfileRepository, MerchantMembersService, ProfileHistoryRepository): 
+  - sendEmailAboutChangeStatus(MerchantEntity, ProfileHistoryEntity): Mono<MerchantEntity>
+  - validateParamsAndSet(MerchantEntity, ProfileType, Map<String, String>): Mono<MerchantEntity>
+  + findByRegistrationNumberWithFilters(String, String): Mono<MerchantEntity>
+  - updateAddressField(Map<String, String>, String, AddressEntity): void
+  - generateMerchantUid(MerchantDetailsForOperationsRequestDto): Mono<UUID>
+  - enrichAddress(AddressEntity, Map<String, String>): Mono<AddressEntity>
+  + getMerchantByMemberEmail(String): Mono<MerchantDto>
+  - changeMerchantStatusToActive(ChangeMerchantStatusDto, MerchantEntity): Mono<List<MerchantMemberEntity>>
+  + checkStatusAvailableOrThrow(UUID, Status): Mono<Void>
+  + findByProfileUidAndRegistrationNumber(String, String): Mono<MerchantEntity>
+  - enrichFilledIfNeeded(MerchantEntity, MerchantEntity): Mono<MerchantEntity>
+  + findById(Long): Mono<MerchantEntity>
+  + getMerchantApiSecretKey(String): Mono<MerchantApiSecretKeyResponseDto>
+  - updateAlpha3Code(Map<String, String>, String, AddressEntity): Mono<AddressEntity>
+  + getMerchantsForOperations(MerchantDetailsForOperationsRequestDto): Mono<PageableDto<MerchantDetailsForOperationsResponseDto>>
+  + checkInvitationBelongsToMerchantOrThrow(UUID, UUID): Mono<Void>
+  + findByEntityProfileUidWithFilters(String, String): Mono<MerchantEntity>
+  + create(ProfileEntity, MerchantDto): Mono<MerchantEntity>
+  - setActiveAfterBlocked(ProfileType, MerchantEntity): Mono<MerchantEntity>
+  + getMerchantByMemberProfileUid(String): Mono<MerchantDto>
+  - updateZipCodeField(Map<String, String>, String, AddressEntity): void
+  - createProfileHistory(MerchantEntity, MerchantEntity): ProfileHistoryEntity
+  + findByEmail(String): Mono<MerchantEntity>
+  + findAll(Integer, Integer): Mono<Page<MerchantEntity>>
+  - generateKey(): String
+  + findByProfileUid(String): Mono<MerchantEntity>
+  + update(MerchantEntity): Mono<MerchantEntity>
+  + getMerchantsByProfileUids(List<UUID>): Mono<List<MerchantEntity>>
+  + getMerchantByCompanyName(String): Mono<MerchantDto>
+  + deleteMerchant(String): Mono<Void>
+  - buildMerchantDto(MerchantEntity): Mono<MerchantDto>
+  - createMerchantItemFromTo(ProfileType, MerchantEntity, Status): Mono<MerchantEntity>
+  - enrichByHistory(ProfileType, MerchantEntity, Map<String, String>, MerchantEntity): Mono<MerchantEntity>
+  - setActiveAfterBlockedOut(ProfileType, MerchantEntity): Mono<MerchantEntity>
+  - returnMerchantActive(MerchantEntity): Mono<MerchantEntity>
+  - setActiveAfterArchive(ProfileType, MerchantEntity): Mono<MerchantEntity>
+  - enrichStatus(ProfileType, MerchantEntity, Map<String, String>, MerchantEntity): Mono<MerchantEntity>
+  + updateWithBlockCheck(String, ProfileType, MerchantMapDto): Mono<MerchantEntity>
+  - buildMerchantEntity(MerchantEntity): Mono<MerchantEntity>
+  + regenerateMerchantApiSecretKey(String): Mono<MerchantApiSecretKeyResponseDto>
+  + checkMerchantIsNotBlockedOrThrow(UUID): Mono<Void>
+  + getMembersForOperations(MerchantMemberRequestForOperationsDto): Mono<PageableDto<MembersOfMerchantResponseDto>>
+  + getMembers(MerchantMemberRequestDto, String): Mono<PageableDto<MembersOfMerchantResponseDto>>
+  + changeStatusFromOperations(ChangeMerchantStatusDto): Mono<List<MerchantMemberEntity>>
+  + getMerchantByMerchantMemberUsername(String): Mono<MerchantDto>
+  + createForProfile(ProfileEntity): Mono<MerchantEntity>
+  + checkIfMerchantRequestFilled(MerchantDetailsForOperationsRequestDto): Mono<Void>
+  - updateHistory(String, ProfileType, Reason, String, MerchantEntity, MerchantEntity): Mono<MerchantEntity>
+  + filledOrThrow(String): Mono<Void>
+}
+class OperationsGetIndividualsMapper {
+  + OperationsGetIndividualsMapper(): 
+  + toGetIndividualsResponseDto(List<IndividualEntity>): List<OperationsGetIndividualsResponseDto>
+  + toGetIndividualsResponseDto(IndividualEntity): OperationsGetIndividualsResponseDto
+}
+class OperationsHistoryEntity {
+  + OperationsHistoryEntity(): 
+  - target: String
+  - createdAt: LocalDateTime
+  - key: OperationsHistoryKey
+  - reason: Reason
+  - changedValues: Map<String, String>
+  - id: Long
+  - changedByProfileUid: UUID
+  # canEqual(Object): boolean
+  + toString(): String
+  + equals(Object): boolean
+  + hashCode(): int
+   createdAt: LocalDateTime
+   changedByProfileUid: UUID
+   id: Long
+   reason: Reason
+   target: String
+   changedValues: Map<String, String>
+   key: OperationsHistoryKey
+}
+class OperationsHistoryKeysEntity {
+  + OperationsHistoryKeysEntity(): 
+  - id: Integer
+  - language: Language
+  - profileType: ProfileType
+  - screen: Screen
+  - description: String
+  - key: OperationsHistoryKey
+  + hashCode(): int
+  + equals(Object): boolean
+  + toString(): String
+  # canEqual(Object): boolean
+   description: String
+   profileType: ProfileType
+   screen: Screen
+   language: Language
+   id: Integer
+   key: OperationsHistoryKey
+}
+class OperationsHistoryRequestEntity {
+  + OperationsHistoryRequestEntity(): 
+  - target: String
+  - key: OperationsHistoryKey
+  - id: Long
+  - reason: Reason
+  - email: String
+  - screen: Screen
+  - createdAt: LocalDateTime
+  # canEqual(Object): boolean
+  + toString(): String
+  + hashCode(): int
+  + equals(Object): boolean
+   createdAt: LocalDateTime
+   id: Long
+   email: String
+   reason: Reason
+   target: String
+   screen: Screen
+   key: OperationsHistoryKey
+}
+class OperationsMemberMapper {
+  + OperationsMemberMapper(): 
+  + toOperationsMembersDto(OperationsMembersEntity): OperationsMembersDto
+  + toGetOperationsMembersResponseDto(List<OperationsMembersEntity>): List<GetOperationsMembersResponseDto>
+  + toGetOperationsMembersResponseDto(OperationsMembersEntity): GetOperationsMembersResponseDto
+}
+class OperationsMembersEntity {
+  + OperationsMembersEntity(): 
+  - archivedAt: LocalDateTime
+  - email: String
+  - lastName: String
+  - firstName: String
+  - profileUid: UUID
+  - role: OperationsRole
+  - id: Long
+  - status: Status
+  + equals(Object): boolean
+  + hashCode(): int
+  + toString(): String
+  # canEqual(Object): boolean
+   lastName: String
+   id: Long
+   email: String
+   firstName: String
+   archivedAt: LocalDateTime
+   profileUid: UUID
+   role: OperationsRole
+   status: Status
+}
+class OperationsMembersInvitationsEntity {
+  + OperationsMembersInvitationsEntity(): 
+  - expiresIn: LocalDateTime
+  - createdAt: LocalDateTime
+  - firstName: String
+  - role: OperationsRole
+  - email: String
+  - lastName: String
+  - uid: UUID
+  - status: InvitationStatus
+  # canEqual(Object): boolean
+  + hashCode(): int
+  + equals(Object): boolean
+  + toString(): String
+   createdAt: LocalDateTime
+   lastName: String
+   email: String
+   uid: UUID
+   firstName: String
+   role: OperationsRole
+   expiresIn: LocalDateTime
+   status: InvitationStatus
+}
+class PasswordEncoderConfig {
+  + PasswordEncoderConfig(): 
+  - memoryCost: int
+  - cpuCost: int
+  - saltLength: int
+  - keyLength: int
+  - parallelization: int
+   memoryCost: int
+   parallelization: int
+   keyLength: int
+   saltLength: int
+   cpuCost: int
+}
+class ProfileChangeControllerV1 {
+  + ProfileChangeControllerV1(ProfileService): 
+  + restoreIndividualForgotPasswordRequest(Mono<ChangeForgottenPasswordRequestDto>): Mono<UserEntity>
+}
+class ProfileDetailsMapper {
+  + ProfileDetailsMapper(AddressMapper): 
+  + toDto(IndividualEntity, boolean): IndividualProfileDetailsDto
+}
+class ProfileDtoMapper {
+  + ProfileDtoMapper(AddressMapper): 
+  + fromMerchant(MerchantEntity): ProfileDto
+  + fromIndividual(IndividualEntity): ProfileDto
+  + fromAdmin(AdminEntity): ProfileDto
+}
+class ProfileEntity {
+  + ProfileEntity(UUID, UserEntity, UUID, ProfileType, Boolean): 
+  + ProfileEntity(): 
+  - verified: Boolean
+  - userUid: UUID
+  - uid: UUID
+  - user: UserEntity
+  - type: ProfileType
+  + equals(Object): boolean
+  + hashCode(): int
+  # canEqual(Object): boolean
+  + toString(): String
+   userUid: UUID
+   uid: UUID
+   type: ProfileType
+   user: UserEntity
+   verified: Boolean
+}
+class ProfileHistoryEntity {
+  + ProfileHistoryEntity(): 
+  + ProfileHistoryEntity(Long, ProfileType, Map<String, String>, UUID, UUID, ProfileChangeMaker, Reason, String): 
+  - targetProfileUid: UUID
+  - changedByUserUid: UUID
+  - changedByProfileType: ProfileChangeMaker
+  - reason: Reason
+  - comment: String
+  - changedValues: Map<String, String>
+  - profileType: ProfileType
+  - id: Long
+  + hashCode(): int
+  + toString(): String
+  # canEqual(Object): boolean
+  + equals(Object): boolean
+  + addProperty(String, String): ProfileHistoryEntity
+   comment: String
+   changedByProfileType: ProfileChangeMaker
+   id: Long
+   reason: Reason
+   changedValues: Map<String, String>
+   profileType: ProfileType
+   targetProfileUid: UUID
+   changedByUserUid: UUID
+}
+class ProfileHistoryMapper {
+  + ProfileHistoryMapper(): 
+  + toDto(ProfileHistoryEntity): ProfileHistoryDto
+  + toDto(List<ProfileHistoryEntity>): List<ProfileHistoryDto>
+}
+interface ProfileHistoryRepository << interface >> {
+  + findByTargetProfileUid(UUID): Mono<ProfileHistoryEntity>
+  + findLastByTargetProfileUidAndField(UUID, String): Mono<ProfileHistoryEntity>
+  + findLastByTargetProfileUid(UUID): Mono<ProfileHistoryEntity>
+  + deleteByTargetProfileUid(UUID): Mono<Integer>
+}
+class ProfileHistoryRestControllerV1 {
+  + ProfileHistoryRestControllerV1(ProfileHistoryMapper, ProfileHistoryService): 
+  + findAllWithFilter(Map<String, String>, Mono<ProfileHistoryFilterDto>): Mono<PageableDto<ProfileHistoryDto>>
+  + findById(Map<String, String>, Long): Mono<ProfileHistoryDto>
+}
+interface ProfileHistoryService << interface >> {
+  + findLastByTargetProfileUidAndField(UUID, String): Mono<ProfileHistoryEntity>
+  + findLastByTargetProfileUid(UUID): Mono<ProfileHistoryEntity>
+  + prepareAndSave(ProfileHistoryWrapper<T>, List<String>): Mono<ProfileHistoryEntity>
+  + findById(Long): Mono<ProfileHistoryEntity>
+  + findAllByAllParameters(ProfileHistoryFilterDto): Mono<Page<ProfileHistoryEntity>>
+  + findAllByAllParametersAndFilters(UUID, ProfileHistoryFilterDto): Mono<Page<ProfileHistoryEntity>>
+  + save(ProfileHistoryEntity): Mono<ProfileHistoryEntity>
+  + update(ProfileHistoryEntity): Mono<ProfileHistoryEntity>
+}
+class ProfileHistoryServiceImpl {
+  + ProfileHistoryServiceImpl(ProfileHistoryRepository): 
+  - extractProfileType(T): ProfileType
+  + findAllByAllParameters(ProfileHistoryFilterDto): Mono<Page<ProfileHistoryEntity>>
+  + findLastByTargetProfileUidAndField(UUID, String): Mono<ProfileHistoryEntity>
+  + update(ProfileHistoryEntity): Mono<ProfileHistoryEntity>
+  + prepareAndSave(ProfileHistoryWrapper<T>, List<String>): Mono<ProfileHistoryEntity>
+  + findById(Long): Mono<ProfileHistoryEntity>
+  + save(ProfileHistoryEntity): Mono<ProfileHistoryEntity>
+  - extractProfileUid(T): String
+  + findAllByAllParametersAndFilters(UUID, ProfileHistoryFilterDto): Mono<Page<ProfileHistoryEntity>>
+  + findLastByTargetProfileUid(UUID): Mono<ProfileHistoryEntity>
+}
+class ProfileHistoryWrapper<T> {
+  + ProfileHistoryWrapper(): 
+  - changedByProfileType: ProfileType
+  - oldEntity: T
+  - changedByUserUid: String
+  - comment: String
+  - newEntity: T
+  - reason: Reason
+  + toString(): String
+  # canEqual(Object): boolean
+  + hashCode(): int
+  + equals(Object): boolean
+   newEntity: T
+   comment: String
+   oldEntity: T
+   changedByProfileType: ProfileType
+   changedByUserUid: String
+   reason: Reason
+}
+class ProfileIndividualMapper {
+  + ProfileIndividualMapper(AddressMapper): 
+  + toDto(List<IndividualEntity>): List<ProfileIndividualDto>
+  + toDto(IndividualEntity): ProfileIndividualDto
+}
+class ProfileInfoRestControllerV1 {
+  + ProfileInfoRestControllerV1(ProfileService, UserService): 
+  + updateMerchantInfo(String, Mono<MerchantProfileDetailsDto>): Mono<MerchantProfileDetailsDto>
+  + getMerchantInfo(String): Mono<MerchantProfileDetailsDto>
+  + getProfileRequiredFields(String, String, String): Mono<List<ProfileRequiredFieldsDto>>
+  + changePassword(Map<String, String>, Mono<ChangePasswordRequestDto>): Mono<Void>
+  + getProfileRequiredFieldsMerchant(String, String, String): Mono<List<ProfileRequiredFieldsDto>>
+  + getIndividualProfileDetails(String): Mono<IndividualProfileDetailsDto>
+  + updateProfileDetails(String, Mono<IndividualProfileDetailsDto>): Mono<IndividualProfileDetailsDto>
+  + updateProfileDetailsForOperations(String, IndividualProfileDetailsForOperationsDto): Mono<IndividualProfileDetailsDto>
+}
+interface ProfileRepository << interface >> {
+  + findByUserUid(UUID): Mono<ProfileEntity>
+  + existsByUidAndVerifiedIsTrue(UUID): Mono<Boolean>
+  + updateVerified(UUID, boolean): Mono<Void>
+}
+interface ProfileRequiredFieldRepository << interface >> {
+  + findAllByCountryAlpha3CodeAndLanguageDefault(ProfileType, Language): Flux<ProfileRequiredFieldsEntity>
+  + findAllByCountryAlpha3CodeAndLanguage(ProfileType, String, Language): Flux<ProfileRequiredFieldsEntity>
+  + findAllByCountryAlpha3Code(String): Flux<ProfileRequiredFieldsEntity>
+}
+class ProfileRequiredFieldsEntity {
+  + ProfileRequiredFieldsEntity(): 
+  - language: String
+  - defaultValue: String
+  - representationName: String
+  - dataType: RequiredFieldDataType
+  - key: String
+  - countryAlpha3Code: String
+  - validationType: RequiredFieldValidationType
+  - modifiedAt: LocalDateTime
+  - createdAt: LocalDateTime
+  - placeholder: String
+  - uid: UUID
+  - description: String
+  - validationRule: String
+  + toString(): String
+  + equals(Object): boolean
+  # canEqual(Object): boolean
+  + hashCode(): int
+   description: String
+   createdAt: LocalDateTime
+   representationName: String
+   language: String
+   validationRule: String
+   validationType: RequiredFieldValidationType
+   modifiedAt: LocalDateTime
+   countryAlpha3Code: String
+   defaultValue: String
+   uid: UUID
+   dataType: RequiredFieldDataType
+   placeholder: String
+   key: String
+}
+class ProfileRequiredFieldsMapper {
+  + ProfileRequiredFieldsMapper(): 
+  + toDto(ProfileRequiredFieldsEntity, String, String, String, String, String, String, String, String, String, String, String, String, String): ProfileRequiredFieldsDto
+  + profileRequiredFieldsToDto(List<ProfileRequiredFieldsEntity>, String, String, String, String, String, String, String, String, String, String, String, String, String): List<ProfileRequiredFieldsDto>
+}
+class ProfileRestControllerV1 {
+  + ProfileRestControllerV1(ProfileService): 
+  + checkIsVerified(String): Mono<Boolean>
+  + findByUserUid(String): Mono<ProfileEntity>
+  + findByUid(String): Mono<ProfileEntity>
+}
+interface ProfileService << interface >> {
+  + getProfileByUid(String): Mono<ProfileEntity>
+  + updateIndividualProfileDetailsForOperations(IndividualProfileDetailsForOperationsDto, String): Mono<IndividualProfileDetailsDto>
+  + checkIsVerified(UUID): Mono<Boolean>
+  + isProfileValid(String): Mono<Boolean>
+  + updateMerchantProfileDetails(MerchantProfileDetailsDto, String): Mono<MerchantProfileDetailsDto>
+  + getMerchantProfileDetails(String): Mono<MerchantProfileDetailsDto>
+  + updateIndividualProfileDetails(IndividualProfileDetailsDto, String): Mono<IndividualProfileDetailsDto>
+  + createProfile(UserEntity, ProfileType): Mono<ProfileEntity>
+  + createMerchantProfile(UserEntity, ProfileType): Mono<ProfileEntity>
+  + getIndividualRequiredFields(String, String, String): Mono<List<ProfileRequiredFieldsDto>>
+  + getMerchantRequiredFields(String, String, String): Mono<List<ProfileRequiredFieldsDto>>
+  + findByUserUid(String): Mono<ProfileEntity>
+  + getIndividualProfileDetails(String): Mono<IndividualProfileDetailsDto>
+  + getProfileInfo(String): Mono<ProfileDto>
+  + restoreIndividualForgottenPassword(ChangeForgottenPasswordRequestDto): Mono<UserEntity>
+}
+class ProfileServiceImpl {
+  + ProfileServiceImpl(ProfileRepository, IndividualService, MerchantService, UserService, ProfileDtoMapper, ProfileDetailsMapper, MerchantMembersMapper, MerchantProfileDetailsMapper, AddressService, CountryService, VerificationStatusesService, ProfileRequiredFieldsMapper, ProfileRequiredFieldRepository, MerchantMembersRepository, IndividualRepository, MerchantRepository): 
+  - allRequiredIndividualProfileFieldsAreFilled(IndividualEntity, AddressEntity): boolean
+  - updateUserPhone(String, String): Mono<UserEntity>
+  - buildAddressEntity(Long, AddressDto): Mono<AddressEntity>
+  + updateMerchantProfileDetails(MerchantProfileDetailsDto, String): Mono<MerchantProfileDetailsDto>
+  + findByUserUid(String): Mono<ProfileEntity>
+  + updateIndividualProfileDetailsForOperations(IndividualProfileDetailsForOperationsDto, String): Mono<IndividualProfileDetailsDto>
+  - allRequiredMerchantProfileFieldsAreFilled(MerchantEntity, AddressEntity): boolean
+  + getProfileByUid(String): Mono<ProfileEntity>
+  + restoreIndividualForgottenPassword(ChangeForgottenPasswordRequestDto): Mono<UserEntity>
+  + getMerchantProfileDetails(String): Mono<MerchantProfileDetailsDto>
+  + createProfile(UserEntity, ProfileType): Mono<ProfileEntity>
+  + getProfileInfo(String): Mono<ProfileDto>
+  - checkLanguageIsBlank(String): Language
+  + getIndividualRequiredFields(String, String, String): Mono<List<ProfileRequiredFieldsDto>>
+  + updateIndividualProfileDetails(IndividualProfileDetailsDto, String): Mono<IndividualProfileDetailsDto>
+  - getMerchantProfile(String, UUID): Mono<ProfileDto>
+  - getIndividualProfile(String, UUID): Mono<ProfileDto>
+  + createMerchantProfile(UserEntity, ProfileType): Mono<ProfileEntity>
+  + checkIsVerified(UUID): Mono<Boolean>
+  + getMerchantRequiredFields(String, String, String): Mono<List<ProfileRequiredFieldsDto>>
+  + getIndividualProfileDetails(String): Mono<IndividualProfileDetailsDto>
+  + isProfileValid(String): Mono<Boolean>
+}
+class ProfileServicesEntity {
+  + ProfileServicesEntity(Long, String, String, Boolean, UUID, Status): 
+  + ProfileServicesEntity(): 
+  - id: Long
+  - status: Status
+  - countryAlpha3Code: String
+  - isAllCurrencies: Boolean
+  - currencyCode: String
+  - merchantProfileUid: UUID
+  # canEqual(Object): boolean
+  + toString(): String
+  + hashCode(): int
+  + equals(Object): boolean
+   isAllCurrencies: Boolean
+   currencyCode: String
+   countryAlpha3Code: String
+   id: Long
+   merchantProfileUid: UUID
+   status: Status
+}
+class ProfileWalletTypeEntity {
+  + ProfileWalletTypeEntity(): 
+  - userUid: UUID
+  - profileUid: UUID
+  - id: Long
+  - walletTypeId: Long
+  + toString(): String
+  + equals(Object): boolean
+  # canEqual(Object): boolean
+  + hashCode(): int
+   userUid: UUID
+   profileUid: UUID
+   walletTypeId: Long
+   id: Long
+}
+class R2dbcConfig {
+  + R2dbcConfig(): 
+}
+class ReactivePostgresConfig {
+  + ReactivePostgresConfig(ObjectMapper): 
+  + r2dbcCustomConversions(): R2dbcCustomConversions
+  + connectionFactory(): ConnectionFactory
+}
+class RegistrationRestControllerV1 {
+  + RegistrationRestControllerV1(UserRegistrationService, MerchantMembersService): 
+  + createMerchantMember(MerchantMemberRegistrationRequestDto): Mono<MerchantMemberEntity>
+  + createSyncedIndividualEntity(String, String, Mono<IndividualRegistrationDto>): Mono<IndividualEntity>
+  + createMerchantEntity(MerchantRegistrationDto): Mono<MerchantMemberEntity>
+  + createIndividualEntity(Mono<IndividualRegistrationDto>): Mono<IndividualEntity>
+}
+interface UserAttributeService << interface >> {
+  + setUserAttribute(String, AttributeWrapperDto): Mono<UserEntity>
+  + getAllAttributes(String): Mono<Map<String, String>>
+  + removeAttribute(String, String): Mono<UserEntity>
+  + getAttribute(String, String): Mono<String>
+}
+class UserAttributeServiceImpl {
+  + UserAttributeServiceImpl(UserService, AttributeService): 
+  + getAllAttributes(String): Mono<Map<String, String>>
+  + removeAttribute(String, String): Mono<UserEntity>
+  + setUserAttribute(String, AttributeWrapperDto): Mono<UserEntity>
+  - removeProfileAttribute(UserEntity, String): Mono<UserEntity>
+  - getProfileAttributes(UserEntity): Mono<Map<String, String>>
+  + getAttribute(String, String): Mono<String>
+  - getProfileAttribute(UserEntity, String): Mono<String>
+}
+class UserEntity {
+  + UserEntity(UUID, String, String, String, String, List<ProfileEntity>, boolean, boolean, ProfileEntity, UUID, Language, PreferredOtpGateway, boolean, ProfileType, boolean, boolean, boolean, String): 
+  + UserEntity(): 
+  - secretKey: String
+  - password: String
+  - lastProfileUid: UUID
+  - emailVerified: boolean
+  - admin: boolean
+  - profileType: ProfileType
+  - enabled: boolean
+  - username: String
+  - phoneNumber: String
+  - profiles: List<ProfileEntity>
+  - uid: UUID
+  - lastProfile: ProfileEntity
+  - preferMobile2FA: PreferredOtpGateway
+  - enabled2fa: boolean
+  - social: boolean
+  - email: String
+  - passwordSet: boolean
+  - language: Language
+  # canEqual(Object): boolean
+  + toString(): String
+  + hashCode(): int
+  + equals(Object): boolean
+   lastProfileUid: UUID
+   lastProfile: ProfileEntity
+   social: boolean
+   profiles: List<ProfileEntity>
+   enabled: boolean
+   enabled2fa: boolean
+   preferMobile2FA: PreferredOtpGateway
+   admin: boolean
+   language: Language
+   secretKey: String
+   password: String
+   passwordSet: boolean
+   email: String
+   uid: UUID
+   phoneNumber: String
+   emailVerified: boolean
+   username: String
+   profileType: ProfileType
+}
+class UserInternalRestControllerV1 {
+  + UserInternalRestControllerV1(UserMapper, UserService, UserAttributeService, ProfileService): 
+  + updateCreds(String, String): Mono<VerifyOperationDto>
+  + getAttribute(String, String): Mono<AttributeWrapperDto>
+  + searchAllAdminsBy(String, Integer, Integer): Mono<List<UserDto>>
+  + isEnabled(String): Mono<VerifyOperationDto>
+  + searchAllBy(String, Integer, Integer): Mono<List<UserDto>>
+  + verifyUserPassword(String, String): Mono<VerifyOperationDto>
+  + createUser(String): Mono<UserDto>
+  + findBy(String, String, String): Mono<UserDto>
+  + findAdminBy(String, String, String): Mono<UserDto>
+  + removeUser(String): Mono<VerifyOperationDto>
+  + setEnabled(String, Boolean): Mono<Void>
+  + setUserAttribute(String, AttributeWrapperDto): Mono<UserDto>
+  + updateUser(UserEntity): Mono<UserEntity>
+  + createAdmin(String): Mono<UserDto>
+  + removeAttribute(String, String): Mono<UserDto>
+  - findAdminByParams(String, String, String): Mono<UserEntity>
+}
+class UserMapper {
+  + UserMapper(): 
+  + toDto(UserEntity): UserDto
+}
+class UserProfileEntity {
+  + UserProfileEntity(UUID, UUID): 
+  + UserProfileEntity(): 
+  - userUid: UUID
+  - profileUid: UUID
+  + equals(Object): boolean
+  # canEqual(Object): boolean
+  + hashCode(): int
+  + toString(): String
+   userUid: UUID
+   profileUid: UUID
+}
+class UserProfileFiltersEntity {
+  + UserProfileFiltersEntity(): 
+  - id: Long
+  - profileType: ProfileManagerType
+  - verified: Boolean
+  - countryIds: List<CountryEntity>
+  - userUid: UUID
+  - profileUid: UUID
+  - walletTypeIds: List<ProfileWalletTypeEntity>
+  + hashCode(): int
+  # canEqual(Object): boolean
+  + equals(Object): boolean
+  + toString(): String
+   countryIds: List<CountryEntity>
+   userUid: UUID
+   id: Long
+   verified: Boolean
+   walletTypeIds: List<ProfileWalletTypeEntity>
+   profileUid: UUID
+   profileType: ProfileManagerType
+}
+interface UserProfilesRepository << interface >> {
+  + deleteByUserUid(UUID): Mono<Void>
+}
+interface UserProfilesService << interface >> {
+  + createUserProfiles(UserEntity, ProfileEntity): Mono<UserProfileEntity>
+}
+class UserProfilesServiceImpl {
+  + UserProfilesServiceImpl(UserProfilesRepository): 
+  + createUserProfiles(UserEntity, ProfileEntity): Mono<UserProfileEntity>
+}
+interface UserRegistrationService << interface >> {
+  + createNewMerchantMember(MerchantMemberRegistrationRequestDto): Mono<MerchantMemberEntity>
+  + createNewMerchant(MerchantRegistrationDto): Mono<MerchantMemberEntity>
+  + createSyncedIndividualEntity(IndividualRegistrationDto, String, String): Mono<IndividualEntity>
+  + createNewIndividualEntity(IndividualRegistrationDto): Mono<IndividualEntity>
+}
+class UserRegistrationServiceImpl {
+  + UserRegistrationServiceImpl(UserService, ProfileService, IndividualService, UserProfilesService, MerchantMapper, MerchantService, AddressService, MerchantMembersService, MerchantMembersInvitationsRepository): 
+  - createMerchantMemberEntity(MerchantMemberRegistrationRequestDto, MerchantMembersInvitationsEntity, ProfileEntity): MerchantMemberEntity
+  + createNewIndividualEntity(IndividualRegistrationDto): Mono<IndividualEntity>
+  + createNewMerchant(MerchantRegistrationDto): Mono<MerchantMemberEntity>
+  + createNewMerchantMember(MerchantMemberRegistrationRequestDto): Mono<MerchantMemberEntity>
+  - buildSyncedIndividual(String, String, String, String, String, ProfileEntity): Mono<IndividualEntity>
+  - buildNewIndividual(IndividualRegistrationDto, ProfileEntity): Mono<IndividualEntity>
+  + createSyncedIndividualEntity(IndividualRegistrationDto, String, String): Mono<IndividualEntity>
+  - buildNewMerchant(MerchantRegistrationDto, ProfileEntity): Mono<MerchantEntity>
+}
+interface UserRepository << interface >> {
+  + findAllByProfileUid(UUID): Flux<UserEntity>
+  + findAllUsers(int, int): Flux<UserEntity>
+  + existsByPhoneNumberLike(String): Mono<Boolean>
+  + existsByEmailAndProfileType(String, ProfileType): Mono<Boolean>
+  + findAllAdmins(int, int): Flux<UserEntity>
+  + findByUsernameAndProfileType(String, ProfileType): Mono<UserEntity>
+  + findByUsernameAndAdminIsTrue(String): Mono<UserEntity>
+  + setEnabled(UUID, Boolean): Mono<Void>
+  + findByEmailAndAdminIsTrue(String): Mono<UserEntity>
+  + findByProfileUid(UUID): Mono<UserEntity>
+  + findAllAdminsByQuery(String, int, int): Flux<UserEntity>
+  + findByUidOrEmailOrUsername(UUID, String, String): Mono<UserEntity>
+  + findByEmail(String): Mono<UserEntity>
+  + findByEmailAndProfileType(String, ProfileType): Mono<UserEntity>
+  + setEnabledByEmail(String, ProfileType, Boolean): Mono<Void>
+  + findAllUsersByQuery(String, int, int): Flux<UserEntity>
+  + findByUidAndAdminIsTrue(UUID): Mono<UserEntity>
+}
+class UserRestControllerV1 {
+  + UserRestControllerV1(UserService, UserMapper): 
+  + setEnabledByEmail(Map<String, String>, String): Mono<Void>
+  + findByEmail(Map<String, String>, String): Mono<UserEntity>
+  + checkUsersEmailDoesNotExistOrThrow(Map<String, String>, String): Mono<Void>
+  + checkUsernameDoesNotExistOrThrow(Map<String, String>, String): Mono<Void>
+  + findByUsernameAndProfileType(Map<String, String>, String): Mono<UserEntity>
+  + isExist(Map<String, String>, String): Mono<Boolean>
+  + checkUsersPhoneDoesNotExistOrThrow(String): Mono<Void>
+  + updateEmail(String, String): Mono<UserEntity>
+  + getByProfileUid(String): Mono<UserDto>
+}
+interface UserService << interface >> {
+  + checkUsersPhoneDoesNotExistOrThrow(String): Mono<Void>
+  + createIndividual(IndividualRegistrationDto): Mono<UserEntity>
+  + isExistByEmailAndProfileType(String, ProfileType): Mono<Boolean>
+  + changePassword(String, ChangePasswordRequestDto): Mono<Void>
+  + findByProfileUid(UUID): Mono<UserEntity>
+  + setEnabledByEmail(String, ProfileType, Boolean): Mono<Void>
+  + checkUsersPhoneExists(String): Mono<Boolean>
+  + updateUserEntity(UserEntity): Mono<UserEntity>
+  + findAllAdmins(String, Integer, Integer): Mono<List<UserEntity>>
+  + findAdminByUid(String): Mono<UserEntity>
+  + createAdmin(String): Mono<UserEntity>
+  + createMerchantMember(MerchantMemberRegistrationRequestDto): Mono<UserEntity>
+  + findAdminByEmail(String): Mono<UserEntity>
+  + createUser(String): Mono<UserEntity>
+  + updateCredentials(String, String): Mono<Boolean>
+  + findByUid(String): Mono<UserEntity>
+  + updatePassword(String, UserEntity): Mono<UserEntity>
+  + checkFullNameOrThrow(String, String): Mono<Void>
+  + removeUserByUid(String): Mono<Boolean>
+  + updateEmail(String, String): Mono<UserEntity>
+  + createMerchant(MerchantRegistrationDto): Mono<UserEntity>
+  + findByUsernameAndProfileType(String, ProfileType): Mono<UserEntity>
+  + deleteUserCascade(UUID): Mono<Void>
+  + findUserByUidOrEmailOrUsername(String, String, String): Mono<UserEntity>
+  + createEnabledIndividual(String, String, String, String, String, String, String): Mono<UserEntity>
+  + verifyPasswordByUserUid(String, String): Mono<Boolean>
+  + setEnabled(String, Boolean): Mono<Void>
+  + findAllUsers(String, Integer, Integer): Mono<List<UserEntity>>
+  + checkUsersEmailDoesNotExistOrThrow(String, ProfileType): Mono<Void>
+  + findAdminByUsername(String): Mono<UserEntity>
+  + findByEmailAndProfileType(String, ProfileType): Mono<UserEntity>
+  + checkUsernameDoesNotExistOrThrow(String, ProfileType): Mono<Void>
+}
+class UserServiceImpl {
+  + UserServiceImpl(UserRepository, PasswordEncoderConfig): 
+  + removeUserByUid(String): Mono<Boolean>
+  + createMerchant(MerchantRegistrationDto): Mono<UserEntity>
+  + findAllAdmins(String, Integer, Integer): Mono<List<UserEntity>>
+  + findByProfileUid(UUID): Mono<UserEntity>
+  + findAdminByUid(String): Mono<UserEntity>
+  + checkUsersPhoneDoesNotExistOrThrow(String): Mono<Void>
+  + createEnabledIndividual(String, String, String, String, String, String, String): Mono<UserEntity>
+  + findByEmailAndProfileType(String, ProfileType): Mono<UserEntity>
+  + updateCredentials(String, String): Mono<Boolean>
+  + findAdminByEmail(String): Mono<UserEntity>
+  + updatePassword(String, UserEntity): Mono<UserEntity>
+  + findUserByUidOrEmailOrUsername(String, String, String): Mono<UserEntity>
+  + checkUsernameDoesNotExistOrThrow(String, ProfileType): Mono<Void>
+  + checkFullNameOrThrow(String, String): Mono<Void>
+  + updateUserEntity(UserEntity): Mono<UserEntity>
+  + updateEmail(String, String): Mono<UserEntity>
+  + createMerchantMember(MerchantMemberRegistrationRequestDto): Mono<UserEntity>
+  + changePassword(String, ChangePasswordRequestDto): Mono<Void>
+  + isExistByEmailAndProfileType(String, ProfileType): Mono<Boolean>
+  + createAdmin(String): Mono<UserEntity>
+  + findByUid(String): Mono<UserEntity>
+  + createIndividual(IndividualRegistrationDto): Mono<UserEntity>
+  + setEnabledByEmail(String, ProfileType, Boolean): Mono<Void>
+  + createUser(String): Mono<UserEntity>
+  + findAllUsers(String, Integer, Integer): Mono<List<UserEntity>>
+  + checkUsersEmailDoesNotExistOrThrow(String, ProfileType): Mono<Void>
+  + deleteUserCascade(UUID): Mono<Void>
+  + verifyPasswordByUserUid(String, String): Mono<Boolean>
+  + setEnabled(String, Boolean): Mono<Void>
+  + checkUsersPhoneExists(String): Mono<Boolean>
+  + findByUsernameAndProfileType(String, ProfileType): Mono<UserEntity>
+  + findAdminByUsername(String): Mono<UserEntity>
+}
+class UsersCountriesEntity {
+  + UsersCountriesEntity(UUID, Integer): 
+  + UsersCountriesEntity(): 
+  - userUid: UUID
+  - countryId: Integer
+  + equals(Object): boolean
+  # canEqual(Object): boolean
+  + hashCode(): int
+  + toString(): String
+   userUid: UUID
+   countryId: Integer
+}
+class UtilMethods {
+  - UtilMethods(): 
+  - checkNotNull(String, String): void
+  + isAllFieldsIsNotNull(T): boolean
+  + checkRegex(Pattern, String, String): void
+  + getDefaultDescription(String): String
+  + getUsernameFromTokenHeader(Map<String, String>): String
+  + getUsernameFromAccessToken(String): String
+  + convertMapToDto(Map<String, Object>, Class<T>): T
+  + getChangedFieldsAtCreation(T, List<String>): Map<String, String>
+  + getChangedFields(T, T, List<String>): Map<String, String>
+  + convertObjectToMap(T): Map<String, Object>
+  + isChangedAddress(AddressEntity, AddressEntity): boolean
+  + checkNotBlank(String, String): void
+  + createChangeMakerByProfileType(ProfileType): ProfileChangeMaker
+}
+class VerificationStatusesEntity {
+  + VerificationStatusesEntity(): 
+  # VerificationStatusesEntity(VerificationStatusesEntityBuilder<?, ?>): 
+  - targetProfileUid: UUID
+  - profileType: ProfileType
+  - verificationStatus: VerificationStatus
+  - id: Integer
+  - applicantId: String
+  - details: String
+  + equals(Object): boolean
+  + hashCode(): int
+  + toBuilder(): VerificationStatusesEntityBuilder<?, ?>
+  # canEqual(Object): boolean
+  + builder(): VerificationStatusesEntityBuilder<?, ?>
+  + toString(): String
+   details: String
+   applicantId: String
+   profileType: ProfileType
+   targetProfileUid: UUID
+   id: Integer
+   verificationStatus: VerificationStatus
+}
+interface VerificationStatusesRepository << interface >> {
+  + findByTargetProfileUid(UUID): Mono<VerificationStatusesEntity>
+  + existsByTargetProfileUid(UUID): Mono<Boolean>
+}
+class VerificationStatusesRestControllerV1 {
+  + VerificationStatusesRestControllerV1(VerificationStatusesService): 
+  + createMerchant(String): Mono<VerificationStatusesEntity>
+  + createIndividual(String): Mono<VerificationStatusesEntity>
+}
+interface VerificationStatusesService << interface >> {
+  + existsByTargetProfileUid(UUID): Mono<Boolean>
+  + createMerchant(String): Mono<VerificationStatusesEntity>
+  + createIndividual(String): Mono<VerificationStatusesEntity>
+  + findByProfileUid(UUID): Mono<VerificationStatusesEntity>
+}
+class VerificationStatusesServiceImpl {
+  + VerificationStatusesServiceImpl(VerificationStatusesRepository, IndividualRepository, MerchantRepository, ProfileRepository): 
+  + findByProfileUid(UUID): Mono<VerificationStatusesEntity>
+  + createIndividual(String): Mono<VerificationStatusesEntity>
+  + createMerchant(String): Mono<VerificationStatusesEntity>
+  + existsByTargetProfileUid(UUID): Mono<Boolean>
+  - createVerificationStatusesEntity(ProfileEntity, String): VerificationStatusesEntity
+}
+
+AddressEntity                         -[#000082,plain]-^  AbstractEntity                       
+AddressEntity                        "1" *-[#595959,plain]-> "country\n1" CountryEntity                        
+AddressMapper                        "1" *-[#595959,plain]-> "countryMapper\n1" CountryMapper                        
+AddressRestControllerV1              "1" *-[#595959,plain]-> "addressMapper\n1" AddressMapper                        
+AddressRestControllerV1              "1" *-[#595959,plain]-> "addressService\n1" AddressService                       
+AddressRestControllerV1              "1" *-[#595959,plain]-> "countryService\n1" CountryService                       
+AddressServiceImpl                    -[#595959,dashed]->  AddressEntity                        : "«create»"
+AddressServiceImpl                   "1" *-[#595959,plain]-> "addressRepository\n1" AddressRepository                    
+AddressServiceImpl                    -[#008200,dashed]-^  AddressService                       
+AddressServiceImpl                   "1" *-[#595959,plain]-> "countryRepository\n1" CountryRepository                    
+AdminEntity                           -[#000082,plain]-^  AbstractEntity                       
+AdminEntity                          "1" *-[#595959,plain]-> "profile\n1" ProfileEntity                        
+AttributeServiceImpl                  -[#008200,dashed]-^  AttributeService                     
+AttributeServiceImpl                 "1" *-[#595959,plain]-> "countryService\n1" CountryService                       
+AttributeServiceImpl                 "1" *-[#595959,plain]-> "individualService\n1" IndividualService                    
+AttributeServiceImpl                 "1" *-[#595959,plain]-> "merchantService\n1" MerchantService                      
+AuthorityEntity                       -[#000082,plain]-^  AbstractEntity                       
+CountryEntity                         -[#000082,plain]-^  AbstractEntity                       
+CountryRestControllerV1              "1" *-[#595959,plain]-> "countryMapper\n1" CountryMapper                        
+CountryRestControllerV1              "1" *-[#595959,plain]-> "countryService\n1" CountryService                       
+CountryServiceImpl                   "1" *-[#595959,plain]-> "addressRepository\n1" AddressRepository                    
+CountryServiceImpl                   "1" *-[#595959,plain]-> "countryRepository\n1" CountryRepository                    
+CountryServiceImpl                    -[#008200,dashed]-^  CountryService                       
+CountryServiceImpl                   "1" *-[#595959,plain]-> "individualRepository\n1" IndividualRepository                 
+CountryServiceImpl                   "1" *-[#595959,plain]-> "merchantRepository\n1" MerchantRepository                   
+CountryServiceImpl                   "1" *-[#595959,plain]-> "profileRepository\n1" ProfileRepository                    
+CountryServiceImpl                   "1" *-[#595959,plain]-> "userRepository\n1" UserRepository                       
+ExtendedAdminEntity                  "1" *-[#595959,plain]-> "profile\n1" ProfileEntity                        
+ExtendedAdminEntity                  "1" *-[#595959,plain]-> "filtersEntity\n1" UserProfileFiltersEntity             
+IndividualEntity                      -[#000082,plain]-^  AbstractEntity                       
+IndividualEntity                     "1" *-[#595959,plain]-> "address\n1" AddressEntity                        
+IndividualEntity                     "1" *-[#595959,plain]-> "profile\n1" ProfileEntity                        
+IndividualRestControllerV1           "1" *-[#595959,plain]-> "individualMapper\n1" IndividualMapper                     
+IndividualRestControllerV1           "1" *-[#595959,plain]-> "individualService\n1" IndividualService                    
+IndividualRestControllerV1           "1" *-[#595959,plain]-> "profileIndividualMapper\n1" ProfileIndividualMapper              
+IndividualRestControllerV1           "1" *-[#595959,plain]-> "userService\n1" UserService                          
+IndividualServiceImpl                 -[#595959,dashed]->  AddressEntity                        : "«create»"
+IndividualServiceImpl                "1" *-[#595959,plain]-> "addressService\n1" AddressService                       
+IndividualServiceImpl                "1" *-[#595959,plain]-> "countryService\n1" CountryService                       
+IndividualServiceImpl                 -[#595959,dashed]->  IndividualEntity                     : "«create»"
+IndividualServiceImpl                "1" *-[#595959,plain]-> "individualMapper\n1" IndividualMapper                     
+IndividualServiceImpl                "1" *-[#595959,plain]-> "individualRepository\n1" IndividualRepository                 
+IndividualServiceImpl                 -[#008200,dashed]-^  IndividualService                    
+IndividualServiceImpl                "1" *-[#595959,plain]-> "operationsGetIndividualsMapper\n1" OperationsGetIndividualsMapper       
+IndividualServiceImpl                 -[#595959,dashed]->  ProfileHistoryEntity                 : "«create»"
+IndividualServiceImpl                "1" *-[#595959,plain]-> "profileHistoryRepository\n1" ProfileHistoryRepository             
+IndividualServiceImpl                "1" *-[#595959,plain]-> "profileHistoryService\n1" ProfileHistoryService                
+IndividualServiceImpl                 -[#595959,dashed]->  ProfileHistoryWrapper                : "«create»"
+IndividualServiceImpl                "1" *-[#595959,plain]-> "profileRepository\n1" ProfileRepository                    
+IndividualServiceImpl                "1" *-[#595959,plain]-> "userProfilesRepository\n1" UserProfilesRepository               
+IndividualServiceImpl                "1" *-[#595959,plain]-> "userRepository\n1" UserRepository                       
+IndividualServiceImpl                "1" *-[#595959,plain]-> "userService\n1" UserService                          
+MerchantEntity                        -[#000082,plain]-^  AbstractEntity                       
+MerchantEntity                       "1" *-[#595959,plain]-> "address\n1" AddressEntity                        
+MerchantEntity                       "1" *-[#595959,plain]-> "profile\n1" ProfileEntity                        
+MerchantMapper                       "1" *-[#595959,plain]-> "addressMapper\n1" AddressMapper                        
+MerchantMapper                        -[#595959,dashed]->  MerchantEntity                       : "«create»"
+MerchantMemberEntity                  -[#000082,plain]-^  AbstractEntity                       
+MerchantMembersServiceImpl            -[#595959,dashed]->  MerchantMemberEntity                 : "«create»"
+MerchantMembersServiceImpl            -[#595959,dashed]->  MerchantMembersInvitationsEntity     : "«create»"
+MerchantMembersServiceImpl           "1" *-[#595959,plain]-> "merchantMembersInvitationsMapper\n1" MerchantMembersInvitationsMapper     
+MerchantMembersServiceImpl           "1" *-[#595959,plain]-> "membersInvitationsRepository\n1" MerchantMembersInvitationsRepository 
+MerchantMembersServiceImpl           "1" *-[#595959,plain]-> "merchantMembersMapper\n1" MerchantMembersMapper                
+MerchantMembersServiceImpl           "1" *-[#595959,plain]-> "merchantMembersRepository\n1" MerchantMembersRepository            
+MerchantMembersServiceImpl            -[#008200,dashed]-^  MerchantMembersService               
+MerchantMembersServiceImpl           "1" *-[#595959,plain]-> "merchantRepository\n1" MerchantRepository                   
+MerchantMembersServiceImpl            -[#595959,dashed]->  ProfileHistoryEntity                 : "«create»"
+MerchantMembersServiceImpl           "1" *-[#595959,plain]-> "profileHistoryRepository\n1" ProfileHistoryRepository             
+MerchantMembersServiceImpl           "1" *-[#595959,plain]-> "profileHistoryService\n1" ProfileHistoryService                
+MerchantMembersServiceImpl           "1" *-[#595959,plain]-> "profileRepository\n1" ProfileRepository                    
+MerchantMembersServiceImpl           "1" *-[#595959,plain]-> "userRepository\n1" UserRepository                       
+MerchantProfileDetailsMapper         "1" *-[#595959,plain]-> "addressMapper\n1" AddressMapper                        
+MerchantProfileDetailsMapper         "1" *-[#595959,plain]-> "membersMapper\n1" MerchantMembersMapper                
+MerchantRestControllerV1             "1" *-[#595959,plain]-> "countryService\n1" CountryService                       
+MerchantRestControllerV1             "1" *-[#595959,plain]-> "merchantMapper\n1" MerchantMapper                       
+MerchantRestControllerV1             "1" *-[#595959,plain]-> "merchantMembersService\n1" MerchantMembersService               
+MerchantRestControllerV1             "1" *-[#595959,plain]-> "merchantService\n1" MerchantService                      
+MerchantRestControllerV1             "1" *-[#595959,plain]-> "profileService\n1" ProfileService                       
+MerchantRestControllerV1             "1" *-[#595959,plain]-> "userService\n1" UserService                          
+MerchantServiceImpl                   -[#595959,dashed]->  AddressEntity                        : "«create»"
+MerchantServiceImpl                  "1" *-[#595959,plain]-> "addressService\n1" AddressService                       
+MerchantServiceImpl                  "1" *-[#595959,plain]-> "countryService\n1" CountryService                       
+MerchantServiceImpl                   -[#595959,dashed]->  MerchantEntity                       : "«create»"
+MerchantServiceImpl                  "1" *-[#595959,plain]-> "merchantMapper\n1" MerchantMapper                       
+MerchantServiceImpl                  "1" *-[#595959,plain]-> "membersInvitationsRepository\n1" MerchantMembersInvitationsRepository 
+MerchantServiceImpl                  "1" *-[#595959,plain]-> "merchantMembersMapper\n1" MerchantMembersMapper                
+MerchantServiceImpl                  "1" *-[#595959,plain]-> "merchantMembersRepository\n1" MerchantMembersRepository            
+MerchantServiceImpl                  "1" *-[#595959,plain]-> "merchantMembersService\n1" MerchantMembersService               
+MerchantServiceImpl                  "1" *-[#595959,plain]-> "merchantRepository\n1" MerchantRepository                   
+MerchantServiceImpl                   -[#008200,dashed]-^  MerchantService                      
+MerchantServiceImpl                   -[#595959,dashed]->  ProfileHistoryEntity                 : "«create»"
+MerchantServiceImpl                  "1" *-[#595959,plain]-> "profileHistoryRepository\n1" ProfileHistoryRepository             
+MerchantServiceImpl                  "1" *-[#595959,plain]-> "profileHistoryService\n1" ProfileHistoryService                
+MerchantServiceImpl                   -[#595959,dashed]->  ProfileHistoryWrapper                : "«create»"
+MerchantServiceImpl                  "1" *-[#595959,plain]-> "profileRepository\n1" ProfileRepository                    
+MerchantServiceImpl                  "1" *-[#595959,plain]-> "userRepository\n1" UserRepository                       
+MerchantServiceImpl                  "1" *-[#595959,plain]-> "userService\n1" UserService                          
+OperationsGetIndividualsMapper       "1" *-[#595959,plain]-> "addressMapper\n1" AddressMapper                        
+OperationsMembersEntity               -[#000082,plain]-^  AbstractEntity                       
+ProfileChangeControllerV1            "1" *-[#595959,plain]-> "profileService\n1" ProfileService                       
+ProfileDetailsMapper                 "1" *-[#595959,plain]-> "addressMapper\n1" AddressMapper                        
+ProfileDtoMapper                     "1" *-[#595959,plain]-> "addressMapper\n1" AddressMapper                        
+ProfileEntity                         -[#000082,plain]-^  AbstractEntity                       
+ProfileEntity                        "1" *-[#595959,plain]-> "user\n1" UserEntity                           
+ProfileHistoryEntity                  -[#000082,plain]-^  AbstractEntity                       
+ProfileHistoryRestControllerV1       "1" *-[#595959,plain]-> "profileHistoryMapper\n1" ProfileHistoryMapper                 
+ProfileHistoryRestControllerV1       "1" *-[#595959,plain]-> "profileHistoryService\n1" ProfileHistoryService                
+ProfileHistoryServiceImpl             -[#595959,dashed]->  ProfileHistoryEntity                 : "«create»"
+ProfileHistoryServiceImpl            "1" *-[#595959,plain]-> "profileHistoryRepository\n1" ProfileHistoryRepository             
+ProfileHistoryServiceImpl             -[#008200,dashed]-^  ProfileHistoryService                
+ProfileIndividualMapper              "1" *-[#595959,plain]-> "addressMapper\n1" AddressMapper                        
+ProfileInfoRestControllerV1          "1" *-[#595959,plain]-> "profileService\n1" ProfileService                       
+ProfileInfoRestControllerV1          "1" *-[#595959,plain]-> "userService\n1" UserService                          
+ProfileRestControllerV1              "1" *-[#595959,plain]-> "profileService\n1" ProfileService                       
+ProfileServiceImpl                   "1" *-[#595959,plain]-> "addressService\n1" AddressService                       
+ProfileServiceImpl                   "1" *-[#595959,plain]-> "countryService\n1" CountryService                       
+ProfileServiceImpl                   "1" *-[#595959,plain]-> "individualRepository\n1" IndividualRepository                 
+ProfileServiceImpl                   "1" *-[#595959,plain]-> "individualService\n1" IndividualService                    
+ProfileServiceImpl                   "1" *-[#595959,plain]-> "merchantMembersMapper\n1" MerchantMembersMapper                
+ProfileServiceImpl                   "1" *-[#595959,plain]-> "merchantMembersRepository\n1" MerchantMembersRepository            
+ProfileServiceImpl                   "1" *-[#595959,plain]-> "merchantProfileDetailsMapper\n1" MerchantProfileDetailsMapper         
+ProfileServiceImpl                   "1" *-[#595959,plain]-> "merchantRepository\n1" MerchantRepository                   
+ProfileServiceImpl                   "1" *-[#595959,plain]-> "merchantService\n1" MerchantService                      
+ProfileServiceImpl                   "1" *-[#595959,plain]-> "profileDetailsMapper\n1" ProfileDetailsMapper                 
+ProfileServiceImpl                   "1" *-[#595959,plain]-> "profileDtoMapper\n1" ProfileDtoMapper                     
+ProfileServiceImpl                    -[#595959,dashed]->  ProfileEntity                        : "«create»"
+ProfileServiceImpl                   "1" *-[#595959,plain]-> "profileRepository\n1" ProfileRepository                    
+ProfileServiceImpl                   "1" *-[#595959,plain]-> "profileRequiredFieldRepository\n1" ProfileRequiredFieldRepository       
+ProfileServiceImpl                   "1" *-[#595959,plain]-> "profileRequiredFieldsMapper\n1" ProfileRequiredFieldsMapper          
+ProfileServiceImpl                    -[#008200,dashed]-^  ProfileService                       
+ProfileServiceImpl                   "1" *-[#595959,plain]-> "userService\n1" UserService                          
+ProfileServiceImpl                   "1" *-[#595959,plain]-> "verificationStatusesService\n1" VerificationStatusesService          
+ProfileServicesEntity                 -[#000082,plain]-^  AbstractEntity                       
+ReactivePostgresConfig                -[#595959,dashed]->  JsonToMapConverter                   : "«create»"
+ReactivePostgresConfig                -[#595959,dashed]->  MapToJsonConverter                   : "«create»"
+RegistrationRestControllerV1         "1" *-[#595959,plain]-> "merchantMembersService\n1" MerchantMembersService               
+RegistrationRestControllerV1         "1" *-[#595959,plain]-> "userRegistrationService\n1" UserRegistrationService              
+UserAttributeServiceImpl             "1" *-[#595959,plain]-> "attributeService\n1" AttributeService                     
+UserAttributeServiceImpl              -[#008200,dashed]-^  UserAttributeService                 
+UserAttributeServiceImpl             "1" *-[#595959,plain]-> "userService\n1" UserService                          
+UserEntity                            -[#000082,plain]-^  AbstractEntity                       
+UserEntity                           "1" *-[#595959,plain]-> "profiles\n*" ProfileEntity                        
+UserInternalRestControllerV1         "1" *-[#595959,plain]-> "profileService\n1" ProfileService                       
+UserInternalRestControllerV1         "1" *-[#595959,plain]-> "attributeService\n1" UserAttributeService                 
+UserInternalRestControllerV1         "1" *-[#595959,plain]-> "userMapper\n1" UserMapper                           
+UserInternalRestControllerV1         "1" *-[#595959,plain]-> "userService\n1" UserService                          
+UserProfileFiltersEntity              -[#000082,plain]-^  AbstractEntity                       
+UserProfileFiltersEntity             "1" *-[#595959,plain]-> "countryIds\n*" CountryEntity                        
+UserProfileFiltersEntity             "1" *-[#595959,plain]-> "walletTypeIds\n*" ProfileWalletTypeEntity              
+UserProfilesServiceImpl               -[#595959,dashed]->  UserProfileEntity                    : "«create»"
+UserProfilesServiceImpl              "1" *-[#595959,plain]-> "userProfilesRepository\n1" UserProfilesRepository               
+UserProfilesServiceImpl               -[#008200,dashed]-^  UserProfilesService                  
+UserRegistrationServiceImpl          "1" *-[#595959,plain]-> "addressService\n1" AddressService                       
+UserRegistrationServiceImpl           -[#595959,dashed]->  IndividualEntity                     : "«create»"
+UserRegistrationServiceImpl          "1" *-[#595959,plain]-> "individualService\n1" IndividualService                    
+UserRegistrationServiceImpl           -[#595959,dashed]->  MerchantEntity                       : "«create»"
+UserRegistrationServiceImpl          "1" *-[#595959,plain]-> "merchantMapper\n1" MerchantMapper                       
+UserRegistrationServiceImpl           -[#595959,dashed]->  MerchantMemberEntity                 : "«create»"
+UserRegistrationServiceImpl          "1" *-[#595959,plain]-> "invitationsRepository\n1" MerchantMembersInvitationsRepository 
+UserRegistrationServiceImpl          "1" *-[#595959,plain]-> "merchantMembersService\n1" MerchantMembersService               
+UserRegistrationServiceImpl          "1" *-[#595959,plain]-> "merchantService\n1" MerchantService                      
+UserRegistrationServiceImpl          "1" *-[#595959,plain]-> "profileService\n1" ProfileService                       
+UserRegistrationServiceImpl          "1" *-[#595959,plain]-> "userProfilesService\n1" UserProfilesService                  
+UserRegistrationServiceImpl           -[#008200,dashed]-^  UserRegistrationService              
+UserRegistrationServiceImpl          "1" *-[#595959,plain]-> "userService\n1" UserService                          
+UserRestControllerV1                 "1" *-[#595959,plain]-> "userMapper\n1" UserMapper                           
+UserRestControllerV1                 "1" *-[#595959,plain]-> "userService\n1" UserService                          
+UserServiceImpl                       -[#595959,dashed]->  UserEntity                           : "«create»"
+UserServiceImpl                      "1" *-[#595959,plain]-> "userRepository\n1" UserRepository                       
+UserServiceImpl                       -[#008200,dashed]-^  UserService                          
+VerificationStatusesEntity            -[#000082,plain]-^  AbstractEntity                       
+VerificationStatusesRestControllerV1 "1" *-[#595959,plain]-> "verificationStatusesService\n1" VerificationStatusesService          
+VerificationStatusesServiceImpl      "1" *-[#595959,plain]-> "individualRepository\n1" IndividualRepository                 
+VerificationStatusesServiceImpl      "1" *-[#595959,plain]-> "merchantRepository\n1" MerchantRepository                   
+VerificationStatusesServiceImpl      "1" *-[#595959,plain]-> "profileRepository\n1" ProfileRepository                    
+VerificationStatusesServiceImpl       -[#595959,dashed]->  VerificationStatusesEntity           : "«create»"
+VerificationStatusesServiceImpl      "1" *-[#595959,plain]-> "verificationStatusesRepository\n1" VerificationStatusesRepository       
+VerificationStatusesServiceImpl       -[#008200,dashed]-^  VerificationStatusesService          
+@enduml

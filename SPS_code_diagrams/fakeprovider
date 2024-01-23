@@ -1,0 +1,378 @@
+@startuml
+
+!theme plain
+top to bottom direction
+skinparam linetype ortho
+
+class BadBalanceException {
+  + BadBalanceException(String): 
+}
+class Balance {
+  + Balance(): 
+  + Balance(Long, Currency): 
+  - merchant: Merchant
+  - id: Long
+  - merchantId: Long
+  - balance: Long
+  - currency: Currency
+  + toString(): String
+   currency: Currency
+   balance: Long
+   merchant: Merchant
+   merchantId: Long
+   id: Long?
+   new: boolean
+}
+interface BalanceMapper << interface >> {
+  + toDto(Balance): BalanceDtoResponse
+}
+interface BalanceRepository << interface >> {
+  + findByMerchantIdAndCurrency(Long, Currency): Mono<Balance>
+  + findAllByMerchantId(Long): Flux<Balance>
+}
+class BalanceRestControllerV1 {
+  + BalanceRestControllerV1(BalanceService, BalanceMapper): 
+  ~ getBalance(String): Flux<BalanceDtoResponse>
+}
+interface BalanceService << interface >> {
+  + findAllBalanceByMerchant(String): Flux<Balance>
+  + getBalance(Payout): Mono<Balance>
+  + topUp(TopUp): void
+  + checkBalanceByPayout(Payout): Mono<Payout>
+}
+class BalanceServiceImpl {
+  + BalanceServiceImpl(BalanceRepository, MerchantTokenHandler): 
+  + topUp(TopUp): void
+  + findAllBalanceByMerchant(String): Flux<Balance>
+  + getBalance(Payout): Mono<Balance>
+  + checkBalanceByPayout(Payout): Mono<Payout>
+}
+class BaseConfig {
+  + BaseConfig(): 
+  ~ webClient(): WebClient
+  ~ clock(): Clock
+}
+class ChangeStatusScheduler {
+  + ChangeStatusScheduler(RandomChanger, TopUpRepository, PayoutRepository, WebhookService, BalanceService, BalanceRepository): 
+  - updateStatusByPayout(): void
+  - updateStatusByTopUp(): void
+  + updateStatusesTransactions(): void
+}
+class FakeProviderApplication {
+  + FakeProviderApplication(): 
+  + main(String[]): void
+}
+class GlobalErrorHandler {
+  + GlobalErrorHandler(): 
+  ~ notFoundHandler(NotFoundException): Map<String, String>
+  ~ badBalanceErrorHandler(BadBalanceException): Map<String, String>
+  ~ authErrorHandler(NotAuthenticateException): Map<String, String>
+  ~ exceptionHandler(Exception): Map<String, String>
+  ~ duplicateErrorHandler(DuplicateKeyException): Map<String, String>
+  ~ badRequestHandler(ServerWebInputException): Map<String, String>
+}
+class Merchant {
+  + Merchant(): 
+  - id: Long
+  - merchantId: String
+  - secretKey: String
+  + toString(): String
+   secretKey: String
+   id: Long?
+   merchantId: String
+   new: boolean
+}
+interface MerchantMapper << interface >> {
+  + toEntity(MerchantDtoRequest): Merchant
+  + toDto(Merchant): MerchantDtoResponse
+}
+interface MerchantRepository << interface >> {
+  + findByMerchantId(String): Mono<Merchant>
+}
+class MerchantRestControllerV1 {
+  + MerchantRestControllerV1(MerchantService, MerchantMapper): 
+  ~ findById(String): Mono<MerchantDtoResponse>
+  ~ insert(MerchantDtoRequest): Mono<MerchantDtoResponse>
+}
+interface MerchantService << interface >> {
+  + findByMerchantId(String): Mono<Merchant>
+  + insert(Merchant): Mono<Merchant>
+}
+class MerchantServiceImpl {
+  + MerchantServiceImpl(MerchantRepository): 
+  + insert(Merchant): Mono<Merchant>
+  + findByMerchantId(String): Mono<Merchant>
+}
+class MerchantTokenHandler {
+  + MerchantTokenHandler(MerchantService): 
+  + getMerchant(String): Mono<Merchant>
+}
+class NotAuthenticateException {
+  + NotAuthenticateException(String): 
+  + NotAuthenticateException(): 
+}
+class NotFoundException {
+  + NotFoundException(String): 
+}
+class Payout {
+  + Payout(): 
+  - id: UUID
+  - language: Language
+  - message: String
+  - createdAt: LocalDateTime
+  - amount: Long
+  - paymentMethod: PaymentMethod
+  - merchant: Merchant
+  - cardData: Long
+  - updatedAt: LocalDateTime
+  - notificationUrl: String
+  - customer: String
+  - currency: Currency
+  - proselyteTransactionId: UUID
+  - merchantId: Long
+  - status: StatusTransactionPayout
+   createdAt: LocalDateTime
+   merchantId: Long
+   notificationUrl: String
+   message: String
+   status: StatusTransactionPayout
+   cardData: Long
+   id: UUID?
+   language: Language
+   updatedAt: LocalDateTime
+   merchant: Merchant
+   new: boolean
+   amount: Long
+   currency: Currency
+   proselyteTransactionId: UUID
+   paymentMethod: PaymentMethod
+   customer: String
+}
+interface PayoutMapper << interface >> {
+  + toEntity(PayoutDtoRequest): Payout
+  + toByListDtoResponse(Payout): PayoutByListDtoResponse
+  + toCreateDtoResponse(Payout): PayoutCreateDtoResponse
+  + toDto(Payout): PayoutDetailsDtoResponse
+}
+interface PayoutRepository << interface >> {
+  + findByMerchantIdAndId(Long, UUID): Mono<Payout>
+  + findAllByStatus(StatusTransactionPayout): Flux<Payout>
+  + findAllByMerchantIdAndCreatedAtBetween(Long, LocalDateTime, LocalDateTime): Flux<Payout>
+}
+class PayoutRestControllerV1 {
+  + PayoutRestControllerV1(PayoutService, PayoutMapper): 
+  ~ insert(String, PayoutDtoRequest): Mono<PayoutCreateDtoResponse>
+  ~ findById(String, UUID): Mono<PayoutDetailsDtoResponse>
+  ~ findAll(String, Optional<LocalDate>, Optional<LocalDate>): Flux<PayoutByListDtoResponse>
+}
+interface PayoutService << interface >> {
+  + findAll(String, LocalDateTime, LocalDateTime): Flux<Payout>
+  + insert(String, Payout): Mono<Payout>
+  + findById(String, UUID): Mono<Payout>
+}
+class PayoutServiceImpl {
+  + PayoutServiceImpl(PayoutRepository, WebhookService, BalanceService, MerchantTokenHandler, Clock): 
+  + findById(String, UUID): Mono<Payout>
+  + insert(String, Payout): Mono<Payout>
+  + findAll(String, LocalDateTime, LocalDateTime): Flux<Payout>
+}
+class PayoutWebhookHistory {
+  + PayoutWebhookHistory(): 
+  - createdAt: LocalDateTime
+  - id: Long
+  - payoutId: UUID
+  - responseStatus: Integer
+  - requestBody: String
+  - resultMessage: String
+  - payout: Payout
+  - status: StatusTransactionPayout
+  + toString(): String
+   payout: Payout
+   createdAt: LocalDateTime
+   responseStatus: Integer
+   id: Long?
+   status: StatusTransactionPayout
+   new: boolean
+   payoutId: UUID
+   resultMessage: String
+   requestBody: String
+}
+interface PayoutWebhookHistoryRepository << interface >> {
+  + findAllByPayoutId(UUID): Flux<PayoutWebhookHistory>
+}
+interface RandomChanger << interface >> {
+   resultUpdateStatus: Boolean
+}
+class TopUp {
+  + TopUp(): 
+  - customer: String
+  - currency: Currency
+  - createdAt: LocalDateTime
+  - merchantId: Long
+  - paymentMethod: PaymentMethod
+  - status: StatusTransactionTopUp
+  - amount: Long
+  - updatedAt: LocalDateTime
+  - merchant: Merchant
+  - proselyteTransactionId: UUID
+  - message: String
+  - language: Language
+  - cardNumber: Long
+  - id: UUID
+  - notificationUrl: String
+   createdAt: LocalDateTime
+   merchantId: Long
+   status: StatusTransactionTopUp
+   notificationUrl: String
+   message: String
+   id: UUID?
+   language: Language
+   cardNumber: Long
+   updatedAt: LocalDateTime
+   merchant: Merchant
+   new: boolean
+   amount: Long
+   currency: Currency
+   proselyteTransactionId: UUID
+   paymentMethod: PaymentMethod
+   customer: String
+}
+interface TopUpMapper << interface >> {
+  + toDto(TopUp): TopUpDtoResponse
+  + toEntity(TopUpDtoRequest): TopUp
+  + toCreateDtoResponse(TopUp): TopUpCreateDtoResponse
+}
+interface TopUpRepository << interface >> {
+  + findAllByMerchantIdAndCreatedAtBetween(Long, LocalDateTime, LocalDateTime): Flux<TopUp>
+  + findByMerchantIdAndId(Long, UUID): Mono<TopUp>
+  + findAllByStatus(StatusTransactionTopUp): Flux<TopUp>
+}
+class TopUpRestControllerV1 {
+  + TopUpRestControllerV1(TopUpService, TopUpMapper): 
+  ~ findById(String, UUID): Mono<TopUpDtoResponse>
+  ~ insert(String, TopUpDtoRequest): Mono<TopUpCreateDtoResponse>
+  ~ findAll(String, Optional<Long>, Optional<Long>): Flux<TopUpDtoResponse>
+}
+interface TopUpService << interface >> {
+  + findById(String, UUID): Mono<TopUp>
+  + findAll(String, LocalDateTime, LocalDateTime): Flux<TopUp>
+  + insert(String, TopUp): Mono<TopUp>
+}
+class TopUpServiceImpl {
+  + TopUpServiceImpl(TopUpRepository, WebhookService, MerchantTokenHandler, Clock): 
+  + findAll(String, LocalDateTime, LocalDateTime): Flux<TopUp>
+  + insert(String, TopUp): Mono<TopUp>
+  + findById(String, UUID): Mono<TopUp>
+}
+class TopUpWebhookHistory {
+  + TopUpWebhookHistory(): 
+  - resultMessage: String
+  - id: Long
+  - status: StatusTransactionTopUp
+  - createdAt: LocalDateTime
+  - topUpId: UUID
+  - requestBody: String
+  - responseStatus: Integer
+  - topUp: TopUp
+  + toString(): String
+   createdAt: LocalDateTime
+   responseStatus: Integer
+   topUpId: UUID
+   id: Long?
+   status: StatusTransactionTopUp
+   new: boolean
+   topUp: TopUp
+   resultMessage: String
+   requestBody: String
+}
+interface TopUpWebhookHistoryRepository << interface >> {
+  + findAllByTopUpId(UUID): Flux<TopUpWebhookHistory>
+}
+interface TransactionService<T> << interface >> {
+  + updateStatus(T): void
+}
+class UniformDistributionChangerStatusImpl {
+  + UniformDistributionChangerStatusImpl(): 
+   resultUpdateStatus: Boolean
+}
+class WebhookHistoryRestControllerV1 {
+  + WebhookHistoryRestControllerV1(WebhookService, WebhookMapper): 
+  ~ findPayoutWebhookHistory(UUID): Flux<PayoutWebhookHistoryDtoResponse>
+  ~ findTopUpWebhookHistory(UUID): Flux<TopUpWebhookHistoryDtoResponse>
+}
+interface WebhookMapper << interface >> {
+  + toDto(PayoutWebhookHistory): PayoutWebhookHistoryDtoResponse
+  + toWebhookPayoutRequest(Payout): WebhookPayoutDtoRequest
+  + toWebhookTopUpRequest(TopUp): WebhookTopUpDtoRequest
+  + toDto(TopUpWebhookHistory): TopUpWebhookHistoryDtoResponse
+}
+interface WebhookService << interface >> {
+  + findPayoutWebhookHistory(UUID): Flux<PayoutWebhookHistory>
+  + findTopUpWebhookHistory(UUID): Flux<TopUpWebhookHistory>
+  + registration(Payout): void
+  + registration(TopUp): void
+}
+class WebhookServiceImpl {
+  + WebhookServiceImpl(TopUpWebhookHistoryRepository, PayoutWebhookHistoryRepository, WebhookMapper, WebClient): 
+  - savePayoutHistory(Payout, String, Integer, String): void
+  - sendWebhook(Payout): void
+  + findPayoutWebhookHistory(UUID): Flux<PayoutWebhookHistory>
+  + registration(TopUp): void
+  - saveTopUpHistory(TopUp, String, Integer, String): void
+  + findTopUpWebhookHistory(UUID): Flux<TopUpWebhookHistory>
+  + registration(Payout): void
+  - sendWebhook(TopUp): void
+}
+
+Balance                              "1" *-[#595959,plain]-> "merchant\n1" Merchant                             
+BalanceRestControllerV1              "1" *-[#595959,plain]-> "mapper\n1" BalanceMapper                        
+BalanceRestControllerV1              "1" *-[#595959,plain]-> "balanceService\n1" BalanceService                       
+BalanceServiceImpl                    -[#595959,dashed]->  BadBalanceException                  : "«create»"
+BalanceServiceImpl                    -[#595959,dashed]->  Balance                              : "«create»"
+BalanceServiceImpl                   "1" *-[#595959,plain]-> "balanceRepository\n1" BalanceRepository                    
+BalanceServiceImpl                    -[#008200,dashed]-^  BalanceService                       
+BalanceServiceImpl                   "1" *-[#595959,plain]-> "merchantTokenHandler\n1" MerchantTokenHandler                 
+ChangeStatusScheduler                "1" *-[#595959,plain]-> "balanceRepository\n1" BalanceRepository                    
+ChangeStatusScheduler                "1" *-[#595959,plain]-> "balanceService\n1" BalanceService                       
+ChangeStatusScheduler                "1" *-[#595959,plain]-> "payoutRepository\n1" PayoutRepository                     
+ChangeStatusScheduler                "1" *-[#595959,plain]-> "randomChanger\n1" RandomChanger                        
+ChangeStatusScheduler                "1" *-[#595959,plain]-> "topUpRepository\n1" TopUpRepository                      
+ChangeStatusScheduler                "1" *-[#595959,plain]-> "webhookService\n1" WebhookService                       
+MerchantRestControllerV1             "1" *-[#595959,plain]-> "mapper\n1" MerchantMapper                       
+MerchantRestControllerV1             "1" *-[#595959,plain]-> "merchantService\n1" MerchantService                      
+MerchantServiceImpl                  "1" *-[#595959,plain]-> "merchantRepository\n1" MerchantRepository                   
+MerchantServiceImpl                   -[#008200,dashed]-^  MerchantService                      
+MerchantServiceImpl                   -[#595959,dashed]->  NotFoundException                    : "«create»"
+MerchantTokenHandler                 "1" *-[#595959,plain]-> "merchantService\n1" MerchantService                      
+MerchantTokenHandler                  -[#595959,dashed]->  NotAuthenticateException             : "«create»"
+Payout                               "1" *-[#595959,plain]-> "merchant\n1" Merchant                             
+PayoutRestControllerV1               "1" *-[#595959,plain]-> "mapper\n1" PayoutMapper                         
+PayoutRestControllerV1               "1" *-[#595959,plain]-> "payoutService\n1" PayoutService                        
+PayoutServiceImpl                    "1" *-[#595959,plain]-> "balanceService\n1" BalanceService                       
+PayoutServiceImpl                    "1" *-[#595959,plain]-> "merchantTokenHandler\n1" MerchantTokenHandler                 
+PayoutServiceImpl                     -[#595959,dashed]->  NotAuthenticateException             : "«create»"
+PayoutServiceImpl                     -[#595959,dashed]->  NotFoundException                    : "«create»"
+PayoutServiceImpl                    "1" *-[#595959,plain]-> "payoutRepository\n1" PayoutRepository                     
+PayoutServiceImpl                     -[#008200,dashed]-^  PayoutService                        
+PayoutServiceImpl                    "1" *-[#595959,plain]-> "webhookService\n1" WebhookService                       
+PayoutWebhookHistory                 "1" *-[#595959,plain]-> "payout\n1" Payout                               
+TopUp                                "1" *-[#595959,plain]-> "merchant\n1" Merchant                             
+TopUpRestControllerV1                "1" *-[#595959,plain]-> "mapper\n1" TopUpMapper                          
+TopUpRestControllerV1                "1" *-[#595959,plain]-> "topUpService\n1" TopUpService                         
+TopUpServiceImpl                     "1" *-[#595959,plain]-> "merchantTokenHandler\n1" MerchantTokenHandler                 
+TopUpServiceImpl                      -[#595959,dashed]->  NotAuthenticateException             : "«create»"
+TopUpServiceImpl                      -[#595959,dashed]->  NotFoundException                    : "«create»"
+TopUpServiceImpl                     "1" *-[#595959,plain]-> "topUpRepository\n1" TopUpRepository                      
+TopUpServiceImpl                      -[#008200,dashed]-^  TopUpService                         
+TopUpServiceImpl                     "1" *-[#595959,plain]-> "webhookService\n1" WebhookService                       
+TopUpWebhookHistory                  "1" *-[#595959,plain]-> "topUp\n1" TopUp                                
+UniformDistributionChangerStatusImpl  -[#008200,dashed]-^  RandomChanger                        
+WebhookHistoryRestControllerV1       "1" *-[#595959,plain]-> "mapper\n1" WebhookMapper                        
+WebhookHistoryRestControllerV1       "1" *-[#595959,plain]-> "webhookService\n1" WebhookService                       
+WebhookServiceImpl                    -[#595959,dashed]->  PayoutWebhookHistory                 : "«create»"
+WebhookServiceImpl                   "1" *-[#595959,plain]-> "payoutWebhookHistoryRepository\n1" PayoutWebhookHistoryRepository       
+WebhookServiceImpl                    -[#595959,dashed]->  TopUpWebhookHistory                  : "«create»"
+WebhookServiceImpl                   "1" *-[#595959,plain]-> "topUpWebhookHistoryRepository\n1" TopUpWebhookHistoryRepository        
+WebhookServiceImpl                   "1" *-[#595959,plain]-> "mapper\n1" WebhookMapper                        
+WebhookServiceImpl                    -[#008200,dashed]-^  WebhookService                       
+@enduml

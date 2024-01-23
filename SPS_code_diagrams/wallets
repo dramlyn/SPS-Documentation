@@ -1,0 +1,1023 @@
+@startuml
+
+!theme plain
+top to bottom direction
+skinparam linetype ortho
+
+class CompletePaymentRequest {
+  + CompletePaymentRequest(UUID, long): 
+  + CompletePaymentRequest(): 
+  - paymentRequestUid: UUID
+  - feeSourceCurrencyCode: long
+  + equals(Object): boolean
+  # canEqual(Object): boolean
+  + hashCode(): int
+  + toString(): String
+   paymentRequestUid: UUID
+   feeSourceCurrencyCode: long
+}
+class ConfirmPaymentModel {
+  + ConfirmPaymentModel(UUID, TransactionType): 
+  - type: TransactionType
+  - paymentRequestUid: UUID
+  + equals(Object): boolean
+  # canEqual(Object): boolean
+  + hashCode(): int
+  + toString(): String
+   type: TransactionType
+   paymentRequestUid: UUID
+}
+interface ConfirmPaymentRequest << interface >> {
+  + confirmTransferPaymentRequest(ConfirmPaymentModel, ConfirmPaymentModel): Mono<Tuple2<UUID, UUID>>
+  + confirmPaymentRequest(ConfirmPaymentModel): Mono<UUID>
+}
+class ConfirmPaymentRequestImpl {
+  + ConfirmPaymentRequestImpl(InitTransactionModelMapper, TransactionInitializer, PaymentRequestsRepository): 
+  - findPaymentRequest(UUID): Mono<PaymentRequestEntity>
+  + confirmTransferPaymentRequest(ConfirmPaymentModel, ConfirmPaymentModel): Mono<Tuple2<UUID, UUID>>
+  + confirmPaymentRequest(ConfirmPaymentModel): Mono<UUID>
+}
+interface ConfirmTransactionService << interface >> {
+  + confirmTopUpTransaction(UUID): Mono<Void>
+  + rollbackTopUpTransaction(UUID): Mono<Void>
+  + rollbackWithdrawalTransaction(UUID): Mono<Void>
+  + confirmWithdrawalTransaction(UUID): Mono<Void>
+}
+class ConfirmTransactionServiceImpl {
+  + ConfirmTransactionServiceImpl(PaymentRequestsRepository, TransactionsRepository, WalletsRepository): 
+  + confirmTopUpTransaction(UUID): Mono<Void>
+  + confirmWithdrawalTransaction(UUID): Mono<Void>
+  + rollbackWithdrawalTransaction(UUID): Mono<Void>
+  - findTransactionByPaymentRequestUid(UUID): Mono<TransactionEntity>
+  + rollbackTopUpTransaction(UUID): Mono<Void>
+}
+class CryptoWalletEntity {
+  + CryptoWalletEntity(UUID, LocalDateTime, LocalDateTime, String, String, String, UUID, String, UUID): 
+  + CryptoWalletEntity(): 
+  - createdAt: LocalDateTime
+  - id: UUID
+  - walletUid: UUID
+  - profileUid: UUID
+  - network: String
+  - modifiedAt: LocalDateTime
+  - address: String
+  - status: String
+  - ticker: String
+  + hashCode(): int
+  + toString(): String
+  # canEqual(Object): boolean
+  + equals(Object): boolean
+   modifiedAt: LocalDateTime
+   createdAt: LocalDateTime
+   new: boolean
+   network: String
+   ticker: String
+   walletUid: UUID
+   id: UUID?
+   status: String
+   profileUid: UUID
+   address: String
+}
+interface CurrencyConverter << interface >> {
+  + convert(Long, String, String): Mono<Long>
+}
+class CurrencyConverterImpl {
+  + CurrencyConverterImpl(CurrencyClient): 
+  + convert(Long, String, String): Mono<Long>
+}
+class ErrorContextConfig {
+  + ErrorContextConfig(): 
+  ~ errorAttributes(List<ExceptionMapper>): ErrorInfoErrorAttributes
+}
+class ErrorHandlerConfig {
+  + ErrorHandlerConfig(): 
+  + equals(Object): boolean
+  # canEqual(Object): boolean
+  + hashCode(): int
+  + toString(): String
+  + errorHandler(): ExchangeFilterFunction
+}
+interface FeeService << interface >> {
+  + countFee(InitPaymentRequestModel, PaymentRequestEntity): Mono<PaymentRequestEntity>
+}
+class FeeServiceImpl {
+  + FeeServiceImpl(IndividualFeeRuleRepository): 
+  - findFeeRuleByPayment(String, TransactionType, BigDecimal, Long, Long): Mono<IndividualFeeRuleEntity>
+  + countFee(InitPaymentRequestModel, PaymentRequestEntity): Mono<PaymentRequestEntity>
+}
+class FrozenTransactionEntity {
+  + FrozenTransactionEntity(UUID, LocalDateTime, UUID, Long): 
+  + FrozenTransactionEntity(): 
+  - id: UUID
+  - createdAt: LocalDateTime
+  - frozenBalance: Long
+  - walletUid: UUID
+  + hashCode(): int
+  # canEqual(Object): boolean
+  + toString(): String
+  + equals(Object): boolean
+   frozenBalance: Long
+   walletUid: UUID
+   id: UUID?
+   createdAt: LocalDateTime
+   new: boolean
+}
+class IndividualFeeRuleEntity {
+  + IndividualFeeRuleEntity(): 
+  + IndividualFeeRuleEntity(Long, LocalDateTime, LocalDateTime, Boolean, Double, Long, String, LocalDateTime, String, Long, Long, Long, Long, Boolean, String, String, LocalDateTime, LocalDateTime, String, UUID, UUID): 
+  - transactionType: String
+  - endDate: LocalDateTime
+  - modifiedAt: LocalDateTime
+  - status: String
+  - feeCurrency: String
+  - percentage: Double
+  - isAllWalletTypes: Boolean
+  - amountTo: Long
+  - createdAt: LocalDateTime
+  - walletTypeId: Long
+  - paymentMethodId: Long
+  - creatorProfileUid: UUID
+  - modifierProfileUid: UUID
+  - option: String
+  - highestPriority: Boolean
+  - feeRuleType: String
+  - archivedAt: LocalDateTime
+  - fixedAmount: Long
+  - amountFrom: Long
+  - startDate: LocalDateTime
+  - id: Long
+  # canEqual(Object): boolean
+  + hashCode(): int
+  + equals(Object): boolean
+  + toString(): String
+   feeCurrency: String
+   paymentMethodId: Long
+   transactionType: String
+   createdAt: LocalDateTime
+   id: Long?
+   endDate: LocalDateTime
+   modifierProfileUid: UUID
+   archivedAt: LocalDateTime
+   startDate: LocalDateTime
+   feeRuleType: String
+   isAllWalletTypes: Boolean
+   amountFrom: Long
+   modifiedAt: LocalDateTime
+   walletTypeId: Long
+   fixedAmount: Long
+   new: boolean
+   amountTo: Long
+   status: String
+   creatorProfileUid: UUID
+   percentage: Double
+   option: String
+   highestPriority: Boolean
+}
+interface IndividualFeeRuleRepository << interface >> {
+  + findRulesByParameters(String, String, BigDecimal, Long, Long): Mono<IndividualFeeRuleEntity>
+}
+class InitPaymentRequestModel {
+  + InitPaymentRequestModel(AbstractPaymentRequestDto, String, TransactionType, WalletTypeEntity): 
+  + InitPaymentRequestModel(): 
+  - transactionType: TransactionType
+  - walletType: WalletTypeEntity
+  - walletUid: String
+  - paymentRequestDto: AbstractPaymentRequestDto
+  + toString(): String
+  # canEqual(Object): boolean
+  + equals(Object): boolean
+  + hashCode(): int
+   transactionType: TransactionType
+   walletType: WalletTypeEntity
+   walletUid: String
+   paymentRequestDto: AbstractPaymentRequestDto
+}
+class InitTransactionModel {
+  + InitTransactionModel(String, String, String, Long, TransactionType, Long): 
+  + InitTransactionModel(): 
+  - walletUid: String
+  - paymentRequestUid: String
+  - type: TransactionType
+  - rawAmount: Long
+  - profileUid: String
+  - fee: Long
+  + equals(Object): boolean
+  + toString(): String
+  + hashCode(): int
+  # canEqual(Object): boolean
+  + builder(): InitTransactionModelBuilder
+   profileUid: String
+   type: TransactionType
+   paymentRequestUid: String
+   walletUid: String
+   fee: Long
+   rawAmount: Long
+}
+interface InitTransactionModelMapper << interface >> {
+  + map(PaymentRequestEntity, TransactionType): InitTransactionModel
+}
+class ListenerCallbackConfirmTransaction {
+  + ListenerCallbackConfirmTransaction(ConfirmTransactionService): 
+  + handleConfirmTransaction(ConsumerRecord<String, ConfirmTransactionRequestDto>): void
+}
+class MerchantFeeRuleEntity {
+  + MerchantFeeRuleEntity(Long, LocalDateTime, LocalDateTime, Double, Long, String, LocalDateTime, String, Long, Long, Long, Long, Boolean, String, String, LocalDateTime, LocalDateTime, String, UUID, UUID, UUID, Boolean): 
+  + MerchantFeeRuleEntity(): 
+  - feeCurrency: String
+  - endDate: LocalDateTime
+  - modifiedAt: LocalDateTime
+  - archivedAt: LocalDateTime
+  - paymentMethodId: Long
+  - amountFrom: Long
+  - feeRuleType: String
+  - percentage: Double
+  - startDate: LocalDateTime
+  - creatorProfileUid: UUID
+  - modifierProfileUid: UUID
+  - walletUid: UUID
+  - fixedAmount: Long
+  - transactionType: String
+  - walletTypeId: Long
+  - status: String
+  - option: String
+  - isAllWallets: Boolean
+  - highestPriority: Boolean
+  - createdAt: LocalDateTime
+  - id: Long
+  - amountTo: Long
+  # canEqual(Object): boolean
+  + toString(): String
+  + equals(Object): boolean
+  + hashCode(): int
+   feeCurrency: String
+   paymentMethodId: Long
+   transactionType: String
+   createdAt: LocalDateTime
+   id: Long?
+   endDate: LocalDateTime
+   modifierProfileUid: UUID
+   archivedAt: LocalDateTime
+   startDate: LocalDateTime
+   feeRuleType: String
+   amountFrom: Long
+   modifiedAt: LocalDateTime
+   walletTypeId: Long
+   fixedAmount: Long
+   new: boolean
+   amountTo: Long
+   walletUid: UUID
+   status: String
+   creatorProfileUid: UUID
+   percentage: Double
+   option: String
+   highestPriority: Boolean
+   isAllWallets: Boolean
+}
+class PartnerPaymentRequestEntity {
+  + PartnerPaymentRequestEntity(UUID, LocalDateTime, LocalDateTime, String, UUID, String, Long, String, String, Boolean, String): 
+  + PartnerPaymentRequestEntity(): 
+  - currencyCode: String
+  - notificationUrl: String
+  - returnUrl: String
+  - id: UUID
+  - testMode: Boolean
+  - type: String
+  - createdAt: LocalDateTime
+  - merchantProfileUid: UUID
+  - modifiedAt: LocalDateTime
+  - amount: Long
+  - metadata: String
+  + equals(Object): boolean
+  + hashCode(): int
+  # canEqual(Object): boolean
+  + toString(): String
+   modifiedAt: LocalDateTime
+   createdAt: LocalDateTime
+   type: String
+   merchantProfileUid: UUID
+   notificationUrl: String
+   new: boolean
+   amount: Long
+   id: UUID?
+   currencyCode: String
+   returnUrl: String
+   metadata: String
+   testMode: Boolean
+}
+class PaymentDetailEntity {
+  + PaymentDetailEntity(Long, Long, Long, Long, Long, String, String, String, String, String, LocalDateTime, LocalDateTime, Long, Long, String, Long, Long, String, Long, String, String, String, String, Long, String, String, String, String, Long, Long, String, String, String, String, String, String, String, String, LocalDateTime, String, String, String, String, String, Long, Long, Long, String, String, String, String, String, String, LocalDateTime, Long, String, String, String, String, LocalDateTime, String, String, String, String, String, String, String, String, String): 
+  + PaymentDetailEntity(): 
+  - failureRedirectUrl: String
+  - created: LocalDateTime
+  - cardExpiryMonth: String
+  - bankThreeDsRedirectUrl: String
+  - paymentPhone: String
+  - completed: LocalDateTime
+  - identifier: String
+  - cardExpiryYear: String
+  - reasonId: Long
+  - organizationRouteBankId: Long
+  - token: String
+  - paymentData: String
+  - paymentIp: String
+  - paymentPersonIdentifier: String
+  - alternativePaymentTypeId: Long
+  - bankTermUrl: String
+  - paymentState: String
+  - amount: String
+  - paymentBirthDate: LocalDateTime
+  - paymentFirstName: String
+  - testThreeDsResult: String
+  - description: String
+  - bankAcsUrl: String
+  - authenticationRequested: String
+  - updated: LocalDateTime
+  - holdAmount: String
+  - inProgress: String
+  - binId: Long
+  - invoiceId: String
+  - amountAfterRefunds: String
+  - accountId: String
+  - version: Long
+  - bankMethod: String
+  - pendingRedirectUrl: String
+  - bankTransactionId: String
+  - cardTypeId: Long
+  - paymentPostalCode: String
+  - id: Long
+  - successRedirectUrl: String
+  - cardFirstSix: String
+  - bankError: String
+  - holdReleaseDate: LocalDateTime
+  - organizationId: Long
+  - methodId: Long
+  - paymentLastName: String
+  - organizationMidId: Long
+  - merchantFee: String
+  - bankEci: String
+  - bankResponseCode: String
+  - bankData: String
+  - paymentTransactionId: Long
+  - paymentCountryId: Long
+  - bankPaReq: String
+  - bankResponseHttpStatus: Long
+  - cardLastFour: String
+  - name: String
+  - bankId: Long
+  - currencyId: Long
+  - bankResponseBody: String
+  - paymentAddress: String
+  - bankResponseData: String
+  - operationTypeId: Long
+  - clientFee: String
+  - bankPaResUrl: String
+  - paymentCity: String
+  - bankMd: String
+  - bankArn: String
+  - statusId: Long
+  - bankTemporaryData: String
+  + hashCode(): int
+  # canEqual(Object): boolean
+  + equals(Object): boolean
+  + toString(): String
+   description: String
+   bankEci: String
+   bankPaReq: String
+   binId: Long
+   failureRedirectUrl: String
+   bankId: Long
+   currencyId: Long
+   holdAmount: String
+   pendingRedirectUrl: String
+   amount: String
+   paymentPhone: String
+   version: Long
+   completed: LocalDateTime
+   organizationId: Long
+   paymentBirthDate: LocalDateTime
+   cardTypeId: Long
+   token: String
+   paymentCountryId: Long
+   bankPaResUrl: String
+   bankResponseData: String
+   invoiceId: String
+   authenticationRequested: String
+   statusId: Long
+   updated: LocalDateTime
+   bankArn: String
+   cardFirstSix: String
+   inProgress: String
+   new: boolean
+   paymentAddress: String
+   cardExpiryMonth: String
+   holdReleaseDate: LocalDateTime
+   bankMd: String
+   paymentFirstName: String
+   clientFee: String
+   cardExpiryYear: String
+   reasonId: Long
+   bankTransactionId: String
+   bankThreeDsRedirectUrl: String
+   bankResponseCode: String
+   paymentLastName: String
+   id: Long?
+   bankResponseBody: String
+   bankData: String
+   testThreeDsResult: String
+   paymentCity: String
+   successRedirectUrl: String
+   accountId: String
+   amountAfterRefunds: String
+   bankMethod: String
+   paymentIp: String
+   created: LocalDateTime
+   alternativePaymentTypeId: Long
+   bankTemporaryData: String
+   merchantFee: String
+   paymentTransactionId: Long
+   paymentPostalCode: String
+   paymentState: String
+   cardLastFour: String
+   paymentPersonIdentifier: String
+   organizationRouteBankId: Long
+   identifier: String
+   organizationMidId: Long
+   name: String
+   methodId: Long
+   bankAcsUrl: String
+   operationTypeId: Long
+   bankResponseHttpStatus: Long
+   paymentData: String
+   bankError: String
+   bankTermUrl: String
+}
+class PaymentRequestEntity {
+  + PaymentRequestEntity(UUID, LocalDateTime, LocalDateTime, UUID, UUID, Long, Long, PaymentStatus, Double, Long, String, Long, String, Long, Double, UUID, String, Long, UUID): 
+  + PaymentRequestEntity(): 
+  - id: UUID
+  - comment: String
+  - providerTransactionUid: UUID
+  - paymentMethodId: Long
+  - option: String
+  - amountInCrypto: Double
+  - status: PaymentStatus
+  - providerTransactionId: String
+  - createdAt: LocalDateTime
+  - walletUid: UUID
+  - fixedAmount: Long
+  - scale: Long
+  - amountGross: Long
+  - percentage: Double
+  - cryptoCallbackId: Long
+  - cryptoWalletUid: UUID
+  - fee: Long
+  - modifiedAt: LocalDateTime
+  - profileUid: UUID
+  + toString(): String
+  + equals(Object): boolean
+  # canEqual(Object): boolean
+  + hashCode(): int
+   paymentMethodId: Long
+   comment: String
+   fee: Long
+   createdAt: LocalDateTime
+   id: UUID?
+   providerTransactionId: String
+   profileUid: UUID
+   scale: Long
+   modifiedAt: LocalDateTime
+   amountInCrypto: Double
+   fixedAmount: Long
+   status: PaymentStatus
+   new: boolean
+   cryptoWalletUid: UUID
+   walletUid: UUID
+   amountGross: Long
+   percentage: Double
+   option: String
+   cryptoCallbackId: Long
+   providerTransactionUid: UUID
+}
+interface PaymentRequestInitializer << interface >> {
+  + initialize(AbstractPaymentRequestDto, String, TransactionType): Mono<CompletePaymentRequest>
+}
+class PaymentRequestInitializerImpl {
+  + PaymentRequestInitializerImpl(PaymentRequestMapper, CurrencyConverter, FeeService, PaymentRequestsRepository, WalletsRepository, WalletTypesRepository): 
+  - createPaymentRequest(InitPaymentRequestModel): Mono<CompletePaymentRequest>
+  + initialize(AbstractPaymentRequestDto, String, TransactionType): Mono<CompletePaymentRequest>
+}
+interface PaymentRequestMapper << interface >> {
+  + map(AbstractPaymentRequestDto): PaymentRequestEntity
+}
+interface PaymentRequestsRepository << interface >> {
+  + findByProviderTransactionUid(UUID): Mono<PaymentRequestEntity>
+}
+class RollingReserveEntity {
+  + RollingReserveEntity(Long, LocalDateTime, LocalDateTime, UUID, Long, Long, LocalDateTime): 
+  + RollingReserveEntity(): 
+  - createdAt: LocalDateTime
+  - walletUid: UUID
+  - blockedAmount: Long
+  - lockoutPeriod: Long
+  - modifiedAt: LocalDateTime
+  - archivedAt: LocalDateTime
+  - id: Long
+  + equals(Object): boolean
+  + toString(): String
+  # canEqual(Object): boolean
+  + hashCode(): int
+   lockoutPeriod: Long
+   modifiedAt: LocalDateTime
+   blockedAmount: Long
+   createdAt: LocalDateTime
+   id: Long?
+   new: boolean
+   walletUid: UUID
+   archivedAt: LocalDateTime
+}
+interface TopUpPaymentService << interface >> {
+  + topUpPayment(TopUpPaymentRequestDto): Mono<TopUpPaymentResponseDto>
+  + confirmTopUpPayment(String): Mono<ConfirmTopUpPaymentResponse>
+}
+class TopUpPaymentServiceImpl {
+  + TopUpPaymentServiceImpl(TopUpRequestMapper, ConfirmPaymentRequest, PaymentRequestInitializer, TopUpRequestsRepository): 
+  + confirmTopUpPayment(String): Mono<ConfirmTopUpPaymentResponse>
+  + topUpPayment(TopUpPaymentRequestDto): Mono<TopUpPaymentResponseDto>
+  - calculatePercentageTopUp(long, long): double
+}
+class TopUpRequestEntity {
+  + TopUpRequestEntity(): 
+  + TopUpRequestEntity(UUID, LocalDateTime, String, UUID): 
+  - provider: String
+  - paymentRequestUid: UUID
+  - id: UUID
+  - createdAt: LocalDateTime
+  # canEqual(Object): boolean
+  + toString(): String
+  + hashCode(): int
+  + equals(Object): boolean
+   id: UUID?
+   createdAt: LocalDateTime
+   paymentRequestUid: UUID
+   new: boolean
+   provider: String
+}
+interface TopUpRequestMapper << interface >> {
+  + map(TransferPaymentRequestDto): TopUpPaymentRequestDto
+  + map(PaymentRequestEntity): TopUpPaymentResponseDto
+  + map(TopUpPaymentRequestDto): TopUpRequestEntity
+}
+interface TopUpRequestsRepository << interface >>
+class TransactionAttributeEntity {
+  + TransactionAttributeEntity(Long, LocalDateTime, LocalDateTime, UUID, String, String): 
+  + TransactionAttributeEntity(): 
+  - id: Long
+  - value: String
+  - transactionUid: UUID
+  - createdAt: LocalDateTime
+  - modifiedAt: LocalDateTime
+  - key: String
+  + toString(): String
+  # canEqual(Object): boolean
+  + hashCode(): int
+  + equals(Object): boolean
+   modifiedAt: LocalDateTime
+   createdAt: LocalDateTime
+   id: Long?
+   new: boolean
+   transactionUid: UUID
+   key: String
+   value: String
+}
+interface TransactionAttributesRepository << interface >>
+class TransactionEntity {
+  + TransactionEntity(UUID, LocalDateTime, LocalDateTime, UUID, UUID, UUID, String, Long, Long, Long, Long, TransactionType, TransactionStatus, UUID, String, Long): 
+  + TransactionEntity(): 
+  - walletName: String
+  - linkedTransaction: UUID
+  - modifiedAt: LocalDateTime
+  - amountInUsd: Long
+  - type: TransactionType
+  - currencyCode: String
+  - walletUid: UUID
+  - refundFee: Long
+  - rawAmount: Long
+  - paymentRequestUid: UUID
+  - createdAt: LocalDateTime
+  - balanceOperationAmount: Long
+  - id: UUID
+  - fee: Long
+  - profileUid: UUID
+  - state: TransactionStatus
+  + equals(Object): boolean
+  + builder(): TransactionEntityBuilder
+  # canEqual(Object): boolean
+  + toString(): String
+  + hashCode(): int
+   linkedTransaction: UUID
+   fee: Long
+   createdAt: LocalDateTime
+   rawAmount: Long
+   type: TransactionType
+   id: UUID?
+   profileUid: UUID
+   paymentRequestUid: UUID
+   refundFee: Long
+   modifiedAt: LocalDateTime
+   balanceOperationAmount: Long
+   new: boolean
+   walletName: String
+   state: TransactionStatus
+   walletUid: UUID
+   currencyCode: String
+   amountInUsd: Long
+}
+class TransactionHistoryController {
+  + TransactionHistoryController(TransactionHistoryService): 
+  + getTransactionHistoryWithPagination(TransactionHistoryWithPaginationDtoRequest): Mono<TransactionHistoryWithPaginationDtoResponse>
+  + getTransactionHistoryWithoutPagination(TransactionHistoryDtoRequest): Mono<TransactionEntityDtoListResponse>
+}
+interface TransactionHistoryMapper << interface >> {
+  + map(TransactionEntity): TransactionEntityDto
+}
+interface TransactionHistoryService << interface >> {
+  + getTransactionHistoryWithPagination(TransactionHistoryWithPaginationDtoRequest): Mono<TransactionHistoryWithPaginationDtoResponse>
+  + getAllTransactionHistory(TransactionHistoryDtoRequest): Mono<TransactionEntityDtoListResponse>
+}
+class TransactionHistoryServiceImpl {
+  + TransactionHistoryServiceImpl(TransactionsRepository, TransactionHistoryMapper): 
+  + getTransactionHistoryWithPagination(TransactionHistoryWithPaginationDtoRequest): Mono<TransactionHistoryWithPaginationDtoResponse>
+  + getAllTransactionHistory(TransactionHistoryDtoRequest): Mono<TransactionEntityDtoListResponse>
+}
+interface TransactionInitializer << interface >> {
+  + initTransactionTransfer(InitTransactionModel, InitTransactionModel): Mono<Tuple2<TransactionEntity, TransactionEntity>>
+  + initTransaction(InitTransactionModel): Mono<TransactionEntity>
+}
+interface TransactionMapper << interface >> {
+  + map(InitTransactionModel): TransactionEntity
+}
+class TransactionRollingReserveEntity {
+  + TransactionRollingReserveEntity(): 
+  + TransactionRollingReserveEntity(UUID, LocalDateTime, LocalDateTime, UUID, Long, String): 
+  - rollingReserveId: Long
+  - frozenBalance: String
+  - id: UUID
+  - expiresAt: LocalDateTime
+  - createdAt: LocalDateTime
+  - walletUid: UUID
+  + equals(Object): boolean
+  # canEqual(Object): boolean
+  + hashCode(): int
+  + toString(): String
+   createdAt: LocalDateTime
+   rollingReserveId: Long
+   frozenBalance: String
+   new: boolean
+   walletUid: UUID
+   id: UUID?
+   expiresAt: LocalDateTime
+}
+class TransactionServiceImpl {
+  + TransactionServiceImpl(TransactionMapper, CurrencyConverter, WalletsRepository, WalletTypesRepository, TransactionsRepository): 
+  - findWalletTypeById(long): Mono<WalletTypeEntity>
+  - getTransaction(InitTransactionModel): Mono<TransactionEntity>
+  - changeWalletBalance(TransactionEntity, WalletEntity, WalletTypeEntity): void
+  - checkWalletTypeIsActive(WalletTypeEntity, SynchronousSink<WalletTypeEntity>): void
+  - saveTransaction(TransactionEntity, WalletTypeEntity): Mono<TransactionEntity>
+  - checkWalletIsActive(WalletEntity, SynchronousSink<WalletEntity>): void
+  - checkBalanceWallet(WalletEntity, SynchronousSink<WalletEntity>): void
+  - getTransaction(InitTransactionModel, InitTransactionModel): Mono<Tuple2<TransactionEntity, TransactionEntity>>
+  - changeTransaction(TransactionEntity, WalletEntity, WalletTypeEntity): Mono<WalletEntity>
+  + initTransactionTransfer(InitTransactionModel, InitTransactionModel): Mono<Tuple2<TransactionEntity, TransactionEntity>>
+  - findWalletByUid(String): Mono<WalletEntity>
+  + initTransaction(InitTransactionModel): Mono<TransactionEntity>
+}
+interface TransactionsRepository << interface >> {
+  + findAllByPaymentRequestUid(UUID): Mono<TransactionEntity>
+  + findTransactionsByFilter(List<UUID>, LocalDateTime, LocalDateTime, List<TransactionType>, List<TransactionStatus>): Flux<TransactionEntity>
+  + findTransactionsByFilter(List<UUID>, LocalDateTime, LocalDateTime, List<TransactionType>, List<TransactionStatus>, int, int): Flux<TransactionEntity>
+}
+class TransferPaymentController {
+  + TransferPaymentController(TransferPaymentService): 
+  + transferPayment(TransferPaymentRequestDto): Mono<TransferPaymentResponseDto>
+  + confirmTransferPayment(String): Mono<ConfirmTransferPaymentResponse>
+}
+interface TransferPaymentService << interface >> {
+  + transferPayment(TransferPaymentRequestDto): Mono<TransferPaymentResponseDto>
+  + confirmTransferPayment(String): Mono<ConfirmTransferPaymentResponse>
+}
+class TransferPaymentServiceImpl {
+  + TransferPaymentServiceImpl(TopUpRequestMapper, WithdrawalRequestMapper, PaymentRequestInitializer, ConfirmPaymentRequest, TransferRequestsRepository): 
+  + confirmTransferPayment(String): Mono<ConfirmTransferPaymentResponse>
+  + transferPayment(TransferPaymentRequestDto): Mono<TransferPaymentResponseDto>
+  - calculatePercentageWithdrawal(long, long): double
+  - saveTransferRequest(TransferRequestEntity, TransferPaymentResponseDto): Mono<TransferRequestEntity>
+  - calculatePercentageTopUp(long, long): double
+}
+class TransferRequestEntity {
+  + TransferRequestEntity(UUID, LocalDateTime, String, UUID, UUID): 
+  + TransferRequestEntity(): 
+  - paymentRequestUidFrom: UUID
+  - paymentRequestUidTo: UUID
+  - createdAt: LocalDateTime
+  - id: UUID
+  - systemRate: String
+  # canEqual(Object): boolean
+  + hashCode(): int
+  + toString(): String
+  + equals(Object): boolean
+   systemRate: String
+   id: UUID?
+   createdAt: LocalDateTime
+   paymentRequestUidTo: UUID
+   new: boolean
+   paymentRequestUidFrom: UUID
+}
+interface TransferRequestsRepository << interface >>
+class WalletEntity {
+  + WalletEntity(Long, LocalDateTime, LocalDateTime, String, Long, UUID, WalletStatus, Long, LocalDateTime, UUID): 
+  + WalletEntity(): 
+  - name: String
+  - profileUid: UUID
+  - status: WalletStatus
+  - walletTypeId: Long
+  - id: Long
+  - walletUid: UUID
+  - modifiedAt: LocalDateTime
+  - balance: Long
+  - createdAt: LocalDateTime
+  - archivedAt: LocalDateTime
+  # canEqual(Object): boolean
+  + toString(): String
+  + equals(Object): boolean
+  + hashCode(): int
+   name: String
+   status: WalletStatus
+   modifiedAt: LocalDateTime
+   createdAt: LocalDateTime
+   walletTypeId: Long
+   id: Long?
+   new: boolean
+   balance: Long
+   walletUid: UUID
+   archivedAt: LocalDateTime
+   profileUid: UUID
+}
+interface WalletMapper << interface >> {
+  + mapToResponse(WalletEntity): WalletResponseDto
+  + mapToResponse(WalletTypeEntity): WalletTypeResponseDto
+  + map(WalletTypeEntity): CreateWalletTypeRequestDto
+  + map(ChangeStatusWalletTypeRequestDto, Long, WalletTypeStatus, WalletTypeStatus): WalletTypeStatusHistoryEntity
+  + map(CreateWalletTypeRequestDto, WalletTypeStatus): WalletTypeEntity
+  + map(WalletEntity): CreateWalletRequestDto
+  + map(ChangeWalletStatusRequestDto, UUID, WalletStatus, WalletStatus): WalletStatusHistoryEntity
+  + map(CreateWalletRequestDto, WalletStatus, UUID): WalletEntity
+}
+class WalletStatusHistoryEntity {
+  + WalletStatusHistoryEntity(): 
+  + WalletStatusHistoryEntity(Long, LocalDateTime, UUID, UUID, String, String, WalletStatus, String, WalletStatus): 
+  - changedByProfileType: String
+  - createdAt: LocalDateTime
+  - reason: String
+  - id: Long
+  - toStatus: WalletStatus
+  - walletUid: UUID
+  - changedByUserUid: UUID
+  - fromStatus: WalletStatus
+  - comment: String
+  + equals(Object): boolean
+  + toString(): String
+  # canEqual(Object): boolean
+  + hashCode(): int
+   comment: String
+   createdAt: LocalDateTime
+   changedByProfileType: String
+   id: Long?
+   new: boolean
+   toStatus: WalletStatus
+   walletUid: UUID
+   reason: String
+   fromStatus: WalletStatus
+   changedByUserUid: UUID
+}
+interface WalletStatusHistoryRepository << interface >>
+class WalletTypeEntity {
+  + WalletTypeEntity(Long, LocalDateTime, LocalDateTime, String, String, WalletTypeStatus, LocalDateTime, String, String, String): 
+  + WalletTypeEntity(): 
+  - name: String
+  - createdAt: LocalDateTime
+  - creator: String
+  - id: Long
+  - status: WalletTypeStatus
+  - currencyCode: String
+  - modifier: String
+  - archivedAt: LocalDateTime
+  - profileType: String
+  - modifiedAt: LocalDateTime
+  # canEqual(Object): boolean
+  + hashCode(): int
+  + toString(): String
+  + equals(Object): boolean
+   modifier: String
+   name: String
+   modifiedAt: LocalDateTime
+   createdAt: LocalDateTime
+   id: Long?
+   new: boolean
+   currencyCode: String
+   archivedAt: LocalDateTime
+   profileType: String
+   status: WalletTypeStatus
+   creator: String
+}
+class WalletTypeStatusHistoryEntity {
+  + WalletTypeStatusHistoryEntity(Long, LocalDateTime, Long, UUID, String, String, WalletTypeStatus, String, WalletTypeStatus): 
+  + WalletTypeStatusHistoryEntity(): 
+  - id: Long
+  - walletTypeId: Long
+  - changedByUserUid: UUID
+  - createdAt: LocalDateTime
+  - changedByProfileType: String
+  - fromStatus: WalletTypeStatus
+  - comment: String
+  - reason: String
+  - toStatus: WalletTypeStatus
+  + hashCode(): int
+  + toString(): String
+  + equals(Object): boolean
+  # canEqual(Object): boolean
+   comment: String
+   createdAt: LocalDateTime
+   toStatus: WalletTypeStatus
+   changedByProfileType: String
+   walletTypeId: Long
+   id: Long?
+   new: boolean
+   reason: String
+   fromStatus: WalletTypeStatus
+   changedByUserUid: UUID
+}
+interface WalletTypesRepository << interface >>
+interface WalletTypesStatusHistoryRepository << interface >>
+class WalletsController {
+  + WalletsController(WalletsService): 
+  + createWalletType(CreateWalletTypeRequestDto): Mono<Void>
+  + changeStatusWalletType(ChangeStatusWalletTypeRequestDto, Long): Mono<Void>
+  + findWalletByUid(String): Mono<WalletResponseDto>
+  + changeStatusWallet(ChangeWalletStatusRequestDto, String): Mono<Void>
+  + changeTypeWallet(Long, String): Mono<Void>
+  + createWallet(CreateWalletRequestDto): Mono<CreateWalletResponseDto>
+}
+class WalletsExceptionHandler {
+  + WalletsExceptionHandler(): 
+  + handle(WalletServiceInitPaymentException): Mono<String>
+  + handle(TransactionHistoryException): Mono<String>
+  + handle(WalletServicePaymentRequestNotFound): Mono<String>
+  + handle(ConstraintViolationException): Mono<String>
+  + handle(WalletServiceCurrencyCodeException): Mono<String>
+  + handle(WalletServiceWalletLockedException): Mono<String>
+  + handle(BadSqlGrammarException): Mono<String>
+  + handle(WalletServiceBalanceChangeException): Mono<String>
+  + handle(MethodArgumentNotValidException): Mono<String>
+  + handle(WalletServiceWalletNotFound): Mono<String>
+  + handle(IllegalArgumentException): Mono<String>
+  + handle(WalletServiceWalletTypeNoActive): Mono<String>
+  + handle(DataIntegrityViolationException): Mono<String>
+  + handle(WalletServiceTransactionException): Mono<String>
+  + handle(WalletServicePointlessness): Mono<String>
+  + handle(WalletServicePaymentConfirmException): Mono<String>
+  + handle(HttpMessageNotWritableException): Mono<String>
+}
+interface WalletsRepository << interface >> {
+  + findWalletsEntityByWalletUid(UUID): Mono<WalletEntity>
+}
+interface WalletsService << interface >> {
+  + createWalletType(CreateWalletTypeRequestDto): Mono<Void>
+  + createWallet(CreateWalletRequestDto): Mono<CreateWalletResponseDto>
+  + changeStatusWallet(ChangeWalletStatusRequestDto, String): Mono<Void>
+  + findWalletByUid(String): Mono<WalletResponseDto>
+  + changeStatusWalletType(ChangeStatusWalletTypeRequestDto, Long): Mono<Void>
+  + changeTypeWallet(Long, String): Mono<Void>
+}
+class WalletsServiceApplication {
+  + WalletsServiceApplication(): 
+  + main(String[]): void
+}
+class WalletsServiceImpl {
+  + WalletsServiceImpl(WalletMapper, WalletsRepository, WalletTypesRepository, WalletStatusHistoryRepository, WalletTypesStatusHistoryRepository): 
+  + findWalletByUid(String): Mono<WalletResponseDto>
+  + changeStatusWallet(ChangeWalletStatusRequestDto, String): Mono<Void>
+  + createWalletType(CreateWalletTypeRequestDto): Mono<Void>
+  + changeStatusWalletType(ChangeStatusWalletTypeRequestDto, Long): Mono<Void>
+  + createWallet(CreateWalletRequestDto): Mono<CreateWalletResponseDto>
+  + changeTypeWallet(Long, String): Mono<Void>
+}
+class WithdrawalPaymentController {
+  + WithdrawalPaymentController(WithdrawalPaymentService): 
+  + withdrawalPayment(WithdrawalPaymentRequestDto): Mono<WithdrawalPaymentResponseDto>
+  + confirmWithdrawalPayment(String): Mono<ConfirmWithdrawalPaymentResponse>
+}
+interface WithdrawalPaymentService << interface >> {
+  + confirmWithdrawalPayment(String): Mono<ConfirmWithdrawalPaymentResponse>
+  + withdrawalPayment(WithdrawalPaymentRequestDto): Mono<WithdrawalPaymentResponseDto>
+}
+class WithdrawalPaymentServiceImpl {
+  + WithdrawalPaymentServiceImpl(WithdrawalRequestMapper, ConfirmPaymentRequest, PaymentRequestInitializer, WithdrawalRequestsRepository): 
+  - calculatePercentageWithdrawal(long, long): double
+  + confirmWithdrawalPayment(String): Mono<ConfirmWithdrawalPaymentResponse>
+  + withdrawalPayment(WithdrawalPaymentRequestDto): Mono<WithdrawalPaymentResponseDto>
+}
+class WithdrawalRequestEntity {
+  + WithdrawalRequestEntity(): 
+  + WithdrawalRequestEntity(UUID, LocalDateTime, String, String, UUID): 
+  - createdAt: LocalDateTime
+  - provider: String
+  - token: String
+  - id: UUID
+  - paymentRequestUid: UUID
+  + equals(Object): boolean
+  + hashCode(): int
+  + toString(): String
+  # canEqual(Object): boolean
+   id: UUID?
+   createdAt: LocalDateTime
+   token: String
+   paymentRequestUid: UUID
+   new: boolean
+   provider: String
+}
+interface WithdrawalRequestMapper << interface >> {
+  + map(TransferPaymentRequestDto): WithdrawalPaymentRequestDto
+  + map(PaymentRequestEntity): WithdrawalPaymentResponseDto
+  + map(WithdrawalPaymentRequestDto): WithdrawalRequestEntity
+}
+interface WithdrawalRequestsRepository << interface >>
+class topUpPaymentController {
+  + topUpPaymentController(TopUpPaymentService): 
+  + topUpPayment(TopUpPaymentRequestDto): Mono<TopUpPaymentResponseDto>
+  + confirmTopUpPayment(String): Mono<ConfirmTopUpPaymentResponse>
+}
+
+ConfirmPaymentRequestImpl           -[#008200,dashed]-^  ConfirmPaymentRequest              
+ConfirmPaymentRequestImpl          "1" *-[#595959,plain]-> "initTransactionModelMapper\n1" InitTransactionModelMapper         
+ConfirmPaymentRequestImpl          "1" *-[#595959,plain]-> "paymentRequestsRepository\n1" PaymentRequestsRepository          
+ConfirmPaymentRequestImpl          "1" *-[#595959,plain]-> "transactionInitializer\n1" TransactionInitializer             
+ConfirmTransactionServiceImpl       -[#008200,dashed]-^  ConfirmTransactionService          
+ConfirmTransactionServiceImpl      "1" *-[#595959,plain]-> "paymentRequestsRepository\n1" PaymentRequestsRepository          
+ConfirmTransactionServiceImpl      "1" *-[#595959,plain]-> "transactionsRepository\n1" TransactionsRepository             
+ConfirmTransactionServiceImpl      "1" *-[#595959,plain]-> "walletsRepository\n1" WalletsRepository                  
+CurrencyConverterImpl               -[#008200,dashed]-^  CurrencyConverter                  
+FeeServiceImpl                      -[#008200,dashed]-^  FeeService                         
+FeeServiceImpl                     "1" *-[#595959,plain]-> "individualFeeRuleRepository\n1" IndividualFeeRuleRepository        
+InitPaymentRequestModel            "1" *-[#595959,plain]-> "walletType\n1" WalletTypeEntity                   
+ListenerCallbackConfirmTransaction "1" *-[#595959,plain]-> "confirmTransactionService\n1" ConfirmTransactionService          
+PaymentRequestInitializerImpl       -[#595959,dashed]->  CompletePaymentRequest             : "«create»"
+PaymentRequestInitializerImpl      "1" *-[#595959,plain]-> "currencyConverter\n1" CurrencyConverter                  
+PaymentRequestInitializerImpl      "1" *-[#595959,plain]-> "feeService\n1" FeeService                         
+PaymentRequestInitializerImpl       -[#595959,dashed]->  InitPaymentRequestModel            : "«create»"
+PaymentRequestInitializerImpl       -[#008200,dashed]-^  PaymentRequestInitializer          
+PaymentRequestInitializerImpl      "1" *-[#595959,plain]-> "paymentRequestMapper\n1" PaymentRequestMapper               
+PaymentRequestInitializerImpl      "1" *-[#595959,plain]-> "paymentRequestsRepository\n1" PaymentRequestsRepository          
+PaymentRequestInitializerImpl      "1" *-[#595959,plain]-> "walletTypesRepository\n1" WalletTypesRepository              
+PaymentRequestInitializerImpl      "1" *-[#595959,plain]-> "walletsRepository\n1" WalletsRepository                  
+TopUpPaymentServiceImpl             -[#595959,dashed]->  ConfirmPaymentModel                : "«create»"
+TopUpPaymentServiceImpl            "1" *-[#595959,plain]-> "confirmPaymentRequest\n1" ConfirmPaymentRequest              
+TopUpPaymentServiceImpl            "1" *-[#595959,plain]-> "paymentRequestsInitializer\n1" PaymentRequestInitializer          
+TopUpPaymentServiceImpl             -[#008200,dashed]-^  TopUpPaymentService                
+TopUpPaymentServiceImpl            "1" *-[#595959,plain]-> "topUpRequestMapper\n1" TopUpRequestMapper                 
+TopUpPaymentServiceImpl            "1" *-[#595959,plain]-> "topUpRequestsRepository\n1" TopUpRequestsRepository            
+TransactionHistoryController       "1" *-[#595959,plain]-> "transactionHistoryService\n1" TransactionHistoryService          
+TransactionHistoryServiceImpl      "1" *-[#595959,plain]-> "transactionHistoryMapper\n1" TransactionHistoryMapper           
+TransactionHistoryServiceImpl       -[#008200,dashed]-^  TransactionHistoryService          
+TransactionHistoryServiceImpl      "1" *-[#595959,plain]-> "transactionsRepository\n1" TransactionsRepository             
+TransactionServiceImpl             "1" *-[#595959,plain]-> "currencyConverter\n1" CurrencyConverter                  
+TransactionServiceImpl              -[#008200,dashed]-^  TransactionInitializer             
+TransactionServiceImpl             "1" *-[#595959,plain]-> "mapper\n1" TransactionMapper                  
+TransactionServiceImpl             "1" *-[#595959,plain]-> "transactionsRepository\n1" TransactionsRepository             
+TransactionServiceImpl             "1" *-[#595959,plain]-> "walletTypesRepository\n1" WalletTypesRepository              
+TransactionServiceImpl             "1" *-[#595959,plain]-> "walletsRepository\n1" WalletsRepository                  
+TransferPaymentController          "1" *-[#595959,plain]-> "service\n1" TransferPaymentService             
+TransferPaymentServiceImpl          -[#595959,dashed]->  ConfirmPaymentModel                : "«create»"
+TransferPaymentServiceImpl         "1" *-[#595959,plain]-> "confirmPaymentRequest\n1" ConfirmPaymentRequest              
+TransferPaymentServiceImpl         "1" *-[#595959,plain]-> "paymentRequestsInitializer\n1" PaymentRequestInitializer          
+TransferPaymentServiceImpl         "1" *-[#595959,plain]-> "topUpRequestMapper\n1" TopUpRequestMapper                 
+TransferPaymentServiceImpl          -[#008200,dashed]-^  TransferPaymentService             
+TransferPaymentServiceImpl          -[#595959,dashed]->  TransferRequestEntity              : "«create»"
+TransferPaymentServiceImpl         "1" *-[#595959,plain]-> "transferRequestsRepository\n1" TransferRequestsRepository         
+TransferPaymentServiceImpl         "1" *-[#595959,plain]-> "withdrawalRequestMapper\n1" WithdrawalRequestMapper            
+WalletsController                  "1" *-[#595959,plain]-> "walletsService\n1" WalletsService                     
+WalletsServiceImpl                 "1" *-[#595959,plain]-> "mapper\n1" WalletMapper                       
+WalletsServiceImpl                 "1" *-[#595959,plain]-> "walletStatusHistoryRepository\n1" WalletStatusHistoryRepository      
+WalletsServiceImpl                 "1" *-[#595959,plain]-> "walletTypesRepository\n1" WalletTypesRepository              
+WalletsServiceImpl                 "1" *-[#595959,plain]-> "walletTypesStatusHistoryRepository\n1" WalletTypesStatusHistoryRepository 
+WalletsServiceImpl                 "1" *-[#595959,plain]-> "walletsRepository\n1" WalletsRepository                  
+WalletsServiceImpl                  -[#008200,dashed]-^  WalletsService                     
+WithdrawalPaymentController        "1" *-[#595959,plain]-> "service\n1" WithdrawalPaymentService           
+WithdrawalPaymentServiceImpl        -[#595959,dashed]->  ConfirmPaymentModel                : "«create»"
+WithdrawalPaymentServiceImpl       "1" *-[#595959,plain]-> "confirmPaymentRequest\n1" ConfirmPaymentRequest              
+WithdrawalPaymentServiceImpl       "1" *-[#595959,plain]-> "paymentRequestsInitializer\n1" PaymentRequestInitializer          
+WithdrawalPaymentServiceImpl        -[#008200,dashed]-^  WithdrawalPaymentService           
+WithdrawalPaymentServiceImpl       "1" *-[#595959,plain]-> "withdrawalRequestMapper\n1" WithdrawalRequestMapper            
+WithdrawalPaymentServiceImpl       "1" *-[#595959,plain]-> "withdrawalRequestsRepository\n1" WithdrawalRequestsRepository       
+topUpPaymentController             "1" *-[#595959,plain]-> "service\n1" TopUpPaymentService                
+@enduml

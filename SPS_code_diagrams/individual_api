@@ -1,0 +1,153 @@
+@startuml
+
+!theme plain
+top to bottom direction
+skinparam linetype ortho
+
+class AccessTokenException
+class AccessTokenMapper {
+  + mapToAccessTokenDto(AccessTokenResponse): KeycloakAccessTokenDto
+}
+class AuthenticationApplication {
+  + main(String[]): void
+}
+class AuthenticationController {
+  + confirmChangePassword(ConfirmChangePasswordDto, JwtAuthenticationToken): Mono<Void>
+  + logoutUser(KeycloakLogoutDto): Mono<ResponseEntity<String>>
+  + registerUser(IndividualRegistrationDto): Mono<ResponseEntity<String>>
+  + changePassword(ChangePasswordDto, JwtAuthenticationToken, ProfileType, UUID): Mono<OtpSendResponseDto>
+  ~ initiate(ChangeEmailInitiateRequestDto, JwtAuthenticationToken): Mono<ChangeEmailInitiateResponseDto>
+  + loginUser(IndividualRegistrationDto): Mono<ResponseEntity<?>>
+  ~ confirm(ChangeEmailConfirmRequestDto, JwtAuthenticationToken): Mono<ChangeEmailConfirmResponseDto>
+}
+class AuthenticationService {
+  + loginUser(String, String, String, String, IndividualRegistrationDto): Mono<KeycloakAccessTokenDto>
+  + registerUser(String, String, String, IndividualRegistrationDto): Mono<KeycloakResponseDto>
+  + logoutUser(String, String, String, String, KeycloakLogoutDto): Mono<KeycloakResponseDto>
+}
+interface ChangeEmailService << interface >> {
+  + initiate(String, OtpType, JwtAuthenticationToken): Mono<UUID>
+  + confirm(ChangeEmailConfirmRequestDto, JwtAuthenticationToken): Mono<String>
+}
+class ChangeEmailServiceImpl {
+  + initiate(String, OtpType, JwtAuthenticationToken): Mono<UUID>
+  - createOtpSendRequestDto(OtpType, String, UUID, Language): Mono<OtpSendRequestDto>
+  + confirm(ChangeEmailConfirmRequestDto, JwtAuthenticationToken): Mono<String>
+  - executeChangeEmail(UserDto, ChangeEmailConfirmRequestDto, String): Mono<String>
+  - getOtpDestinationDto(OtpType, String): OtpDestinationDto
+  - checkOtpResult(OtpCheckResponseDto): Mono<Void>
+  - checkEqualsUserEmailOrThrow(String, String): Mono<Void>
+  - updateEmailInKeycloak(UserDto, String, String): Mono<UserDto>
+}
+class ChangeForgottenPasswordController {
+  + changePassword(ChangePasswordInitiateDtoRequest): Mono<ResponseEntity<?>>
+  + acceptChangePassword(ChangePasswordVerifyDto, UUID): Mono<ResponseEntity<String>>
+}
+class ChangePasswordControllerV1 {
+  + changePassword(ChangePasswordDto, JwtAuthenticationToken, ProfileType, UUID): Mono<OtpSendResponseDto>
+  + confirmChangePassword(ConfirmChangePasswordDto, JwtAuthenticationToken): Mono<Void>
+}
+class ChangePasswordService {
+  + processPasswordChangeRequest(String, String, String, String, OtpDestinationDto): Mono<KeycloakResponseDto>
+  - getOtpDestinationDto(String): OtpDestinationDto
+  - createOtpSendRequestDto(String, UUID, String, Language): Mono<OtpSendRequestDto>
+  + sendToMailPasswordChangeLink(String, String): Mono<ChangePasswordSendLinkResponseDto>
+  - createOtpCheckRequestDto(String, String, OtpDestinationDto): Mono<OtpCheckRequestDto>
+  - changeUserPasswordOnKeycloak(String, String): Mono<KeycloakResponseDto>
+  - createChangePasswordTokenDto(String, UUID): Mono<ChangePasswordTokenDto>
+}
+interface ChangeUserPasswordService << interface >> {
+  + initiateChangePassword(UUID, ChangePasswordDto, JwtAuthenticationToken): Mono<OtpSendResponseDto>
+  + confirmChangePassword(ConfirmChangePasswordDto, JwtAuthenticationToken): Mono<Void>
+}
+class ChangeUserPasswordServiceImpl {
+  + confirmChangePassword(ConfirmChangePasswordDto, JwtAuthenticationToken): Mono<Void>
+  - validateNewPassword(String, String): Mono<Void>
+  - checkCurrentPasswordWithInput(String, JwtAuthenticationToken): Mono<Void>
+  - changeKeycloakUserPassword(JwtAuthenticationToken, String): Mono<Void>
+  - createOtpSendRequestDto(String, UUID, Language): Mono<OtpSendRequestDto>
+  + initiateChangePassword(UUID, ChangePasswordDto, JwtAuthenticationToken): Mono<OtpSendResponseDto>
+}
+class ErrorContextConfig {
+  ~ errorAttributes(List<ExceptionMapper>): ErrorInfoErrorAttributes
+}
+class ErrorHandlerConfig {
+  + equals(Object): boolean
+  # canEqual(Object): boolean
+  + hashCode(): int
+  + toString(): String
+  + errorHandler(): ExchangeFilterFunction
+}
+class IndividualRestControllerV1 {
+  ~ initiate(ChangeEmailInitiateRequestDto, JwtAuthenticationToken): Mono<ChangeEmailInitiateResponseDto>
+  ~ confirm(ChangeEmailConfirmRequestDto, JwtAuthenticationToken): Mono<ChangeEmailConfirmResponseDto>
+}
+class InvalidNumberException
+class InvalidOtpException
+class KeycloakConfiguration {
+  ~ keycloakGrantedAuthoritiesConverter(String): Converter<Jwt, Collection<GrantedAuthority>>
+  ~ keycloakJwtAuthenticationConverter(Converter<Jwt, Collection<GrantedAuthority>>): Converter<Jwt, Mono<AbstractAuthenticationToken>>
+  ~ keycloakAdmin(): Keycloak
+}
+class KeycloakConfigurationConstants {
+  + CLIENT_SECRET: String
+  + ADMIN_PASSWORD: String
+  + ADMIN_CLIENT_ID: String
+  + USERNAME_CLAIM: String
+  + ADMIN_USERNAME: String
+  + RESOURCE_ACCESS: String
+  + AUTH_SERVER_URL: String
+  + CLIENT_ID: String
+  + ADMIN_REALM: String
+  + CLAIM_REALM_ACCESS: String
+   ADMIN_USERNAME: String
+   ADMIN_REALM: String
+   ADMIN_CLIENT_ID: String
+   roles: String
+   CLAIM_REALM_ACCESS: String
+   ADMIN_PASSWORD: String
+   CLIENT_SECRET: String
+   RESOURCE_ACCESS: String
+   realm: String
+   AUTH_SERVER_URL: String
+   CLIENT_ID: String
+   USERNAME_CLAIM: String
+}
+class KeycloakGrantedAuthoritiesConverter {
+  - defaultGrantedAuthorities(Jwt): Collection<GrantedAuthority>
+  + convert(Jwt): Collection<GrantedAuthority>?
+  # realmRoles(Jwt): List<String>
+  # clientRoles(Jwt, String): List<String>
+}
+class NotValidFromOtpException
+class OtpConfigurationConstant
+class ReactiveKeycloakJwtAuthenticationConverter {
+  + convert(Jwt): Mono<AbstractAuthenticationToken>
+  - extractUsername(Jwt): String
+}
+class SecurityConfiguration {
+  + springSecurityFilterChain(ServerHttpSecurity, Converter<Jwt, Mono<AbstractAuthenticationToken>>): SecurityWebFilterChain
+}
+class TokenExceptionHandler {
+  # handleTokenErrorException(AccessTokenException): ResponseEntity<?>
+  + handleNotValidFromOtpException(NotValidFromOtpException): ResponseEntity<?>
+}
+class UserRepresentationMapper {
+  + mapToUserRepresentation(IndividualRegistrationDto): UserRepresentation
+}
+
+AuthenticationController                   "1" *-[#595959,plain]-> "authenticationService\n1" AuthenticationService                      
+AuthenticationController                   "1" *-[#595959,plain]-> "changeEmailService\n1" ChangeEmailService                         
+AuthenticationController                   "1" *-[#595959,plain]-> "changeUserPasswordService\n1" ChangeUserPasswordService                  
+AuthenticationService                       -[#595959,dashed]->  AccessTokenException                       : "«create»"
+ChangeEmailServiceImpl                      -[#008200,dashed]-^  ChangeEmailService                         
+ChangeForgottenPasswordController          "1" *-[#595959,plain]-> "changePasswordService\n1" ChangePasswordService                      
+ChangePasswordControllerV1                 "1" *-[#595959,plain]-> "changeUserPasswordService\n1" ChangeUserPasswordService                  
+ChangePasswordService                       -[#595959,dashed]->  InvalidNumberException                     : "«create»"
+ChangePasswordService                       -[#595959,dashed]->  InvalidOtpException                        : "«create»"
+ChangeUserPasswordServiceImpl               -[#008200,dashed]-^  ChangeUserPasswordService                  
+IndividualRestControllerV1                 "1" *-[#595959,plain]-> "changeEmailService\n1" ChangeEmailService                         
+KeycloakConfiguration                      "1" *-[#595959,plain]-> "keycloakConfigurationConstants\n1" KeycloakConfigurationConstants             
+KeycloakConfiguration                       -[#595959,dashed]->  KeycloakGrantedAuthoritiesConverter        : "«create»"
+KeycloakConfiguration                       -[#595959,dashed]->  ReactiveKeycloakJwtAuthenticationConverter : "«create»"
+@enduml

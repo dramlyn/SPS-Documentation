@@ -1,0 +1,354 @@
+@startuml
+
+!theme plain
+top to bottom direction
+skinparam linetype ortho
+
+class ExecutionPaymentControllerV1 {
+  + ExecutionPaymentControllerV1(ExecutionPaymentService): 
+  + paymentWithdrawal(ExecutionProviderPaymentRequestDto): Mono<ExecutionPaymentResponseDto>
+  + paymentTopUp(ExecutionProviderPaymentRequestDto): Mono<ExecutionPaymentResponseDto>
+}
+interface ExecutionPaymentService << interface >> {
+  + paymentWithdrawal(ExecutionProviderPaymentRequestDto): Mono<ExecutionPaymentResponseDto>
+  + paymentTopUp(ExecutionProviderPaymentRequestDto): Mono<ExecutionPaymentResponseDto>
+}
+class ExecutionPaymentServiceImpl {
+  + ExecutionPaymentServiceImpl(RequiredFieldValidator, PaymentMapper, PaymentMethodRepository, ProviderConfig, FakeProviderClient, WebClient): 
+  - createCardDataPopup(List<RequiredFieldDto>): CardDataByTopUpDtoRequest
+  - createCardDataPayout(List<RequiredFieldDto>): CardDataByPayoutDtoRequest
+  + paymentWithdrawal(ExecutionProviderPaymentRequestDto): Mono<ExecutionPaymentResponseDto>
+  + paymentTopUp(ExecutionProviderPaymentRequestDto): Mono<ExecutionPaymentResponseDto>
+   providerAuthToken: String
+}
+interface FakeProviderClient << interface >> {
+  + insertWithdrawal(PayoutDtoRequest, String): Mono<PayoutCreateDtoResponse>
+  + insertTopUp(TopUpDtoRequest, String): Mono<TopUpCreateDtoResponse>
+}
+class FakeProviderClientImpl {
+  + FakeProviderClientImpl(WebClient, ProviderConfig): 
+  + insertTopUp(TopUpDtoRequest, String): Mono<TopUpCreateDtoResponse>
+  + insertWithdrawal(PayoutDtoRequest, String): Mono<PayoutCreateDtoResponse>
+}
+class PaymentFieldInfoModel {
+  + PaymentFieldInfoModel(): 
+  - language: Language
+  - countryAlpha3Code: String
+  - paymentMethodId: Long
+  - paymentType: PaymentType
+  + equals(Object): boolean
+  # canEqual(Object): boolean
+  + hashCode(): int
+  + toString(): String
+   paymentMethodId: Long
+   paymentType: PaymentType
+   countryAlpha3Code: String
+   language: Language
+}
+interface PaymentMapper << interface >> {
+  + map(ExecutionProviderPaymentRequestDto, PaymentType): PaymentFieldInfoModel
+  + map(TopUpCreateDtoResponse): ExecutionPaymentResponseDto
+  + map(PayoutCreateDtoResponse): ExecutionPaymentResponseDto
+}
+class PaymentMethodControllerV1 {
+  + PaymentMethodControllerV1(PaymentMethodService): 
+  + getPaymentMethods(GetPaymentMethodRequestDto): Mono<List<PaymentMethodDto>>
+}
+class PaymentMethodDefinitionsEntity {
+  + PaymentMethodDefinitionsEntity(Long, Long, String, String, Boolean, Boolean, Boolean, Boolean): 
+  + PaymentMethodDefinitionsEntity(): 
+  - id: Long
+  - countryAlpha3Code: String
+  - isAllCurrencies: Boolean
+  - isAllCountries: Boolean
+  - currencyCode: String
+  - isPriority: Boolean
+  - paymentMethodId: Long
+  - isActive: Boolean
+  + equals(Object): boolean
+  + hashCode(): int
+  # canEqual(Object): boolean
+  + toString(): String
+   paymentMethodId: Long
+   isAllCountries: Boolean
+   isPriority: Boolean
+   countryAlpha3Code: String
+   id: Long?
+   new: boolean
+   isAllCurrencies: Boolean
+   currencyCode: String
+   isActive: Boolean
+}
+interface PaymentMethodDefinitionsRepository << interface >>
+class PaymentMethodEntity {
+  + PaymentMethodEntity(): 
+  + PaymentMethodEntity(Long, PaymentType, LocalDateTime, LocalDateTime, String, Boolean, String, String, String, ProfileType, Long): 
+  - id: Long
+  - modifiedAt: LocalDateTime
+  - profileType: ProfileType
+  - name: String
+  - providerId: Long
+  - logo: String
+  - createdAt: LocalDateTime
+  - providerUniqueId: String
+  - providerMethodType: String
+  - type: PaymentType
+  - isActive: Boolean
+  + equals(Object): boolean
+  + hashCode(): int
+  # canEqual(Object): boolean
+  + toString(): String
+   name: String
+   modifiedAt: LocalDateTime
+   createdAt: LocalDateTime
+   type: PaymentType
+   providerId: Long
+   id: Long?
+   new: boolean
+   logo: String
+   providerMethodType: String
+   profileType: ProfileType
+   isActive: Boolean
+   providerUniqueId: String
+}
+interface PaymentMethodMapper << interface >> {
+  + map(PaymentMethodEntity): PaymentMethodDto
+  + map(PaymentMethodRequiredFieldsEntity): PaymentMethodRequiredFieldDto
+}
+class PaymentMethodMetaInfoEntity {
+  + PaymentMethodMetaInfoEntity(Long, Long, String, String): 
+  + PaymentMethodMetaInfoEntity(): 
+  - requiredFields: String
+  - id: Long
+  - paymentMethodId: Long
+  - country: String
+  + toString(): String
+  # canEqual(Object): boolean
+  + equals(Object): boolean
+  + hashCode(): int
+   paymentMethodId: Long
+   requiredFields: String
+   id: Long?
+   new: boolean
+   country: String
+}
+interface PaymentMethodMetaInfoRepository << interface >>
+interface PaymentMethodRepository << interface >>
+class PaymentMethodRequiredFieldsEntity {
+  + PaymentMethodRequiredFieldsEntity(UUID, LocalDateTime, LocalDateTime, Long, PaymentType, String, String, RequiredFieldDataType, RequiredFieldValidationType, String, String, String, String, String, String, Language, Boolean): 
+  + PaymentMethodRequiredFieldsEntity(): 
+  - paymentMethodId: Long
+  - dataType: RequiredFieldDataType
+  - language: Language
+  - placeholder: String
+  - description: String
+  - isActive: Boolean
+  - valuesOptions: String
+  - defaultValue: String
+  - paymentType: PaymentType
+  - name: String
+  - representationName: String
+  - createdAt: LocalDateTime
+  - modifiedAt: LocalDateTime
+  - validationType: RequiredFieldValidationType
+  - id: UUID
+  - validationRule: String
+  - countryAlpha3Code: String
+  + equals(Object): boolean
+  + hashCode(): int
+  + toString(): String
+  # canEqual(Object): boolean
+   description: String
+   paymentMethodId: Long
+   paymentType: PaymentType
+   createdAt: LocalDateTime
+   representationName: String
+   validationRule: String
+   id: UUID?
+   language: Language
+   validationType: RequiredFieldValidationType
+   name: String
+   modifiedAt: LocalDateTime
+   countryAlpha3Code: String
+   defaultValue: String
+   new: boolean
+   dataType: RequiredFieldDataType
+   valuesOptions: String
+   placeholder: String
+   isActive: Boolean
+}
+interface PaymentMethodRequiredFieldsRepository << interface >> {
+  + findPaymentMethodRequiredFieldsEntitiesByPaymentMethodId(Long): Flux<PaymentMethodRequiredFieldsEntity>
+  + findPaymentMethodRequiredFieldsEntity(Long, PaymentType, String, String, Language): Mono<PaymentMethodRequiredFieldsEntity>
+}
+interface PaymentMethodService << interface >> {
+  + getPaymentMethod(GetPaymentMethodRequestDto): Mono<List<PaymentMethodDto>>
+}
+class PaymentMethodServiceImpl {
+  + PaymentMethodServiceImpl(PaymentMethodMapper, PaymentMethodRepository, PaymentMethodDefinitionsRepository, PaymentMethodRequiredFieldsRepository): 
+  + getPaymentMethod(GetPaymentMethodRequestDto): Mono<List<PaymentMethodDto>>
+}
+class PaymentProviderEntity {
+  + PaymentProviderEntity(Long, String, String): 
+  + PaymentProviderEntity(): 
+  - name: String
+  - id: Long
+  - description: String
+  + toString(): String
+  + equals(Object): boolean
+  # canEqual(Object): boolean
+  + hashCode(): int
+   name: String
+   description: String
+   id: Long?
+   new: boolean
+}
+interface PaymentProviderRepository << interface >>
+class PaymentServiceApplication {
+  + PaymentServiceApplication(): 
+  + main(String[]): void
+}
+class PersonalSecurityRulesTypeEntity {
+  + PersonalSecurityRulesTypeEntity(Long, LocalDateTime, UUID, LocalDateTime, String, String, Boolean, Long, Long, Long, Long, String, Long, String): 
+  + PersonalSecurityRulesTypeEntity(): 
+  - amountFrom: Long
+  - paymentMethodId: Long
+  - amountTo: Long
+  - status: String
+  - profileUid: UUID
+  - ruleType: String
+  - transactionType: String
+  - timeDefinition: String
+  - transactionsCount: Long
+  - id: Long
+  - timeValue: Long
+  - createdAt: LocalDateTime
+  - modifiedAt: LocalDateTime
+  - isAllTransactionType: Boolean
+  + equals(Object): boolean
+  + toString(): String
+  # canEqual(Object): boolean
+  + hashCode(): int
+   paymentMethodId: Long
+   transactionType: String
+   createdAt: LocalDateTime
+   id: Long?
+   timeValue: Long
+   profileUid: UUID
+   ruleType: String
+   amountFrom: Long
+   transactionsCount: Long
+   modifiedAt: LocalDateTime
+   timeDefinition: String
+   new: boolean
+   amountTo: Long
+   isAllTransactionType: Boolean
+   status: String
+}
+interface PersonalSecurityRulesTypeRepository << interface >>
+class ProviderConfig {
+  + ProviderConfig(): 
+  - merchantLogin: String
+  - paymentTopUpUrl: String
+  - paymentWithdrawalUrl: String
+  - merchantPassword: String
+  - providerUrl: String
+   paymentTopUpUrl: String
+   providerUrl: String
+   merchantPassword: String
+   merchantLogin: String
+   paymentWithdrawalUrl: String
+}
+interface RequiredFieldValidator << interface >> {
+  + validate(PaymentFieldInfoModel, List<RequiredFieldDto>): Mono<Void>
+}
+class RequiredFieldValidatorImpl {
+  + RequiredFieldValidatorImpl(PaymentMethodRequiredFieldsRepository): 
+  - validRegexp(String, String): boolean
+  + validate(PaymentFieldInfoModel, List<RequiredFieldDto>): Mono<Void>
+}
+class SecurityRulesTypeEntity {
+  + SecurityRulesTypeEntity(Long, LocalDateTime, LocalDateTime, String, String, Boolean, Long, Long, Long, Long, String, Long, String): 
+  + SecurityRulesTypeEntity(): 
+  - id: Long
+  - amountFrom: Long
+  - transactionsCount: Long
+  - modifiedAt: LocalDateTime
+  - timeValue: Long
+  - isAllTransactionType: Boolean
+  - createdAt: LocalDateTime
+  - transactionType: String
+  - ruleType: String
+  - timeDefinition: String
+  - amountTo: Long
+  - paymentMethodId: Long
+  - status: String
+  + hashCode(): int
+  + equals(Object): boolean
+  # canEqual(Object): boolean
+  + toString(): String
+   paymentMethodId: Long
+   transactionType: String
+   createdAt: LocalDateTime
+   id: Long?
+   timeValue: Long
+   ruleType: String
+   amountFrom: Long
+   transactionsCount: Long
+   modifiedAt: LocalDateTime
+   timeDefinition: String
+   new: boolean
+   amountTo: Long
+   isAllTransactionType: Boolean
+   status: String
+}
+interface SecurityRulesTypeRepository << interface >>
+class SecurityTriggeredRulesEntity {
+  + SecurityTriggeredRulesEntity(): 
+  + SecurityTriggeredRulesEntity(Long, UUID, Boolean, UUID, UUID, LocalDateTime, LocalDateTime, String, Long, String): 
+  - modifiedAt: LocalDateTime
+  - ruleType: String
+  - walletUid: UUID
+  - createdAt: LocalDateTime
+  - paymentRequestUid: UUID
+  - profileUid: UUID
+  - ruleId: Long
+  - id: Long
+  - generalRule: Boolean
+  - status: String
+  # canEqual(Object): boolean
+  + toString(): String
+  + equals(Object): boolean
+  + hashCode(): int
+   modifiedAt: LocalDateTime
+   createdAt: LocalDateTime
+   id: Long?
+   new: boolean
+   ruleId: Long
+   walletUid: UUID
+   status: String
+   generalRule: Boolean
+   profileUid: UUID
+   ruleType: String
+   paymentRequestUid: UUID
+}
+interface SecurityTriggeredRulesRepository << interface >>
+
+ExecutionPaymentControllerV1          "1" *-[#595959,plain]-> "service\n1" ExecutionPaymentService               
+ExecutionPaymentServiceImpl            -[#008200,dashed]-^  ExecutionPaymentService               
+ExecutionPaymentServiceImpl           "1" *-[#595959,plain]-> "fakeProviderClient\n1" FakeProviderClient                    
+ExecutionPaymentServiceImpl           "1" *-[#595959,plain]-> "paymentMapper\n1" PaymentMapper                         
+ExecutionPaymentServiceImpl           "1" *-[#595959,plain]-> "paymentMethodRepository\n1" PaymentMethodRepository               
+ExecutionPaymentServiceImpl           "1" *-[#595959,plain]-> "providerConfig\n1" ProviderConfig                        
+ExecutionPaymentServiceImpl           "1" *-[#595959,plain]-> "validator\n1" RequiredFieldValidator                
+FakeProviderClientImpl                 -[#008200,dashed]-^  FakeProviderClient                    
+FakeProviderClientImpl                "1" *-[#595959,plain]-> "providerConfig\n1" ProviderConfig                        
+PaymentMethodControllerV1             "1" *-[#595959,plain]-> "service\n1" PaymentMethodService                  
+PaymentMethodServiceImpl              "1" *-[#595959,plain]-> "paymentMethodDefinitionsRepository\n1" PaymentMethodDefinitionsRepository    
+PaymentMethodServiceImpl              "1" *-[#595959,plain]-> "paymentMethodMapper\n1" PaymentMethodMapper                   
+PaymentMethodServiceImpl              "1" *-[#595959,plain]-> "paymentMethodRepository\n1" PaymentMethodRepository               
+PaymentMethodServiceImpl              "1" *-[#595959,plain]-> "paymentMethodRequiredFieldsRepository\n1" PaymentMethodRequiredFieldsRepository 
+PaymentMethodServiceImpl               -[#008200,dashed]-^  PaymentMethodService                  
+RequiredFieldValidatorImpl            "1" *-[#595959,plain]-> "requiredFieldsRepository\n1" PaymentMethodRequiredFieldsRepository 
+RequiredFieldValidatorImpl             -[#008200,dashed]-^  RequiredFieldValidator                
+@enduml

@@ -1,0 +1,196 @@
+@startuml
+
+!theme plain
+top to bottom direction
+skinparam linetype ortho
+
+class ConversionRate {
+  + ConversionRate(): 
+  + ConversionRate(Long, LocalDateTime, LocalDateTime, String, String, LocalDateTime, LocalDateTime, BigDecimal, String, BigDecimal, BigDecimal): 
+  - rate: BigDecimal
+  - rateBeginTime: LocalDateTime
+  - systemRate: BigDecimal
+  - providerCode: String
+  - rateEndTime: LocalDateTime
+  - id: Long
+  - sourceCode: String
+  - multiplier: BigDecimal
+  - createdAt: LocalDateTime
+  - destinationCode: String
+  - modifiedAt: LocalDateTime
+  + toString(): String
+  # canEqual(Object): boolean
+  + toBuilder(): ConversionRateBuilder
+  + builder(): ConversionRateBuilder
+  + equals(Object): boolean
+  + hashCode(): int
+   destinationCode: String
+   modifiedAt: LocalDateTime
+   createdAt: LocalDateTime
+   rate: BigDecimal
+   id: Long
+   rateBeginTime: LocalDateTime
+   providerCode: String
+   multiplier: BigDecimal
+   sourceCode: String
+   rateEndTime: LocalDateTime
+   systemRate: BigDecimal
+}
+class ConversionRateAPIResponseMapper {
+  + ConversionRateAPIResponseMapper(): 
+  + toConversionRate(APIRateDto, String, BigDecimal, String): ConversionRate
+}
+interface ConversionRateMapper << interface >> {
+  + toDto(ConversionRate): ConversionRateDto
+}
+interface ConversionRateRepo << interface >> {
+  + findFirstBySourceCodeAndDestinationCodeOrderByCreatedAtDesc(String, String): Mono<ConversionRate>
+}
+class Currency {
+  + Currency(Long, LocalDateTime, LocalDateTime, String, int, String, boolean, int, String): 
+  + Currency(): 
+  - description: String
+  - scale: int
+  - symbol: String
+  - id: Long
+  - code: String
+  - isoCode: int
+  - isActive: boolean
+  - createdAt: LocalDateTime
+  - modifiedAt: LocalDateTime
+  + builder(): CurrencyBuilder
+  # canEqual(Object): boolean
+  + equals(Object): boolean
+  + hashCode(): int
+  + toString(): String
+  + toBuilder(): CurrencyBuilder
+   description: String
+   modifiedAt: LocalDateTime
+   createdAt: LocalDateTime
+   id: Long
+   code: String
+   isoCode: int
+   scale: int
+   symbol: String
+   isActive: boolean
+}
+class CurrencyApiProviderClient {
+  + CurrencyApiProviderClient(WebClient): 
+  + getJsonConversionRate(String, List<String>): Mono<APIRateDto>
+}
+class CurrencyExchangeRestControllerV1 {
+  + CurrencyExchangeRestControllerV1(CurrencyExchangeService): 
+  + getConversionRateBySourceAndDestinationCode(String, String): Mono<ConversionRateDto>
+  + getCurrencyByCode(String): Mono<CurrencyDto>
+}
+class CurrencyExchangeScheduler {
+  + CurrencyExchangeScheduler(RateProviderRepo, CurrencyApiProviderClient, ConversionRateRepo, CurrencyRepo): 
+  + getInfoFromProviderApi(): void
+}
+interface CurrencyExchangeService << interface >> {
+  + getCurrencyByCode(String): Mono<CurrencyDto>
+  + getRateBySourceAndDestinationCode(String, String): Mono<ConversionRateDto>
+}
+class CurrencyExchangeServiceImpl {
+  + CurrencyExchangeServiceImpl(CurrencyRepo, ConversionRateRepo, CurrencyMapper, ConversionRateMapper): 
+  + getCurrencyByCode(String): Mono<CurrencyDto>
+  + getRateBySourceAndDestinationCode(String, String): Mono<ConversionRateDto>
+}
+interface CurrencyMapper << interface >> {
+  + toDto(Currency): CurrencyDto
+}
+interface CurrencyRepo << interface >> {
+  + findByCode(String): Mono<Currency>
+}
+class ExchangeApplication {
+  + ExchangeApplication(): 
+  + main(String[]): void
+}
+class R2dbcConfig {
+  + R2dbcConfig(): 
+}
+class RateCorrectionCoefficient {
+  + RateCorrectionCoefficient(Long, LocalDateTime, LocalDateTime, boolean, String, String, float, String, String, String, LocalDate, LocalDate, String): 
+  + RateCorrectionCoefficient(): 
+  - creator: String
+  - dateFrom: LocalDate
+  - dateTo: LocalDate
+  - sourceCode: String
+  - providerCode: String
+  - profileType: String
+  - modifier: String
+  - destinationCode: String
+  - id: Long
+  - createdAt: LocalDateTime
+  - isArchived: boolean
+  - multiplier: float
+  - modifiedAt: LocalDateTime
+  # canEqual(Object): boolean
+  + hashCode(): int
+  + toBuilder(): RateCorrectionCoefficientBuilder
+  + builder(): RateCorrectionCoefficientBuilder
+  + equals(Object): boolean
+  + toString(): String
+   createdAt: LocalDateTime
+   isArchived: boolean
+   id: Long
+   providerCode: String
+   sourceCode: String
+   dateTo: LocalDate
+   modifier: String
+   destinationCode: String
+   modifiedAt: LocalDateTime
+   profileType: String
+   multiplier: float
+   creator: String
+   dateFrom: LocalDate
+}
+interface RateCorrectionCoefficientRepo << interface >>
+class RateProvider {
+  + RateProvider(): 
+  + RateProvider(String, LocalDateTime, LocalDateTime, String, String, int, boolean, BigDecimal): 
+  - priority: int
+  - providerName: String
+  - providerCode: String
+  - modifiedAt: LocalDateTime
+  - description: String
+  - defaultMultiplier: BigDecimal
+  - isActive: boolean
+  - createdAt: LocalDateTime
+  + builder(): RateProviderBuilder
+  + hashCode(): int
+  + equals(Object): boolean
+  + toBuilder(): RateProviderBuilder
+  # canEqual(Object): boolean
+  + toString(): String
+   description: String
+   priority: int
+   modifiedAt: LocalDateTime
+   createdAt: LocalDateTime
+   new: boolean
+   providerCode: String
+   isActive: boolean
+   defaultMultiplier: BigDecimal
+   id: String?
+   providerName: String
+}
+interface RateProviderRepo << interface >> {
+  + findFirstByActiveOrderByPriority(boolean): Mono<RateProvider>
+}
+class SchedulerConfig {
+  + SchedulerConfig(ConnectionFactory): 
+   lockProvider: LockProvider
+}
+
+ConversionRateAPIResponseMapper   -[#595959,dashed]->  ConversionRate                   : "«create»"
+CurrencyExchangeRestControllerV1 "1" *-[#595959,plain]-> "currencyExchangeService\n1" CurrencyExchangeService          
+CurrencyExchangeScheduler        "1" *-[#595959,plain]-> "conversionRateRepo\n1" ConversionRateRepo               
+CurrencyExchangeScheduler        "1" *-[#595959,plain]-> "currencyApiProviderClient\n1" CurrencyApiProviderClient        
+CurrencyExchangeScheduler        "1" *-[#595959,plain]-> "currencyRepo\n1" CurrencyRepo                     
+CurrencyExchangeScheduler        "1" *-[#595959,plain]-> "rateProviderRepo\n1" RateProviderRepo                 
+CurrencyExchangeServiceImpl      "1" *-[#595959,plain]-> "conversionRateMapper\n1" ConversionRateMapper             
+CurrencyExchangeServiceImpl      "1" *-[#595959,plain]-> "conversionRateRepo\n1" ConversionRateRepo               
+CurrencyExchangeServiceImpl       -[#008200,dashed]-^  CurrencyExchangeService          
+CurrencyExchangeServiceImpl      "1" *-[#595959,plain]-> "currencyMapper\n1" CurrencyMapper                   
+CurrencyExchangeServiceImpl      "1" *-[#595959,plain]-> "currencyRepo\n1" CurrencyRepo                     
+@enduml
